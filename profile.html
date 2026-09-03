@@ -5,21 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>STZ Network - Profile</title>
 
-    <!-- Telegram SDK -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-
-    <!-- Google Fonts & FontAwesome Icons -->
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
         :root {
             --primary-blue: #1c64f2;
-            --light-blue: #3f83f8;
             --text-dark: #0f172a;
             --text-muted: #64748b;
             --card-glass: rgba(255, 255, 255, 0.94);
-            --card-white: #ffffff;
         }
 
         * {
@@ -53,7 +48,6 @@
             align-items: center;
         }
 
-        /* Top Header */
         .top-nav {
             width: 100%;
             display: flex;
@@ -75,15 +69,11 @@
             text-decoration: none;
             backdrop-filter: blur(8px);
             font-size: 14px;
+            cursor: pointer;
         }
 
-        .brand-text {
-            font-size: 19px;
-            font-weight: 700;
-            color: #ffffff;
-        }
+        .brand-text { font-size: 19px; font-weight: 700; color: #ffffff; }
 
-        /* User Identity Card */
         .profile-hero-card {
             width: 100%;
             background: var(--card-glass);
@@ -108,7 +98,6 @@
             align-items: center;
             justify-content: center;
             margin-bottom: 10px;
-            box-shadow: 0 4px 15px rgba(28, 100, 242, 0.25);
         }
 
         .avatar-core {
@@ -124,20 +113,9 @@
             color: var(--primary-blue);
         }
 
-        .user-fullname {
-            font-size: 18px;
-            font-weight: 800;
-            color: var(--text-dark);
-        }
+        .user-fullname { font-size: 18px; font-weight: 800; color: var(--text-dark); }
+        .user-tag { font-size: 12px; color: var(--text-muted); font-weight: 600; margin-top: 2px; }
 
-        .user-tag {
-            font-size: 12px;
-            color: var(--text-muted);
-            font-weight: 600;
-            margin-top: 2px;
-        }
-
-        /* Balance Snapshot Card */
         .balance-snapshot-card {
             width: 100%;
             background: #ffffff;
@@ -150,24 +128,9 @@
             margin-bottom: 14px;
         }
 
-        .snap-title {
-            font-size: 12px;
-            font-weight: 700;
-            color: var(--text-muted);
-        }
-
-        .snap-val {
-            font-size: 20px;
-            font-weight: 800;
-            color: var(--text-dark);
-            margin-top: 2px;
-        }
-
-        .snap-usdt {
-            font-size: 12px;
-            font-weight: 700;
-            color: #10b981;
-        }
+        .snap-title { font-size: 12px; font-weight: 700; color: var(--text-muted); }
+        .snap-val { font-size: 20px; font-weight: 800; color: var(--text-dark); margin-top: 2px; }
+        .snap-usdt { font-size: 12px; font-weight: 700; color: #10b981; }
 
         .btn-withdraw-link {
             background: var(--primary-blue);
@@ -180,17 +143,16 @@
             display: flex;
             align-items: center;
             gap: 6px;
-            box-shadow: 0 4px 12px rgba(28, 100, 242, 0.3);
+            border: none;
+            cursor: pointer;
         }
 
-        /* Settings & Info Section */
         .section-label {
             width: 100%;
             font-size: 13px;
             font-weight: 700;
             color: #ffffff;
             margin: 4px 0 8px 4px;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.1);
         }
 
         .menu-group {
@@ -208,17 +170,12 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
             cursor: pointer;
             text-decoration: none;
             color: inherit;
         }
 
-        .menu-left {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
+        .menu-left { display: flex; align-items: center; gap: 12px; }
 
         .tile-icon {
             width: 36px;
@@ -232,17 +189,8 @@
             font-size: 15px;
         }
 
-        .tile-text-block .m-title {
-            font-size: 14px;
-            font-weight: 700;
-            color: var(--text-dark);
-        }
-
-        .tile-text-block .m-desc {
-            font-size: 11px;
-            color: var(--text-muted);
-            margin-top: 1px;
-        }
+        .tile-text-block .m-title { font-size: 14px; font-weight: 700; color: var(--text-dark); }
+        .tile-text-block .m-desc { font-size: 11px; color: var(--text-muted); margin-top: 1px; }
 
         .m-badge {
             font-size: 11px;
@@ -253,12 +201,8 @@
             color: var(--primary-blue);
         }
 
-        .m-badge.green {
-            background: #dcfce7;
-            color: #15803d;
-        }
+        .m-badge.green { background: #dcfce7; color: #15803d; }
 
-        /* Bottom Floating Bar */
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -282,15 +226,11 @@
             text-decoration: none;
             font-size: 11px;
             font-weight: 700;
+            cursor: pointer;
         }
 
-        .nav-item.active {
-            color: var(--primary-blue);
-        }
-
-        .nav-item i {
-            font-size: 18px;
-        }
+        .nav-item.active { color: var(--primary-blue); }
+        .nav-item i { font-size: 18px; }
 
         .center-mine-btn {
             width: 50px;
@@ -305,22 +245,21 @@
             box-shadow: 0 6px 18px rgba(24, 86, 243, 0.4);
             text-decoration: none;
             font-size: 18px;
+            cursor: pointer;
         }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <!-- Top App Bar -->
         <div class="top-nav">
-            <a href="./index.html" class="back-pill-btn">
+            <div onclick="goToPage('index.html')" class="back-pill-btn">
                 <i class="fas fa-chevron-left"></i>
-            </a>
+            </div>
             <span class="brand-text">Profile</span>
             <div style="width: 36px;"></div>
         </div>
 
-        <!-- User Identity Card -->
         <div class="profile-hero-card">
             <div class="avatar-ring">
                 <div class="avatar-core" id="avatarText">S</div>
@@ -329,22 +268,20 @@
             <div class="user-tag" id="userTelegramId">UID: --</div>
         </div>
 
-        <!-- Balance Snapshot & Direct Withdraw Button -->
         <div class="balance-snapshot-card">
             <div>
                 <div class="snap-title">Available Assets</div>
                 <div class="snap-val"><span id="profileBalanceText">0.00</span> STZ</div>
                 <div class="snap-usdt">≈ $<span id="profileUsdtText">0.000</span> USDT</div>
             </div>
-            <a href="https://sakiltechzone.github.io/passive_income_zone-/withdraw.html" class="btn-withdraw-link">
-    <i class="fas fa-wallet"></i> Withdraw
-</a>
+            <button onclick="goToPage('withdraw.html')" class="btn-withdraw-link">
+                <i class="fas fa-wallet"></i> Withdraw
+            </button>
         </div>
 
-        <!-- Account Section -->
         <div class="section-label">Account & Security</div>
         <div class="menu-group">
-            <div class="menu-tile" onclick="showVerificationAlert()">
+            <div class="menu-tile" onclick="tg.showAlert('অ্যাকাউন্টটি টেলিগ্রামের সাথে সম্পূর্ণ সুরক্ষিত ও ভেরিফাইড।')">
                 <div class="menu-left">
                     <div class="tile-icon"><i class="fas fa-shield-alt"></i></div>
                     <div class="tile-text-block">
@@ -367,10 +304,9 @@
             </div>
         </div>
 
-        <!-- Network & Support -->
         <div class="section-label">Community & Network</div>
         <div class="menu-group">
-            <a href="./refer.html" class="menu-tile">
+            <div class="menu-tile" onclick="goToPage('refer.html')">
                 <div class="menu-left">
                     <div class="tile-icon"><i class="fas fa-users"></i></div>
                     <div class="tile-text-block">
@@ -379,14 +315,14 @@
                     </div>
                 </div>
                 <i class="fas fa-chevron-right" style="color: #cbd5e1; font-size: 13px;"></i>
-            </a>
+            </div>
 
-            <div class="menu-tile" onclick="openOfficialChannel()">
+            <div class="menu-tile" onclick="tg.openTelegramLink('https://t.me/passive_income_zone_bot')">
                 <div class="menu-left">
                     <div class="tile-icon"><i class="fab fa-telegram"></i></div>
                     <div class="tile-text-block">
                         <div class="m-title">Official Channel</div>
-                        <div class="m-desc">News and token airdrop announcements</div>
+                        <div class="m-desc">News and announcements</div>
                     </div>
                 </div>
                 <i class="fas fa-external-link-alt" style="color: #cbd5e1; font-size: 13px;"></i>
@@ -394,22 +330,20 @@
         </div>
     </div>
 
-    <!-- Bottom Navigation Bar -->
     <nav class="bottom-nav">
-        <a href="./index.html" class="nav-item">
+        <div onclick="goToPage('index.html')" class="nav-item">
             <i class="fas fa-home"></i>
             <span>Home</span>
-        </a>
-        <a href="./dashboard.html" class="center-mine-btn">
+        </div>
+        <div onclick="goToPage('dashboard.html')" class="center-mine-btn">
             <i class="fas fa-hammer"></i>
-        </a>
-        <a href="./refer.html" class="nav-item">
+        </div>
+        <div onclick="goToPage('refer.html')" class="nav-item">
             <i class="fas fa-user-friends"></i>
             <span>Referral</span>
-        </a>
+        </div>
     </nav>
 
-    <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
@@ -417,7 +351,13 @@
         const tg = window.Telegram.WebApp;
         tg.expand();
 
-        const STZ_TO_USDT = 0.001; // ১ STZ = $০.০০১ USDT (১০০ STZ = $০.১০ USDT)
+        const STZ_TO_USDT = 0.001;
+        let isHapticOn = true;
+
+        function goToPage(target) {
+            const base = window.location.href.substring(0, window.location.href.lastIndexOf('/') + 1);
+            window.location.href = base + target;
+        }
 
         const firebaseConfig = {
             apiKey: "AIzaSyAl0eRqOs5QNUg_J1Pj-4PlEqRDxAXr-oA",
@@ -433,20 +373,15 @@
         const db = firebase.database();
 
         let userId = "sakil24";
-        let isHapticOn = true;
-
-        // টেলিগ্রাম ইউজার ডেটা লোড
         if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
             const u = tg.initDataUnsafe.user;
-            userId = u.id ? u.id.toString() : "sakil24";
+            userId = u.id ? u.id.toString() : (u.username || "sakil24");
             const fullName = `${u.first_name || ''} ${u.last_name || ''}`.trim() || "Miner";
-            
             document.getElementById('userDisplayName').innerText = fullName;
             document.getElementById('avatarText').innerText = fullName[0].toUpperCase();
             document.getElementById('userTelegramId').innerText = "UID: " + u.id;
         }
 
-        // ফায়ারবেজ থেকে ব্যালেন্স আনা
         const userRef = db.ref('stz_miners/' + userId);
         userRef.on('value', snap => {
             const val = snap.val();
@@ -457,20 +392,12 @@
             }
         });
 
-        function showVerificationAlert() {
-            tg.showAlert("আপনার টেলিগ্রাম অ্যাকাউন্টটি ইতিমধ্যে সিস্টেমের সাথে ভেরিফাইড রয়েছে।");
-        }
-
         function toggleHaptics() {
             isHapticOn = !isHapticOn;
             document.getElementById('hapticStatusTxt').innerText = isHapticOn ? "Enabled" : "Disabled";
             if (isHapticOn && tg.HapticFeedback) {
                 tg.HapticFeedback.notificationOccurred('success');
             }
-        }
-
-        function openOfficialChannel() {
-            tg.openTelegramLink("https://t.me/passive_income_zone_bot");
         }
     </script>
 </body>
