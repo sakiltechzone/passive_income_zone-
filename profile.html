@@ -313,7 +313,7 @@
     <div class="container">
         <!-- Top App Bar -->
         <div class="top-nav">
-            <a href="index.html" class="back-pill-btn">
+            <a href="./index.html" class="back-pill-btn">
                 <i class="fas fa-chevron-left"></i>
             </a>
             <span class="brand-text">Profile</span>
@@ -326,7 +326,7 @@
                 <div class="avatar-core" id="avatarText">S</div>
             </div>
             <div class="user-fullname" id="userDisplayName">Sakil Miner</div>
-            <div class="user-tag" id="userTelegramId">UID: 8645837338</div>
+            <div class="user-tag" id="userTelegramId">UID: --</div>
         </div>
 
         <!-- Balance Snapshot & Direct Withdraw Button -->
@@ -334,9 +334,9 @@
             <div>
                 <div class="snap-title">Available Assets</div>
                 <div class="snap-val"><span id="profileBalanceText">0.00</span> STZ</div>
-                <div class="snap-usdt">≈ $<span id="profileUsdtText">0.00</span> USDT</div>
+                <div class="snap-usdt">≈ $<span id="profileUsdtText">0.000</span> USDT</div>
             </div>
-            <a href="withdraw.html" class="btn-withdraw-link">
+            <a href="./withdraw.html" class="btn-withdraw-link">
                 <i class="fas fa-wallet"></i> Withdraw
             </a>
         </div>
@@ -370,7 +370,7 @@
         <!-- Network & Support -->
         <div class="section-label">Community & Network</div>
         <div class="menu-group">
-            <a href="refer.html" class="menu-tile">
+            <a href="./refer.html" class="menu-tile">
                 <div class="menu-left">
                     <div class="tile-icon"><i class="fas fa-users"></i></div>
                     <div class="tile-text-block">
@@ -396,14 +396,14 @@
 
     <!-- Bottom Navigation Bar -->
     <nav class="bottom-nav">
-        <a href="index.html" class="nav-item">
+        <a href="./index.html" class="nav-item">
             <i class="fas fa-home"></i>
             <span>Home</span>
         </a>
-        <a href="dashboard.html" class="center-mine-btn">
+        <a href="./dashboard.html" class="center-mine-btn">
             <i class="fas fa-hammer"></i>
         </a>
-        <a href="refer.html" class="nav-item">
+        <a href="./refer.html" class="nav-item">
             <i class="fas fa-user-friends"></i>
             <span>Referral</span>
         </a>
@@ -420,17 +420,17 @@
         const STZ_TO_USDT = 0.001; // ১ STZ = $০.০০১ USDT (১০০ STZ = $০.১০ USDT)
 
         const firebaseConfig = {
-            apiKey: "AIzaSyAl0eRqOs5QNUg_J1Pj-4PlEqRDxAXr-oA",[span_0](start_span)[span_0](end_span)
-            authDomain: "viral-zone-bd.firebaseapp.com",[span_1](start_span)[span_1](end_span)
-            projectId: "viral-zone-bd",[span_2](start_span)[span_2](end_span)
-            storageBucket: "viral-zone-bd.firebasestorage.app",[span_3](start_span)[span_3](end_span)
-            messagingSenderId: "794737483555",[span_4](start_span)[span_4](end_span)
-            appId: "1:794737483555:web:a275cd96aafff0e640f696",[span_5](start_span)[span_5](end_span)
-            databaseURL: "https://viral-zone-bd-default-rtdb.firebaseio.com[span_6](start_span)"[span_6](end_span)
+            apiKey: "AIzaSyAl0eRqOs5QNUg_J1Pj-4PlEqRDxAXr-oA",
+            authDomain: "viral-zone-bd.firebaseapp.com",
+            projectId: "viral-zone-bd",
+            storageBucket: "viral-zone-bd.firebasestorage.app",
+            messagingSenderId: "794737483555",
+            appId: "1:794737483555:web:a275cd96aafff0e640f696",
+            databaseURL: "https://viral-zone-bd-default-rtdb.firebaseio.com"
         };
 
-        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);[span_7](start_span)[span_7](end_span)
-        const db = firebase.database();[span_8](start_span)[span_8](end_span)
+        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
 
         let userId = "sakil24";
         let isHapticOn = true;
@@ -438,7 +438,7 @@
         // টেলিগ্রাম ইউজার ডেটা লোড
         if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
             const u = tg.initDataUnsafe.user;
-            userId = u.username ? u.username : u.id.toString();
+            userId = u.id ? u.id.toString() : "sakil24";
             const fullName = `${u.first_name || ''} ${u.last_name || ''}`.trim() || "Miner";
             
             document.getElementById('userDisplayName').innerText = fullName;
@@ -453,7 +453,7 @@
             if (val) {
                 const bal = val.balance || 0;
                 document.getElementById('profileBalanceText').innerText = bal.toFixed(2);
-                document.getElementById('profileUsdtText').innerText = (bal * STZ_TO_USDT).toFixed(2);
+                document.getElementById('profileUsdtText').innerText = (bal * STZ_TO_USDT).toFixed(3);
             }
         });
 
