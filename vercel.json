@@ -1,0 +1,11 @@
+{
+  "cleanUrls": false,
+  "routes": [
+    { "src": "/index", "dest": "/index.html" },
+    { "src": "/dashboard", "dest": "/dashboard.html" },
+    { "src": "/profile", "dest": "/profile.html" },
+    { "src": "/refer", "dest": "/refer.html" },
+    { "src": "/withdraw", "dest": "/withdraw.html" },
+    { "handle": "filesystem" }
+  ]
+}
