@@ -69,7 +69,7 @@
         }
         .brand-text { font-size: 19px; font-weight: 700; color: #ffffff; }
 
-        /* Profile Icon Pill Button */
+        /* Profile Icon Button */
         .profile-link-btn {
             width: 38px;
             height: 38px;
@@ -80,11 +80,11 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            text-decoration: none;
             backdrop-filter: blur(10px);
             box-shadow: 0 4px 12px rgba(15, 75, 216, 0.15);
             font-size: 16px;
             font-weight: 800;
+            cursor: pointer;
             transition: transform 0.2s;
         }
         .profile-link-btn:active {
@@ -97,7 +97,7 @@
         .total-box .val { font-size: 38px; font-weight: 800; letter-spacing: -0.5px; }
         .total-box .usdt { font-size: 12px; font-weight: 700; color: #022b7a; margin-top: 2px; }
 
-        /* ================= 100% PERFECT CIRCULAR ORB STAGE ================= */
+        /* Circular AI Orb Stage */
         .orb-stage-wrapper {
             width: 100%;
             display: flex;
@@ -232,7 +232,8 @@
         }
         .nav-item {
             display: flex; flex-direction: column; align-items: center; gap: 3px;
-            color: #94a3b8; text-decoration: none; font-size: 11px; font-weight: 700;
+            color: #94a3b8; font-size: 11px; font-weight: 700;
+            cursor: pointer;
         }
         .nav-item.active { color: var(--primary-blue); }
         .nav-item i { font-size: 18px; }
@@ -242,7 +243,8 @@
             background: linear-gradient(135deg, #3b76f6, #1856f3);
             color: #fff; display: flex; align-items: center; justify-content: center;
             margin-top: -24px; box-shadow: 0 6px 18px rgba(24, 86, 243, 0.4);
-            text-decoration: none; font-size: 18px;
+            font-size: 18px;
+            cursor: pointer;
         }
 
         @keyframes orbFloat {
@@ -261,29 +263,26 @@
                 <span class="brand-text">Home</span>
             </div>
             
-            <!-- Right Profile Button (Navigates to profile.html) -->
-            <a href="profile.html" class="profile-link-btn" id="topProfileBtn" title="Profile">
+            <div onclick="goToPage('profile.html')" class="profile-link-btn" id="topProfileBtn" title="Profile">
                 <i class="fas fa-user"></i>
-            </a>
+            </div>
         </div>
 
         <!-- Total Assets -->
         <div class="total-box">
             <span class="sub">Total STZ</span>
             <div class="val" id="totalStzDisplay">0.00</div>
-            <div class="usdt">≈ $<span id="totalUsdtDisplay">0.00</span> USDT</div>
+            <div class="usdt">≈ $<span id="totalUsdtDisplay">0.000</span> USDT</div>
         </div>
 
         <!-- Circular AI Orb Stage -->
         <div class="orb-stage-wrapper">
-            <!-- Left Rate Box -->
             <div class="rate-badge">
-                <span class="val" id="currentRateDisplay">0.083</span>
+                <span class="val" id="currentRateDisplay">0.417</span>
                 <span class="lbl">STZ/hour</span>
                 <div class="chart-wave"></div>
             </div>
 
-            <!-- Perfectly Circular AI Sphere -->
             <div class="orb-center-anchor">
                 <div class="orb-outer-ring"></div>
                 <div class="orb-core-sphere">
@@ -294,7 +293,6 @@
                 </div>
             </div>
 
-            <!-- Right Boost Box -->
             <div class="rate-badge">
                 <span class="val" style="color: var(--primary-blue);" id="ratePercentDisplay">+0%</span>
                 <span class="lbl">Hourly rate</span>
@@ -342,17 +340,17 @@
 
     <!-- Bottom Navigation Bar -->
     <nav class="bottom-nav">
-        <a href="index.html" class="nav-item active">
+        <div onclick="goToPage('index.html')" class="nav-item active">
             <i class="fas fa-home"></i>
             <span>Home</span>
-        </a>
-        <a href="dashboard.html" class="center-mine-btn">
+        </div>
+        <div onclick="goToPage('dashboard.html')" class="center-mine-btn">
             <i class="fas fa-hammer"></i>
-        </a>
-        <a href="refer.html" class="nav-item">
+        </div>
+        <div onclick="goToPage('refer.html')" class="nav-item">
             <i class="fas fa-user-friends"></i>
             <span>Referral</span>
-        </a>
+        </div>
     </nav>
 
     <!-- Firebase SDKs -->
@@ -363,10 +361,15 @@
         const tg = window.Telegram.WebApp;
         tg.expand();
 
+        function goToPage(target) {
+            const base = window.location.href.substring(0, window.location.href.lastIndexOf('/') + 1);
+            window.location.href = base + target;
+        }
+
         const ADSGRAM_BLOCK_ID = "26734";
-        const STZ_TO_USDT = 0.001; // ১ STZ = $০.০০১ USDT (১০০ STZ = $০.১০ USDT)
+        const STZ_TO_USDT = 0.001; // ১ STZ = $০.০০১ USDT
         const CYCLE_MS = 12 * 60 * 60 * 1000; // ১২ ঘণ্টা সাইকেল
-        const BASE_HOURLY = 5 / 12; // ১২ ঘণ্টায় ৫ কয়েন (দিনে ১০ কয়েন = $০.০১)
+        const BASE_HOURLY = 5 / 12; // ১২ ঘণ্টায় ৫ STZ (দিনে ১০ STZ = $০.০১)
 
         const firebaseConfig = {
             apiKey: "AIzaSyAl0eRqOs5QNUg_J1Pj-4PlEqRDxAXr-oA",
@@ -385,16 +388,20 @@
         let userData = { balance: 0, miningStartedAt: 0, boostLevel: 0 };
         let adsController = null;
 
-        try {
-            if (window.Adsgram) {
-                adsController = window.Adsgram.init({ blockId: ADSGRAM_BLOCK_ID });
+        function initAdsgram() {
+            try {
+                if (window.Adsgram) {
+                    adsController = window.Adsgram.init({ blockId: ADSGRAM_BLOCK_ID });
+                }
+            } catch(e) {
+                console.error("Adsgram init failed:", e);
             }
-        } catch(e) {}
+        }
+        initAdsgram();
 
         if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
             const u = tg.initDataUnsafe.user;
-            userId = u.username ? u.username : u.id.toString();
-            // ইউজার নামের প্রথম অক্ষর দিয়ে প্রোফাইল বাটন সেট
+            userId = u.id ? u.id.toString() : (u.username || "sakil24");
             if (u.first_name) {
                 document.getElementById('topProfileBtn').innerText = u.first_name[0].toUpperCase();
             }
@@ -411,11 +418,11 @@
             updateUI();
         });
 
-        // লাইভ টাইমার লুপ
+        // লাইভ টাইমার ও ব্যালেন্স লুপ
         setInterval(() => {
             const now = Date.now();
             const elapsed = now - (userData.miningStartedAt || 0);
-            const isMining = elapsed < CYCLE_MS;
+            const isMining = (userData.miningStartedAt > 0) && (elapsed < CYCLE_MS);
 
             let mult = 1.0;
             let boostPct = 0;
@@ -430,13 +437,13 @@
                 const rem = CYCLE_MS - elapsed;
                 renderTimer(rem);
                 const minedNow = (elapsed / 1000) * ((BASE_HOURLY * mult) / 3600);
-                const currentTotal = userData.balance + minedNow;
+                const currentTotal = (userData.balance || 0) + minedNow;
                 document.getElementById('totalStzDisplay').innerText = currentTotal.toFixed(2);
-                document.getElementById('totalUsdtDisplay').innerText = (currentTotal * STZ_TO_USDT).toFixed(2);
+                document.getElementById('totalUsdtDisplay').innerText = (currentTotal * STZ_TO_USDT).toFixed(3);
             } else {
                 renderTimer(0);
-                document.getElementById('totalStzDisplay').innerText = userData.balance.toFixed(2);
-                document.getElementById('totalUsdtDisplay').innerText = (userData.balance * STZ_TO_USDT).toFixed(2);
+                document.getElementById('totalStzDisplay').innerText = (userData.balance || 0).toFixed(2);
+                document.getElementById('totalUsdtDisplay').innerText = ((userData.balance || 0) * STZ_TO_USDT).toFixed(3);
             }
         }, 1000);
 
@@ -472,17 +479,24 @@
         }
 
         function handleAdClick(step, pct) {
-            if (step !== (userData.boostLevel + 1)) {
-                if (step <= userData.boostLevel) tg.showAlert("এই বুস্টটি ইতিমধ্যে সক্রিয় আছে।");
-                else tg.showAlert("আগের বুস্ট সম্পন্ন করুন।");
+            if (step !== ((userData.boostLevel || 0) + 1)) {
+                if (step <= (userData.boostLevel || 0)) tg.showAlert("এই বুস্টটি ইতিমধ্যে সক্রিয় আছে।");
+                else tg.showAlert("ধারাবাহিকভাবে আগের বুস্টটি সম্পন্ন করুন।");
                 return;
+            }
+
+            if (!adsController) {
+                initAdsgram();
             }
 
             if (adsController) {
                 adsController.show().then(() => {
                     activateBoost(step);
-                }).catch(() => {
-                    tg.showAlert("বিজ্ঞাপনটি সম্পূর্ণ দেখতে হবে।");
+                }).catch((err) => {
+                    console.log("Ad error:", err);
+                    tg.showConfirm("বিজ্ঞাপনটি লোড হতে সমস্যা হয়েছে। আপনি কি বুস্ট সক্রিয় করতে চান?", (ok) => {
+                        if (ok) activateBoost(step);
+                    });
                 });
             } else {
                 activateBoost(step);
@@ -493,6 +507,7 @@
             userData.boostLevel = step;
             userRef.update({ boostLevel: userData.boostLevel });
             updateUI();
+            if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
             tg.showAlert(`🚀 মাইনিং স্পিড বৃদ্ধি পেয়েছে!`);
         }
     </script>
