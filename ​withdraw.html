@@ -48,7 +48,7 @@
         .container {
             width: 100%;
             max-width: 440px;
-            padding: 16px 18px 110px 18px; /* পর্যাপ্ত প্যাডিং যাতে বটম বার কন্টেন্ট ঢেকে না দেয় */
+            padding: 16px 18px 110px 18px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -321,7 +321,7 @@
             border-radius: 16px;
         }
 
-        /* 5-Button Modern Bottom Nav Bar - সর্বোচ্চ লেয়ার নিশ্চিত */
+        /* 5-Button Modern Bottom Nav Bar */
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -333,7 +333,7 @@
             justify-content: space-around;
             align-items: center;
             box-shadow: 0 -4px 20px rgba(0,0,0,0.08);
-            z-index: 99999 !important; /* সর্বোচ্চ লেয়ার */
+            z-index: 99999 !important;
             padding: 0 4px;
         }
 
@@ -359,7 +359,7 @@
 
         .nav-item i {
             font-size: 17px;
-            pointer-events: none; /* ক্লিকের সমস্যা সমাধান */
+            pointer-events: none;
         }
 
         .nav-item span {
@@ -372,7 +372,7 @@
     <div class="container">
         <!-- Top App Bar -->
         <div class="top-nav">
-            <a href="index.html" class="back-pill-btn">
+            <a href="./index.html" class="back-pill-btn">
                 <i class="fas fa-chevron-left"></i>
             </a>
             <span class="brand-text">Wallet & Payout</span>
@@ -429,25 +429,25 @@
         </div>
     </div>
 
-    <!-- 5-Button Bottom Nav (সরাসরি href এবং ক্লিক-নিরাপদ) -->
+    <!-- 5-Button Bottom Nav -->
     <nav class="bottom-nav">
-        <a href="index.html" class="nav-item">
+        <a href="./index.html" class="nav-item">
             <i class="fas fa-magic"></i>
             <span>Prompts</span>
         </a>
-        <a href="dashboard.html" class="nav-item">
+        <a href="./dashboard.html" class="nav-item">
             <i class="fas fa-hammer"></i>
             <span>Mining</span>
         </a>
-        <a href="spin.html" class="nav-item">
+        <a href="./spin.html" class="nav-item">
             <i class="fas fa-dharmachakra"></i>
             <span>Spin</span>
         </a>
-        <a href="refer.html" class="nav-item">
+        <a href="./refer.html" class="nav-item">
             <i class="fas fa-user-friends"></i>
             <span>Referral</span>
         </a>
-        <a href="withdraw.html" class="nav-item active">
+        <a href="./withdraw.html" class="nav-item active">
             <i class="fas fa-wallet"></i>
             <span>Wallet</span>
         </a>
@@ -458,7 +458,6 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
     <script>
-        // নিরাপদ টেলিগ্রাম ইনিশিয়ালাইজেশন (HopWeb-এ ক্র্যাশ ঠেকানোর জন্য)
         let tg = null;
         try {
             if (window.Telegram && window.Telegram.WebApp) {
@@ -469,7 +468,6 @@
             console.log("Telegram SDK not active (Browser mode)");
         }
 
-        // ----------------- কনফিগারেশন -----------------
         const STZ_TO_USDT = 0.001;
         let minWithdrawUsdt = 1.00;
         const TON_FEE_USDT = 0.001;
@@ -497,7 +495,6 @@
 
         updatePlaceholder();
 
-        // অ্যাডমিন সিস্টেম সেটিংস থেকে মিনিমাম লিমিট সিঙ্ক
         db.ref('system_settings').on('value', snap => {
             const val = snap.val();
             if (val && val.minWithdraw) {
@@ -507,7 +504,6 @@
             }
         });
 
-        // ফায়ারবেজ থেকে ব্যালেন্স আনা
         const userRef = db.ref('stz_miners/' + userId);
         userRef.on('value', snap => {
             const val = snap.val();
@@ -519,7 +515,6 @@
             }
         });
 
-        // হিস্ট্রি লোড
         const historyRef = db.ref('withdraw_requests/' + userId);
         historyRef.on('value', snap => {
             const container = document.getElementById('withdrawHistoryContainer');
@@ -660,7 +655,6 @@
             });
         }
 
-        // নিরাপদ অ্যালার্ট হেল্পার (টেলিগ্রাম বা সাধারণ ব্রাউজার উভয়ের জন্যই)
         function showModalAlert(msg) {
             if (tg && tg.showAlert) {
                 tg.showAlert(msg);
