@@ -49,7 +49,7 @@
         .container {
             width: 100%;
             max-width: 440px;
-            padding: 16px 18px 95px 18px;
+            padding: 16px 18px 110px 18px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -76,6 +76,7 @@
             justify-content: center;
             font-size: 14px;
             cursor: pointer;
+            text-decoration: none;
         }
 
         .brand-text {
@@ -96,6 +97,7 @@
             color: var(--text-dark);
             box-shadow: 0 4px 12px rgba(0,0,0,0.06);
             cursor: pointer;
+            text-decoration: none;
         }
 
         /* ---------------- VIEW 1: IDLE / READY STATE ---------------- */
@@ -437,8 +439,8 @@
             display: flex;
             justify-content: space-around;
             align-items: center;
-            box-shadow: 0 -4px 20px rgba(0,0,0,0.06);
-            z-index: 100;
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.08);
+            z-index: 99999 !important;
             padding: 0 4px;
         }
 
@@ -446,12 +448,15 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            justify-content: center;
             gap: 3px;
             color: #94a3b8;
             font-size: 10px;
             font-weight: 700;
             cursor: pointer;
             flex: 1;
+            height: 100%;
+            text-decoration: none;
         }
 
         .nav-item.active {
@@ -460,6 +465,11 @@
 
         .nav-item i {
             font-size: 17px;
+            pointer-events: none;
+        }
+
+        .nav-item span {
+            pointer-events: none;
         }
 
         @keyframes orbFloat {
@@ -473,14 +483,14 @@
     <div class="container">
         <!-- Top App Bar -->
         <div class="top-nav">
-            <div onclick="goToPage('index.html')" class="back-pill-btn">
+            <a href="./index.html" class="back-pill-btn">
                 <i class="fas fa-chevron-left"></i>
-            </div>
+            </a>
             <span class="brand-text">STZ Mining</span>
-            <div class="mine-wallet-tag" onclick="goToPage('withdraw.html')">
+            <a href="./withdraw.html" class="mine-wallet-tag">
                 <i class="fas fa-wallet" style="color: var(--primary-blue);"></i>
                 $<span id="topBarBalanceUsdt">0.000</span>
-            </div>
+            </a>
         </div>
 
         <!-- ==================== VIEW 1: IDLE / START SCREEN ==================== -->
@@ -610,26 +620,26 @@
 
     <!-- 5-Button Bottom Nav -->
     <nav class="bottom-nav">
-        <div onclick="goToPage('index.html')" class="nav-item">
+        <a href="./index.html" class="nav-item">
             <i class="fas fa-magic"></i>
             <span>Prompts</span>
-        </div>
-        <div onclick="goToPage('dashboard.html')" class="nav-item active">
+        </a>
+        <a href="./dashboard.html" class="nav-item active">
             <i class="fas fa-hammer"></i>
             <span>Mining</span>
-        </div>
-        <div onclick="goToPage('spin.html')" class="nav-item">
+        </a>
+        <a href="./spin.html" class="nav-item">
             <i class="fas fa-dharmachakra"></i>
             <span>Spin</span>
-        </div>
-        <div onclick="goToPage('refer.html')" class="nav-item">
+        </a>
+        <a href="./refer.html" class="nav-item">
             <i class="fas fa-user-friends"></i>
             <span>Referral</span>
-        </div>
-        <div onclick="goToPage('withdraw.html')" class="nav-item">
+        </a>
+        <a href="./withdraw.html" class="nav-item">
             <i class="fas fa-wallet"></i>
             <span>Wallet</span>
-        </div>
+        </a>
     </nav>
 
     <!-- Firebase SDKs -->
@@ -637,12 +647,13 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
     <script>
-        const tg = window.Telegram.WebApp;
-        tg.expand();
-
-        function goToPage(target) {
-            window.location.href = target;
-        }
+        let tg = null;
+        try {
+            if (window.Telegram && window.Telegram.WebApp) {
+                tg = window.Telegram.WebApp;
+                tg.expand();
+            }
+        } catch(e) {}
 
         const ADSGRAM_BLOCK_ID = "26734";
         const STZ_TO_USDT = 0.001;
@@ -679,7 +690,7 @@
         }
         initAdsgram();
 
-        if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
+        if (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) {
             const u = tg.initDataUnsafe.user;
             userId = u.id ? u.id.toString() : (u.username || "sakil24");
         }
@@ -723,7 +734,6 @@
             const totalMult = aiMult * refMultiplier;
 
             if (isMining) {
-                // ২য় স্ক্রিনশটের অ্যাক্টিভ ভিউ
                 document.getElementById('idleStateView').style.display = 'none';
                 document.getElementById('activeStateView').style.display = 'flex';
 
@@ -741,7 +751,6 @@
                 document.getElementById('aiStepBoostDisplay').innerText = `+${boostPct}%`;
                 document.getElementById('adsStepCounter').innerText = `${userData.boostLevel || 0}/3`;
             } else {
-                // ১ম স্ক্রিনশটের আইডল ভিউ
                 document.getElementById('activeStateView').style.display = 'none';
                 document.getElementById('idleStateView').style.display = 'flex';
 
@@ -791,9 +800,13 @@
                     onSuccess();
                 }).catch((err) => {
                     console.log("Ad fallback triggered:", err);
-                    tg.showConfirm("বিজ্ঞাপন লোড হতে সমস্যা হয়েছে। আপনি কি সরাসরি মাইনিং চালু করতে চান?", (ok) => {
-                        if (ok) onSuccess();
-                    });
+                    if (tg && tg.showConfirm) {
+                        tg.showConfirm("বিজ্ঞাপন লোড হতে সমস্যা হয়েছে। আপনি কি সরাসরি মাইনিং চালু করতে চান?", (ok) => {
+                            if (ok) onSuccess();
+                        });
+                    } else {
+                        onSuccess();
+                    }
                 });
             } else {
                 onSuccess();
@@ -823,14 +836,14 @@
                     miningStartedAt: userData.miningStartedAt,
                     boostLevel: userData.boostLevel || 0
                 });
-                if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
-                tg.showAlert("🚀 ১২ ঘণ্টার মাইনিং সফলভাবে শুরু হয়েছে!");
+                if (tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+                alertModal("🚀 ১২ ঘণ্টার মাইনিং সফলভাবে শুরু হয়েছে!");
             });
         }
 
         function triggerBoostAd() {
             if (userData.boostLevel >= 3) {
-                tg.showAlert("সর্বোচ্চ +১০০% বুস্ট ইতিমধ্যে সক্রিয় রয়েছে!");
+                alertModal("সর্বোচ্চ +১০০% বুস্ট ইতিমধ্যে সক্রিয় রয়েছে!");
                 return;
             }
 
@@ -838,9 +851,14 @@
                 userData.boostLevel = (userData.boostLevel || 0) + 1;
                 userRef.update({ boostLevel: userData.boostLevel });
                 updateBoostUI();
-                if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
-                tg.showAlert("🚀 মাইনিং স্পিড বৃদ্ধি পেয়েছে!");
+                if (tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+                alertModal("🚀 মাইনিং স্পিড বৃদ্ধি পেয়েছে!");
             });
+        }
+
+        function alertModal(msg) {
+            if (tg && tg.showAlert) tg.showAlert(msg);
+            else alert(msg);
         }
     </script>
 </body>
