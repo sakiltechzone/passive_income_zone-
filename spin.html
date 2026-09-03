@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>STZ Network - Lucky Spin</title>
+
+    <!-- Telegram & Adsgram SDK -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
+
+    <!-- Google Fonts & FontAwesome -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --primary-blue: #1c64f2;
+            --light-blue: #3f83f8;
+            --text-dark: #0f172a;
+            --text-muted: #64748b;
+            --card-glass: rgba(255, 255, 255, 0.94);
+            --success: #10b981;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: #3b82f6;
+            background-image: 
+                radial-gradient(circle at 50% 20%, rgba(255, 255, 255, 0.25) 0%, transparent 60%),
+                radial-gradient(rgba(255, 255, 255, 0.18) 1.5px, transparent 1.5px),
+                linear-gradient(180deg, #1d6bf3 0%, #60a5fa 35%, #bfdbfe 70%, #f0f6ff 100%);
+            background-size: 100% 100%, 16px 16px, 100% 100%;
+            min-height: 100vh;
+            color: var(--text-dark);
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 440px;
+            padding: 16px 18px 95px 18px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Top Bar */
+        .top-nav {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .back-pill-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .brand-text {
+            font-size: 19px;
+            font-weight: 800;
+            color: #ffffff;
+        }
+
+        .wallet-pill {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 6px 14px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            font-weight: 800;
+            color: var(--text-dark);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+            cursor: pointer;
+        }
+
+        /* Hero Info Card */
+        .spin-info-card {
+            width: 100%;
+            background: var(--card-glass);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            border-radius: 20px;
+            padding: 16px;
+            text-align: center;
+            margin-bottom: 16px;
+            box-shadow: 0 6px 20px rgba(15, 75, 216, 0.08);
+        }
+
+        .spin-info-card h3 {
+            font-size: 17px;
+            font-weight: 800;
+            color: var(--text-dark);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .spin-info-card p {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 4px;
+            font-weight: 600;
+        }
+
+        .spin-limit-badge {
+            display: inline-block;
+            margin-top: 8px;
+            background: #e2edff;
+            color: var(--primary-blue);
+            font-size: 12px;
+            font-weight: 800;
+            padding: 4px 12px;
+            border-radius: 12px;
+        }
+
+        /* Wheel Arena */
+        .wheel-container {
+            position: relative;
+            width: 290px;
+            height: 290px;
+            margin: 10px 0 20px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .wheel-pointer {
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 14px solid transparent;
+            border-right: 14px solid transparent;
+            border-top: 26px solid #ef4444;
+            z-index: 10;
+            filter: drop-shadow(0 3px 6px rgba(0,0,0,0.3));
+        }
+
+        #wheelCanvas {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            box-shadow: 0 10px 30px rgba(15, 75, 216, 0.25);
+            background: #ffffff;
+            transition: transform 4s cubic-bezier(0.15, 0.9, 0.2, 1);
+        }
+
+        .wheel-center-cap {
+            position: absolute;
+            width: 54px;
+            height: 54px;
+            border-radius: 50%;
+            background: #ffffff;
+            border: 3px solid var(--primary-blue);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-blue);
+            font-size: 18px;
+            z-index: 5;
+            pointer-events: none;
+        }
+
+        /* Action Button */
+        .btn-spin-action {
+            width: 100%;
+            padding: 16px;
+            border-radius: 18px;
+            background: linear-gradient(135deg, #3b76f6, #1856f3);
+            border: none;
+            color: #fff;
+            font-size: 16px;
+            font-weight: 800;
+            box-shadow: 0 8px 22px rgba(24, 86, 243, 0.35);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-spin-action:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        /* 5-Button Modern Bottom Nav Bar */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 68px;
+            background: #ffffff;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.06);
+            z-index: 100;
+            padding: 0 4px;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 3px;
+            color: #94a3b8;
+            font-size: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            flex: 1;
+        }
+
+        .nav-item.active {
+            color: var(--primary-blue);
+        }
+
+        .nav-item i {
+            font-size: 17px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Top Nav -->
+        <div class="top-nav">
+            <div onclick="goToPage('index.html')" class="back-pill-btn">
+                <i class="fas fa-chevron-left"></i>
+            </div>
+            <span class="brand-text">Lucky Spin</span>
+            <div class="wallet-pill" onclick="goToPage('withdraw.html')">
+                <i class="fas fa-wallet" style="color: var(--primary-blue);"></i>
+                $<span id="topBalance">0.000</span>
+            </div>
+        </div>
+
+        <!-- Info Card -->
+        <div class="spin-info-card">
+            <h3><i class="fas fa-gift" style="color: #f59e0b;"></i> Daily Reward Wheel</h3>
+            <p>Watch a sponsor ad to spin and win instant USDT balance.</p>
+            <div class="spin-limit-badge">
+                Remaining Spins: <span id="spinsRemainingText">5/5</span>
+            </div>
+        </div>
+
+        <!-- Canvas Wheel Area -->
+        <div class="wheel-container">
+            <div class="wheel-pointer"></div>
+            <canvas id="wheelCanvas" width="580" height="580"></canvas>
+            <div class="wheel-center-cap">
+                <i class="fas fa-bolt"></i>
+            </div>
+        </div>
+
+        <!-- Spin Action Button -->
+        <button class="btn-spin-action" id="spinActionBtn" onclick="handleSpinClick()">
+            <i class="fas fa-play"></i> Watch Ad & Spin
+        </button>
+    </div>
+
+    <!-- 5-Button Bottom Nav -->
+    <nav class="bottom-nav">
+        <div onclick="goToPage('index.html')" class="nav-item">
+            <i class="fas fa-magic"></i>
+            <span>Prompts</span>
+        </div>
+        <div onclick="goToPage('dashboard.html')" class="nav-item">
+            <i class="fas fa-hammer"></i>
+            <span>Mining</span>
+        </div>
+        <div onclick="goToPage('spin.html')" class="nav-item active">
+            <i class="fas fa-dharmachakra"></i>
+            <span>Spin</span>
+        </div>
+        <div onclick="goToPage('refer.html')" class="nav-item">
+            <i class="fas fa-user-friends"></i>
+            <span>Referral</span>
+        </div>
+        <div onclick="goToPage('withdraw.html')" class="nav-item">
+            <i class="fas fa-wallet"></i>
+            <span>Wallet</span>
+        </div>
+    </nav>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+
+    <script>
+        const tg = window.Telegram.WebApp;
+        tg.expand();
+
+        function goToPage(target) {
+            window.location.href = target;
+        }
+
+        const ADSGRAM_BLOCK_ID = "26734";
+        const STZ_TO_USDT = 0.001; // ১ STZ = $০.০০১ (১০০ STZ = $০.১০)
+        const ONE_DAY_MS = 24 * 60 * 60 * 1000;
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAl0eRqOs5QNUg_J1Pj-4PlEqRDxAXr-oA",
+            authDomain: "viral-zone-bd.firebaseapp.com",
+            projectId: "viral-zone-bd",
+            storageBucket: "viral-zone-bd.firebasestorage.app",
+            messagingSenderId: "794737483555",
+            appId: "1:794737483555:web:a275cd96aafff0e640f696",
+            databaseURL: "https://viral-zone-bd-default-rtdb.firebaseio.com"
+        };
+
+        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
+        let userId = "sakil24";
+        let userBalance = 0;
+        let spinLimit = 5;
+        let spinHistory = { count: 0, lastReset: Date.now() };
+        let spinRewards = [0.001, 0.0002, 0.002, 0.0005, 0.005, 0.001];
+        let adsController = null;
+        let isSpinning = false;
+        let currentRotation = 0;
+
+        function initAdsgram() {
+            try {
+                if (window.Adsgram) {
+                    adsController = window.Adsgram.init({ blockId: ADSGRAM_BLOCK_ID });
+                }
+            } catch(e) {
+                console.error("Adsgram init error:", e);
+            }
+        }
+        initAdsgram();
+
+        if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
+            const u = tg.initDataUnsafe.user;
+            userId = u.id ? u.id.toString() : (u.username || "sakil24");
+        }
+
+        // অ্যাডমিন সিস্টেম সেটিংস লোড
+        db.ref('system_settings').on('value', snap => {
+            const val = snap.val();
+            if (val) {
+                if (val.spinLimit) spinLimit = parseInt(val.spinLimit);
+                if (val.spinPool) {
+                    const parsed = val.spinPool.split(',').map(s => parseFloat(s.trim())).filter(n => !isNaN(n));
+                    if (parsed.length >= 4) spinRewards = parsed;
+                }
+            }
+            drawWheel();
+            updateSpinsUI();
+        });
+
+        // ব্যালেন্স ও স্পিন ট্র্যাকিং
+        const userRef = db.ref('stz_miners/' + userId);
+        userRef.on('value', snap => {
+            const val = snap.val();
+            if (val) {
+                userBalance = val.balance || 0;
+                document.getElementById('topBalance').innerText = (userBalance * STZ_TO_USDT).toFixed(3);
+            }
+        });
+
+        const spinRef = db.ref('spin_records/' + userId);
+        spinRef.on('value', snap => {
+            const val = snap.val();
+            const now = Date.now();
+            if (val) {
+                // ২৪ ঘণ্টা অতিক্রান্ত হলে স্পিন কাউন্টার রিসেট
+                if (now - (val.lastReset || 0) > ONE_DAY_MS) {
+                    spinHistory = { count: 0, lastReset: now };
+                    spinRef.set(spinHistory);
+                } else {
+                    spinHistory = val;
+                }
+            } else {
+                spinHistory = { count: 0, lastReset: now };
+                spinRef.set(spinHistory);
+            }
+            updateSpinsUI();
+        });
+
+        function updateSpinsUI() {
+            const rem = Math.max(0, spinLimit - (spinHistory.count || 0));
+            document.getElementById('spinsRemainingText').innerText = `${rem}/${spinLimit}`;
+
+            const btn = document.getElementById('spinActionBtn');
+            if (rem <= 0) {
+                btn.disabled = true;
+                btn.innerText = "Daily Limit Reached (Wait 24h)";
+            } else if (!isSpinning) {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-play"></i> Watch Ad & Spin';
+            }
+        }
+
+        // ক্যানভাসে লাকি হুইল অঙ্কন
+        function drawWheel() {
+            const canvas = document.getElementById('wheelCanvas');
+            const ctx = canvas.getContext('2d');
+            const numSlices = spinRewards.length;
+            const arc = 2 * Math.PI / numSlices;
+            const radius = canvas.width / 2;
+
+            const sliceColors = ['#1c64f2', '#3b82f6', '#60a5fa', '#93c5fd', '#2563eb', '#1d4ed8'];
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            for (let i = 0; i < numSlices; i++) {
+                const angle = i * arc;
+                ctx.beginPath();
+                ctx.fillStyle = sliceColors[i % sliceColors.length];
+                ctx.moveTo(radius, radius);
+                ctx.arc(radius, radius, radius, angle, angle + arc);
+                ctx.lineTo(radius, radius);
+                ctx.fill();
+
+                // টেক্সট বসানো
+                ctx.save();
+                ctx.fillStyle = '#ffffff';
+                ctx.font = 'bold 24px Plus Jakarta Sans';
+                ctx.translate(radius, radius);
+                ctx.rotate(angle + arc / 2);
+                ctx.textAlign = 'right';
+                ctx.fillText(`$${spinRewards[i]}`, radius - 40, 10);
+                ctx.restore();
+            }
+        }
+
+        function handleSpinClick() {
+            const rem = spinLimit - (spinHistory.count || 0);
+            if (rem <= 0 || isSpinning) return;
+
+            if (!adsController) {
+                initAdsgram();
+            }
+
+            if (adsController) {
+                adsController.show().then(() => {
+                    executeWheelSpin();
+                }).catch((err) => {
+                    console.log("Ad error / fallback:", err);
+                    tg.showConfirm("বিজ্ঞাপনটি লোড হতে সমস্যা হয়েছে। আপনি কি সরাসরি স্পিন করতে চান?", (ok) => {
+                        if (ok) executeWheelSpin();
+                    });
+                });
+            } else {
+                executeWheelSpin();
+            }
+        }
+
+        function executeWheelSpin() {
+            isSpinning = true;
+            const btn = document.getElementById('spinActionBtn');
+            btn.disabled = true;
+            btn.innerText = "Spinning Wheel...";
+
+            const numSlices = spinRewards.length;
+            const arcDeg = 360 / numSlices;
+            
+            // দৈবচয়নভাবে রিওয়ার্ড নির্বাচন
+            const winningIndex = Math.floor(Math.random() * numSlices);
+            const wonAmount = spinRewards[winningIndex];
+
+            // কাঁটা শীর্ষবিন্দুতে (২৭০ ডিগ্রিতে) পয়েন্ট করে
+            const targetDeg = 360 - (winningIndex * arcDeg) - (arcDeg / 2) - 90;
+            const extraRounds = 360 * 5; // ন্যূনতম ৫ চক্কর
+            currentRotation += extraRounds + (targetDeg - (currentRotation % 360) + 360) % 360;
+
+            const canvas = document.getElementById('wheelCanvas');
+            canvas.style.transform = `rotate(${currentRotation}deg)`;
+
+            setTimeout(() => {
+                isSpinning = false;
+                
+                // ব্যালেন্সে যোগ (STZ হিসেবে সঞ্চয়: USDT / STZ_TO_USDT)
+                const addedCoins = wonAmount / STZ_TO_USDT;
+                const newTotalBalance = userBalance + addedCoins;
+                const newCount = (spinHistory.count || 0) + 1;
+
+                const updates = {};
+                updates['/stz_miners/' + userId + '/balance'] = newTotalBalance;
+                updates['/spin_records/' + userId + '/count'] = newCount;
+                updates['/spin_records/' + userId + '/lastReset'] = spinHistory.lastReset || Date.now();
+
+                db.ref().update(updates).then(() => {
+                    if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+                    tg.showAlert(`🎉 অভিনন্দন! আপনি জিতেছেন $${wonAmount} USDT!`);
+                    updateSpinsUI();
+                });
+            }, 4200);
+        }
+
+        drawWheel();
+    </script>
+</body>
+</html>
