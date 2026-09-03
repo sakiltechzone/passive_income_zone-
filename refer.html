@@ -48,10 +48,12 @@
         .container {
             width: 100%;
             max-width: 440px;
-            padding: 16px 18px 95px 18px;
+            padding: 16px 18px 110px 18px;
             display: flex;
             flex-direction: column;
             align-items: center;
+            position: relative;
+            z-index: 1;
         }
 
         /* Top Bar */
@@ -75,6 +77,7 @@
             justify-content: center;
             font-size: 14px;
             cursor: pointer;
+            text-decoration: none;
         }
 
         .brand-text {
@@ -95,6 +98,7 @@
             color: var(--text-dark);
             box-shadow: 0 4px 12px rgba(0,0,0,0.06);
             cursor: pointer;
+            text-decoration: none;
         }
 
         /* Hero Card */
@@ -318,8 +322,8 @@
             display: flex;
             justify-content: space-around;
             align-items: center;
-            box-shadow: 0 -4px 20px rgba(0,0,0,0.06);
-            z-index: 100;
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.08);
+            z-index: 99999 !important;
             padding: 0 4px;
         }
 
@@ -327,12 +331,16 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            justify-content: center;
             gap: 3px;
             color: #94a3b8;
             font-size: 10px;
             font-weight: 700;
             cursor: pointer;
             flex: 1;
+            height: 100%;
+            text-decoration: none;
+            -webkit-user-select: none;
         }
 
         .nav-item.active {
@@ -341,6 +349,11 @@
 
         .nav-item i {
             font-size: 17px;
+            pointer-events: none;
+        }
+
+        .nav-item span {
+            pointer-events: none;
         }
     </style>
 </head>
@@ -349,14 +362,14 @@
     <div class="container">
         <!-- Top App Bar -->
         <div class="top-nav">
-            <div onclick="goToPage('index.html')" class="back-pill-btn">
+            <a href="./index.html" class="back-pill-btn">
                 <i class="fas fa-chevron-left"></i>
-            </div>
+            </a>
             <span class="brand-text">Referrals</span>
-            <div class="wallet-pill" onclick="goToPage('withdraw.html')">
+            <a href="./withdraw.html" class="wallet-pill">
                 <i class="fas fa-wallet" style="color: var(--primary-blue);"></i>
                 $<span id="topBalance">0.000</span>
-            </div>
+            </a>
         </div>
 
         <!-- Hero Card -->
@@ -417,26 +430,26 @@
 
     <!-- 5-Button Bottom Nav -->
     <nav class="bottom-nav">
-        <div onclick="goToPage('index.html')" class="nav-item">
+        <a href="./index.html" class="nav-item">
             <i class="fas fa-magic"></i>
             <span>Prompts</span>
-        </div>
-        <div onclick="goToPage('dashboard.html')" class="nav-item">
+        </a>
+        <a href="./dashboard.html" class="nav-item">
             <i class="fas fa-hammer"></i>
             <span>Mining</span>
-        </div>
-        <div onclick="goToPage('spin.html')" class="nav-item">
+        </a>
+        <a href="./spin.html" class="nav-item">
             <i class="fas fa-dharmachakra"></i>
             <span>Spin</span>
-        </div>
-        <div onclick="goToPage('refer.html')" class="nav-item active">
+        </a>
+        <a href="./refer.html" class="nav-item active">
             <i class="fas fa-user-friends"></i>
             <span>Referral</span>
-        </div>
-        <div onclick="goToPage('withdraw.html')" class="nav-item">
+        </a>
+        <a href="./withdraw.html" class="nav-item">
             <i class="fas fa-wallet"></i>
             <span>Wallet</span>
-        </div>
+        </a>
     </nav>
 
     <!-- Firebase SDKs -->
@@ -444,15 +457,16 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
     <script>
-        const tg = window.Telegram.WebApp;
-        tg.expand();
+        let tg = null;
+        try {
+            if (window.Telegram && window.Telegram.WebApp) {
+                tg = window.Telegram.WebApp;
+                tg.expand();
+            }
+        } catch(e) {}
 
-        function goToPage(target) {
-            window.location.href = target;
-        }
-
-        const STZ_TO_USDT = 0.001; // ১ STZ = $০.০০১ USDT
-        const BOT_USERNAME = "passive_income_zone_bot"; // আপনার টেলিগ্রাম বটের ইউজারনেম
+        const STZ_TO_USDT = 0.001;
+        const BOT_USERNAME = "passive_income_zone_bot";
 
         const firebaseConfig = {
             apiKey: "AIzaSyAl0eRqOs5QNUg_J1Pj-4PlEqRDxAXr-oA",
@@ -468,18 +482,16 @@
         const db = firebase.database();
 
         let userId = "sakil24";
-        let referBonusRate = 0.10; // অ্যাডমিন থেকে লাইভ সিঙ্ক হবে
+        let referBonusRate = 0.10;
 
-        if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
+        if (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) {
             const u = tg.initDataUnsafe.user;
             userId = u.id ? u.id.toString() : (u.username || "sakil24");
         }
 
-        // ইনভাইট লিংক তৈরি
         const inviteLink = `https://t.me/${BOT_USERNAME}?start=ref_${userId}`;
         document.getElementById('referralLinkInput').value = inviteLink;
 
-        // অ্যাডমিন সিস্টেম সেটিংস থেকে রেফার বোনাস রেট আনা
         db.ref('system_settings').on('value', snap => {
             const val = snap.val();
             if (val && val.referBonus) {
@@ -488,7 +500,6 @@
             }
         });
 
-        // ব্যালেন্স ট্র্যাকিং
         const userRef = db.ref('stz_miners/' + userId);
         userRef.on('value', snap => {
             const val = snap.val();
@@ -498,7 +509,6 @@
             }
         });
 
-        // শুধুমাত্র ১-লেভেল (Direct Friends) ট্র্যাকিং
         const refRef = db.ref('stz_referrals/' + userId);
         refRef.on('value', snap => {
             const val = snap.val() || {};
@@ -507,35 +517,34 @@
             document.getElementById('f1CountDisplay').innerText = f1Count;
             document.getElementById('totalRefCount').innerText = f1Count;
 
-            // রেফারেল আয় হিসাব
             const earnedUsdt = f1Count * referBonusRate;
             document.getElementById('referTotalEarnedUsdt').innerText = earnedUsdt.toFixed(2);
         });
 
-        // লিংক কপি করা
         function copyReferralLink() {
             const linkInput = document.getElementById('referralLinkInput');
             linkInput.select();
             linkInput.setSelectionRange(0, 99999);
 
+            const copied = () => {
+                if (tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+                if (tg && tg.showAlert) tg.showAlert("✅ রেফারেল লিংক ক্লিপবোর্ডে কপি হয়েছে!");
+                else alert("✅ রেফারেল লিংক ক্লিপবোর্ডে কপি হয়েছে!");
+            };
+
             if (navigator.clipboard && navigator.clipboard.writeText) {
-                navigator.clipboard.writeText(linkInput.value).then(() => {
-                    if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
-                    tg.showAlert("✅ রেফারেল লিংক ক্লিপবোর্ডে কপি হয়েছে!");
-                });
+                navigator.clipboard.writeText(linkInput.value).then(copied);
             } else {
                 document.execCommand("copy");
-                if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
-                tg.showAlert("✅ রেফারেল লিংক ক্লিপবোর্ডে কপি হয়েছে!");
+                copied();
             }
         }
 
-        // টেলিগ্রামে সরাসরি শেয়ার করা
         function shareOnTelegram() {
             const shareText = encodeURIComponent(`🔥 Join STZ Network! Unlock viral AI video prompts, mine crypto & earn daily USDT prizes free!\n\n👇 Start now:`);
             const shareUrl = `https://t.me/share/url?url=${encodeURIComponent(inviteLink)}&text=${shareText}`;
             
-            if (tg.openTelegramLink) {
+            if (tg && tg.openTelegramLink) {
                 tg.openTelegramLink(shareUrl);
             } else {
                 window.open(shareUrl, '_blank');
