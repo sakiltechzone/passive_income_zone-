@@ -72,9 +72,9 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            text-decoration: none;
             backdrop-filter: blur(8px);
             font-size: 14px;
+            cursor: pointer;
         }
 
         .brand-text {
@@ -387,9 +387,9 @@
             align-items: center;
             gap: 3px;
             color: #94a3b8;
-            text-decoration: none;
             font-size: 11px;
             font-weight: 700;
+            cursor: pointer;
         }
 
         .nav-item.active {
@@ -411,8 +411,8 @@
             justify-content: center;
             margin-top: -24px;
             box-shadow: 0 6px 18px rgba(24, 86, 243, 0.4);
-            text-decoration: none;
             font-size: 18px;
+            cursor: pointer;
         }
     </style>
 </head>
@@ -421,7 +421,7 @@
     <div class="container">
         <!-- Top Navigation -->
         <div class="top-nav">
-            <a href="index.html" class="back-pill-btn"><i class="fas fa-chevron-left"></i></a>
+            <div onclick="goToPage('index.html')" class="back-pill-btn"><i class="fas fa-chevron-left"></i></div>
             <span class="brand-text">Referral Network</span>
             <div style="width: 36px;"></div>
         </div>
@@ -489,17 +489,17 @@
 
     <!-- Bottom Navigation Bar -->
     <nav class="bottom-nav">
-        <a href="index.html" class="nav-item">
+        <div onclick="goToPage('index.html')" class="nav-item">
             <i class="fas fa-home"></i>
             <span>Home</span>
-        </a>
-        <a href="dashboard.html" class="center-mine-btn">
+        </div>
+        <div onclick="goToPage('dashboard.html')" class="center-mine-btn">
             <i class="fas fa-hammer"></i>
-        </a>
-        <a href="refer.html" class="nav-item active">
+        </div>
+        <div onclick="goToPage('refer.html')" class="nav-item active">
             <i class="fas fa-user-friends"></i>
             <span>Referral</span>
-        </a>
+        </div>
     </nav>
 
     <!-- Firebase SDKs -->
@@ -509,6 +509,11 @@
     <script>
         const tg = window.Telegram.WebApp;
         tg.expand();
+
+        function goToPage(target) {
+            const base = window.location.href.substring(0, window.location.href.lastIndexOf('/') + 1);
+            window.location.href = base + target;
+        }
 
         const firebaseConfig = {
             apiKey: "AIzaSyAl0eRqOs5QNUg_J1Pj-4PlEqRDxAXr-oA",
@@ -529,7 +534,7 @@
 
         if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
             const u = tg.initDataUnsafe.user;
-            userId = u.username ? u.username : u.id.toString();
+            userId = u.id ? u.id.toString() : (u.username || "sakil24");
         }
         document.getElementById('displayInviteCode').innerText = userId;
 
@@ -576,7 +581,7 @@
                     <div class="team-user-item">
                         <div class="user-left-info">
                             <div class="user-dot-icon">${initial}</div>
-                            <span class="user-id-text">@${item.id}</span>
+                            <span class="user-id-text">ID: ${item.id}</span>
                         </div>
                         <span class="bonus-tag">${activeTab === 'direct' ? '+10%' : '+5%'}</span>
                     </div>
@@ -593,15 +598,27 @@
         }
 
         function copyCode() {
-            navigator.clipboard.writeText(userId);
-            if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
-            tg.showAlert("Invite Code Copied!");
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(userId).then(() => {
+                    if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+                    tg.showAlert("Invite Code Copied!");
+                });
+            } else {
+                const tempInput = document.createElement("input");
+                tempInput.value = userId;
+                document.body.appendChild(tempInput);
+                tempInput.select();
+                document.execCommand("copy");
+                document.body.removeChild(tempInput);
+                if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+                tg.showAlert("Invite Code Copied!");
+            }
         }
 
         function sendInvite() {
             const botUsername = "passive_income_zone_bot";
             const link = `https://t.me/${botUsername}?start=${userId}`;
-            const msg = `Join my STZ Mining team and earn crypto together! Code: ${userId}`;
+            const msg = `Join my STZ Mining team and earn crypto together!`;
             tg.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(link)}&text=${encodeURIComponent(msg)}`);
         }
     </script>
