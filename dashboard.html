@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>STZ Network - Mine Dashboard</title>
+
+    <!-- Telegram & Adsgram SDK -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
+
+    <!-- Google Fonts & FontAwesome -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --primary-blue: #1c64f2;
+            --light-blue: #3f83f8;
+            --text-dark: #0f172a;
+            --text-muted: #64748b;
+            --card-glass: rgba(255, 255, 255, 0.94);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: #3b82f6;
+            background-image: 
+                radial-gradient(circle at 50% 20%, rgba(255, 255, 255, 0.25) 0%, transparent 60%),
+                radial-gradient(rgba(255, 255, 255, 0.18) 1.5px, transparent 1.5px),
+                linear-gradient(180deg, #1d6bf3 0%, #60a5fa 35%, #bfdbfe 70%, #f0f6ff 100%);
+            background-size: 100% 100%, 16px 16px, 100% 100%;
+            min-height: 100vh;
+            color: var(--text-dark);
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 440px;
+            padding: 16px 18px 95px 18px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Top Bar */
+        .top-nav {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+
+        .back-pill-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            backdrop-filter: blur(8px);
+            font-size: 14px;
+        }
+
+        .brand-text {
+            font-size: 19px;
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        .mine-wallet-tag {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 6px 14px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            font-weight: 800;
+            color: var(--text-dark);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+        }
+
+        /* Token Counter Block */
+        .token-header-block {
+            text-align: center;
+            margin: 4px 0 10px 0;
+            color: #fff;
+        }
+
+        .token-value {
+            font-size: 36px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+
+        .token-value .unit {
+            font-size: 17px;
+            font-weight: 600;
+        }
+
+        .usdt-sub {
+            font-size: 12px;
+            font-weight: 700;
+            color: #022b7a;
+            margin-top: 1px;
+        }
+
+        /* ================= 100% PERFECT CIRCULAR ORB ================= */
+        .orb-center-anchor {
+            width: 120px;
+            height: 120px;
+            aspect-ratio: 1 / 1;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 4px 0 14px 0;
+            flex-shrink: 0;
+        }
+
+        .orb-outer-ring {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.6);
+            border-bottom: 3.5px solid var(--primary-blue);
+            transform: rotate(-35deg);
+            pointer-events: none;
+        }
+
+        .orb-core-sphere {
+            width: 104px;
+            height: 104px;
+            aspect-ratio: 1 / 1;
+            border-radius: 50%;
+            background: radial-gradient(circle at 35% 30%, #ffffff 0%, #8ec5fc 35%, #2575fc 75%, #0d47a1 100%);
+            box-shadow: 
+                0 12px 30px rgba(28, 100, 242, 0.4),
+                inset -5px -5px 16px rgba(10, 37, 100, 0.7),
+                inset 5px 5px 12px rgba(255, 255, 255, 0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            animation: orbFloat 4s ease-in-out infinite;
+        }
+
+        .orb-eyes-row {
+            display: flex;
+            gap: 18px;
+            align-items: center;
+        }
+
+        .orb-eye {
+            width: 5px;
+            height: 13px;
+            background: #ffffff;
+            border-radius: 4px;
+            box-shadow: 0 0 8px #ffffff;
+        }
+
+        /* Session Timer Pill */
+        .session-timer-pill {
+            background: var(--card-glass);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            border-radius: 20px;
+            padding: 8px 18px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 14px;
+            box-shadow: 0 6px 16px rgba(15, 75, 216, 0.06);
+        }
+
+        /* Sheet Card Details */
+        .white-sheet-card {
+            width: 100%;
+            background: #ffffff;
+            border-radius: 22px;
+            padding: 18px;
+            box-shadow: 0 8px 25px rgba(15, 75, 216, 0.08);
+            margin-bottom: 14px;
+        }
+
+        .sheet-head-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .sheet-head-row .rate-txt {
+            color: var(--primary-blue);
+            font-weight: 800;
+        }
+
+        .list-stat-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 9px 0;
+            border-bottom: 1px solid #f1f5f9;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .list-stat-item .left-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #334155;
+        }
+
+        .list-stat-item .tag-pct {
+            font-weight: 700;
+            color: #64748b;
+        }
+
+        .text-blue {
+            color: var(--primary-blue) !important;
+        }
+
+        /* Step Slider */
+        .step-slider-track {
+            margin: 18px 0 10px 0;
+        }
+
+        .step-line-bg {
+            width: 100%;
+            height: 5px;
+            background: #e2e8f0;
+            border-radius: 4px;
+            position: relative;
+        }
+
+        .step-line-fill {
+            width: 0%;
+            height: 100%;
+            background: var(--primary-blue);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        .points-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            font-weight: 700;
+            color: #94a3b8;
+            margin-top: 8px;
+        }
+
+        .points-row .point.active {
+            color: var(--primary-blue);
+        }
+
+        .sheet-mini-acc-btn {
+            width: 100%;
+            padding: 12px;
+            border-radius: 14px;
+            background: #ecf3ff;
+            border: none;
+            color: var(--primary-blue);
+            font-size: 13px;
+            font-weight: 700;
+            margin-top: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .sheet-hint {
+            display: block;
+            text-align: center;
+            font-size: 11px;
+            color: #94a3b8;
+            margin-top: 6px;
+        }
+
+        /* Main Blue Action Button */
+        .btn-main-action {
+            width: 100%;
+            padding: 17px;
+            border-radius: 18px;
+            background: linear-gradient(135deg, #3b76f6, #1856f3);
+            border: none;
+            color: #fff;
+            font-size: 16px;
+            font-weight: 800;
+            box-shadow: 0 8px 22px rgba(24, 86, 243, 0.35);
+            cursor: pointer;
+        }
+
+        .btn-main-action:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        /* Bottom Navigation Bar */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 65px;
+            background: #ffffff;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.05);
+            z-index: 100;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 3px;
+            color: #94a3b8;
+            text-decoration: none;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .nav-item.active {
+            color: var(--primary-blue);
+        }
+
+        .nav-item i {
+            font-size: 18px;
+        }
+
+        .center-mine-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #3b76f6, #1856f3);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: -24px;
+            box-shadow: 0 6px 18px rgba(24, 86, 243, 0.4);
+            text-decoration: none;
+            font-size: 18px;
+        }
+
+        @keyframes orbFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Top App Bar -->
+        <div class="top-nav">
+            <a href="index.html" class="back-pill-btn">
+                <i class="fas fa-chevron-left"></i>
+            </a>
+            <span class="brand-text">Mine</span>
+            <div class="mine-wallet-tag">
+                <i class="fas fa-coins text-blue"></i>
+                <span id="topBarBalance">0.00</span>
+            </div>
+        </div>
+
+        <!-- Mined Figure Display -->
+        <div class="token-header-block">
+            <div class="token-value"><span id="sessionMinedStz">0.00</span> <span class="unit">STZ</span></div>
+            <div class="usdt-sub">≈ $<span id="sessionMinedUsdt">0.00</span> USDT</div>
+        </div>
+
+        <!-- 100% Circular AI Sphere -->
+        <div class="orb-center-anchor">
+            <div class="orb-outer-ring"></div>
+            <div class="orb-core-sphere">
+                <div class="orb-eyes-row">
+                    <span class="orb-eye"></span>
+                    <span class="orb-eye"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Next Session Timer -->
+        <div class="session-timer-pill">
+            <i class="far fa-clock text-blue"></i> Next session in <span id="mineTimerText">12:00:00</span>
+        </div>
+
+        <!-- Sheet Card Details -->
+        <div class="white-sheet-card">
+            <div class="sheet-head-row">
+                <span>Current rate</span>
+                <span class="rate-txt" id="sheetRateDisplay">0.083/hour</span>
+            </div>
+
+            <div class="list-stat-item">
+                <div class="left-row"><i class="fas fa-user-friends"></i> F1 acceleration 0</div>
+                <span class="tag-pct">+0%</span>
+            </div>
+            <div class="list-stat-item">
+                <div class="left-row"><i class="fas fa-users"></i> F2 acceleration 0</div>
+                <span class="tag-pct">+0%</span>
+            </div>
+            <div class="list-stat-item">
+                <div class="left-row"><i class="fas fa-network-wired"></i> AI acceleration <span id="adsStepCounter">0/3</span></div>
+                <span class="tag-pct text-blue" id="aiStepBoostDisplay">+0%</span>
+            </div>
+
+            <!-- Step Slider -->
+            <div class="step-slider-track">
+                <div class="step-line-bg">
+                    <div class="step-line-fill" id="sliderLineFill"></div>
+                </div>
+                <div class="points-row">
+                    <span class="point active">+0%</span>
+                    <span class="point" id="dot-step-1">+30%</span>
+                    <span class="point" id="dot-step-2">+60%</span>
+                    <span class="point" id="dot-step-3">+100%</span>
+                </div>
+            </div>
+
+            <button class="sheet-mini-acc-btn" onclick="triggerBoostAd()">
+                <i class="fas fa-bolt"></i> Accelerate (Watch Ad)
+            </button>
+            <span class="sheet-hint">Resets every 12 hours session</span>
+        </div>
+
+        <!-- Action Button -->
+        <button class="btn-main-action" id="mineActionBtn" onclick="handleMineActionClick()">
+            Start 12h Mining
+        </button>
+    </div>
+
+    <!-- Bottom Navigation Bar -->
+    <nav class="bottom-nav">
+        <a href="index.html" class="nav-item">
+            <i class="fas fa-home"></i>
+            <span>Home</span>
+        </a>
+        <a href="dashboard.html" class="center-mine-btn">
+            <i class="fas fa-hammer"></i>
+        </a>
+        <a href="refer.html" class="nav-item">
+            <i class="fas fa-user-friends"></i>
+            <span>Referral</span>
+        </a>
+    </nav>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+
+    <script>
+        const tg = window.Telegram.WebApp;
+        tg.expand();
+
+        const ADSGRAM_BLOCK_ID = "26734";
+        const STZ_TO_USDT = 0.001; // ১ STZ = $০.০০১ USDT (১০০ STZ = $০.১০ USDT)
+        const CYCLE_MS = 12 * 60 * 60 * 1000;
+        const BASE_HOURLY = 5 / 12;
+        const BASE_PER_SEC = BASE_HOURLY / 3600;
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAl0eRqOs5QNUg_J1Pj-4PlEqRDxAXr-oA",[span_0](start_span)[span_0](end_span)
+            authDomain: "viral-zone-bd.firebaseapp.com",[span_1](start_span)[span_1](end_span)
+            projectId: "viral-zone-bd",[span_2](start_span)[span_2](end_span)
+            storageBucket: "viral-zone-bd.firebasestorage.app",[span_3](start_span)[span_3](end_span)
+            messagingSenderId: "794737483555",[span_4](start_span)[span_4](end_span)
+            appId: "1:794737483555:web:a275cd96aafff0e640f696",[span_5](start_span)[span_5](end_span)
+            databaseURL: "https://viral-zone-bd-default-rtdb.firebaseio.com[span_6](start_span)"[span_6](end_span)
+        };
+
+        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);[span_7](start_span)[span_7](end_span)
+        const db = firebase.database();[span_8](start_span)[span_8](end_span)
+
+        let userId = "sakil24";
+        let userData = { balance: 0, miningStartedAt: 0, boostLevel: 0 };
+        let adsController = null;
+
+        try {
+            if (window.Adsgram) {
+                adsController = window.Adsgram.init({ blockId: ADSGRAM_BLOCK_ID });
+            }
+        } catch(e) {}
+
+        if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
+            const u = tg.initDataUnsafe.user;
+            userId = u.username ? u.username : u.id.toString();
+        }
+
+        const userRef = db.ref('stz_miners/' + userId);
+        userRef.on('value', snap => {
+            const val = snap.val();
+            if (val) {
+                userData = Object.assign(userData, val);
+            } else {
+                userRef.set(userData);
+            }
+            updateBoostUI();
+        });
+
+        // লাইভ টাইমার ও মাইনিং লুপ
+        setInterval(() => {
+            const now = Date.now();
+            const elapsed = now - (userData.miningStartedAt || 0);
+            const isMining = elapsed < CYCLE_MS;
+
+            let mult = 1.0;
+            let boostPct = 0;
+            if (userData.boostLevel === 1) { mult = 1.30; boostPct = 30; }
+            else if (userData.boostLevel === 2) { mult = 1.60; boostPct = 60; }
+            else if (userData.boostLevel === 3) { mult = 2.00; boostPct = 100; }
+
+            document.getElementById('sheetRateDisplay').innerText = `${(BASE_HOURLY * mult).toFixed(3)}/hour`;
+            document.getElementById('aiStepBoostDisplay').innerText = `+${boostPct}%`;
+            document.getElementById('adsStepCounter').innerText = `${userData.boostLevel}/3`;
+
+            const actionBtn = document.getElementById('mineActionBtn');
+
+            if (isMining) {
+                const rem = CYCLE_MS - elapsed;
+                renderTimerText(rem);
+
+                const minedSoFar = (elapsed / 1000) * BASE_PER_SEC * mult;
+                document.getElementById('sessionMinedStz').innerText = minedSoFar.toFixed(2);
+                document.getElementById('sessionMinedUsdt').innerText = (minedSoFar * STZ_TO_USDT).toFixed(2);
+
+                document.getElementById('topBarBalance').innerText = (userData.balance + minedSoFar).toFixed(2);
+
+                actionBtn.disabled = true;
+                actionBtn.innerText = "Mining In Progress...";
+            } else {
+                renderTimerText(0);
+                document.getElementById('sessionMinedStz').innerText = "0.00";
+                document.getElementById('sessionMinedUsdt').innerText = "0.00";
+                document.getElementById('topBarBalance').innerText = userData.balance.toFixed(2);
+
+                actionBtn.disabled = false;
+                if (userData.miningStartedAt > 0) {
+                    actionBtn.innerText = "Claim STZ";
+                } else {
+                    actionBtn.innerText = "Start 12h Mining";
+                }
+            }
+        }, 1000);
+
+        function renderTimerText(ms) {
+            const s = Math.max(0, Math.floor(ms / 1000));
+            const hrs = String(Math.floor(s / 3600)).padStart(2, '0');
+            const mins = String(Math.floor((s % 3600) / 60)).padStart(2, '0');
+            const secs = String(s % 60).padStart(2, '0');
+            document.getElementById('mineTimerText').innerText = `${hrs}:${mins}:${secs}`;
+        }
+
+        function updateBoostUI() {
+            const lvl = userData.boostLevel || 0;
+            const fillPct = (lvl / 3) * 100;
+            document.getElementById('sliderLineFill').style.width = fillPct + '%';
+
+            for (let i = 1; i <= 3; i++) {
+                const dot = document.getElementById(`dot-step-${i}`);
+                if (dot) {
+                    if (i <= lvl) dot.classList.add('active');
+                    else dot.classList.remove('active');
+                }
+            }
+        }
+
+        function handleMineActionClick() {
+            const now = Date.now();
+            const elapsed = now - (userData.miningStartedAt || 0);
+
+            if (userData.miningStartedAt > 0 && elapsed >= CYCLE_MS) {
+                let mult = 1.0;
+                if (userData.boostLevel === 1) mult = 1.30;
+                else if (userData.boostLevel === 2) mult = 1.60;
+                else if (userData.boostLevel === 3) mult = 2.00;
+
+                const earned = (CYCLE_MS / 1000) * BASE_PER_SEC * mult;
+                userData.balance += earned;
+                userData.miningStartedAt = 0;
+                userData.boostLevel = 0;
+            }
+
+            showRewardAd(() => {
+                userData.miningStartedAt = Date.now();
+                userRef.update({
+                    balance: userData.balance,
+                    miningStartedAt: userData.miningStartedAt,
+                    boostLevel: userData.boostLevel
+                });
+                if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+            });
+        }
+
+        function triggerBoostAd() {
+            if (userData.boostLevel >= 3) {
+                tg.showAlert("সর্বোচ্চ +১০০% বুস্ট ইতিমধ্যে সক্রিয় আছে!");
+                return;
+            }
+
+            showRewardAd(() => {
+                userData.boostLevel += 1;
+                userRef.update({ boostLevel: userData.boostLevel });
+                updateBoostUI();
+                tg.showAlert("🚀 মাইনিং স্পিড বৃদ্ধি পেয়েছে!");
+            });
+        }
+
+        function showRewardAd(onSuccess) {
+            if (adsController) {
+                adsController.show().then(() => {
+                    onSuccess();
+                }).catch(() => {
+                    tg.showAlert("বিজ্ঞাপনটি সম্পূর্ণ দেখতে হবে!");
+                });
+            } else {
+                onSuccess();
+            }
+        }
+    </script>
+</body>
+</html>
