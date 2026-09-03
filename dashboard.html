@@ -5,11 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>STZ Network - Mine Dashboard</title>
 
-    <!-- Telegram & Adsgram SDK -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
 
-    <!-- Google Fonts & FontAwesome -->
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
@@ -72,9 +70,8 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            text-decoration: none;
-            backdrop-filter: blur(8px);
             font-size: 14px;
+            cursor: pointer;
         }
 
         .brand-text {
@@ -341,9 +338,9 @@
             align-items: center;
             gap: 3px;
             color: #94a3b8;
-            text-decoration: none;
             font-size: 11px;
             font-weight: 700;
+            cursor: pointer;
         }
 
         .nav-item.active {
@@ -365,8 +362,8 @@
             justify-content: center;
             margin-top: -24px;
             box-shadow: 0 6px 18px rgba(24, 86, 243, 0.4);
-            text-decoration: none;
             font-size: 18px;
+            cursor: pointer;
         }
 
         @keyframes orbFloat {
@@ -378,11 +375,10 @@
 <body>
 
     <div class="container">
-        <!-- Top App Bar -->
         <div class="top-nav">
-            <a href="index.html" class="back-pill-btn">
+            <div onclick="goToPage('index.html')" class="back-pill-btn">
                 <i class="fas fa-chevron-left"></i>
-            </a>
+            </div>
             <span class="brand-text">Mine</span>
             <div class="mine-wallet-tag">
                 <i class="fas fa-coins text-blue"></i>
@@ -390,13 +386,11 @@
             </div>
         </div>
 
-        <!-- Mined Figure Display -->
         <div class="token-header-block">
             <div class="token-value"><span id="sessionMinedStz">0.00</span> <span class="unit">STZ</span></div>
-            <div class="usdt-sub">≈ $<span id="sessionMinedUsdt">0.00</span> USDT</div>
+            <div class="usdt-sub">≈ $<span id="sessionMinedUsdt">0.000</span> USDT</div>
         </div>
 
-        <!-- 100% Circular AI Sphere -->
         <div class="orb-center-anchor">
             <div class="orb-outer-ring"></div>
             <div class="orb-core-sphere">
@@ -407,16 +401,14 @@
             </div>
         </div>
 
-        <!-- Next Session Timer -->
         <div class="session-timer-pill">
             <i class="far fa-clock text-blue"></i> Next session in <span id="mineTimerText">12:00:00</span>
         </div>
 
-        <!-- Sheet Card Details -->
         <div class="white-sheet-card">
             <div class="sheet-head-row">
                 <span>Current rate</span>
-                <span class="rate-txt" id="sheetRateDisplay">0.083/hour</span>
+                <span class="rate-txt text-blue" id="sheetRateDisplay">0.417/hour</span>
             </div>
 
             <div class="list-stat-item">
@@ -432,7 +424,6 @@
                 <span class="tag-pct text-blue" id="aiStepBoostDisplay">+0%</span>
             </div>
 
-            <!-- Step Slider -->
             <div class="step-slider-track">
                 <div class="step-line-bg">
                     <div class="step-line-fill" id="sliderLineFill"></div>
@@ -451,28 +442,25 @@
             <span class="sheet-hint">Resets every 12 hours session</span>
         </div>
 
-        <!-- Action Button -->
         <button class="btn-main-action" id="mineActionBtn" onclick="handleMineActionClick()">
             Start 12h Mining
         </button>
     </div>
 
-    <!-- Bottom Navigation Bar -->
     <nav class="bottom-nav">
-        <a href="index.html" class="nav-item">
+        <div onclick="goToPage('index.html')" class="nav-item">
             <i class="fas fa-home"></i>
             <span>Home</span>
-        </a>
-        <a href="dashboard.html" class="center-mine-btn">
+        </div>
+        <div onclick="goToPage('dashboard.html')" class="center-mine-btn">
             <i class="fas fa-hammer"></i>
-        </a>
-        <a href="refer.html" class="nav-item">
+        </div>
+        <div onclick="goToPage('refer.html')" class="nav-item">
             <i class="fas fa-user-friends"></i>
             <span>Referral</span>
-        </a>
+        </div>
     </nav>
 
-    <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
@@ -480,38 +468,48 @@
         const tg = window.Telegram.WebApp;
         tg.expand();
 
+        function goToPage(target) {
+            const base = window.location.href.substring(0, window.location.href.lastIndexOf('/') + 1);
+            window.location.href = base + target;
+        }
+
         const ADSGRAM_BLOCK_ID = "26734";
-        const STZ_TO_USDT = 0.001; // ১ STZ = $০.০০১ USDT (১০০ STZ = $০.১০ USDT)
-        const CYCLE_MS = 12 * 60 * 60 * 1000;
-        const BASE_HOURLY = 5 / 12;
+        const STZ_TO_USDT = 0.001; // ১ STZ = $০.০০১ USDT
+        const CYCLE_MS = 12 * 60 * 60 * 1000; // ১২ ঘণ্টা
+        const BASE_HOURLY = 5 / 12; // ১২ ঘণ্টায় ৫ STZ
         const BASE_PER_SEC = BASE_HOURLY / 3600;
 
         const firebaseConfig = {
-            apiKey: "AIzaSyAl0eRqOs5QNUg_J1Pj-4PlEqRDxAXr-oA",[span_0](start_span)[span_0](end_span)
-            authDomain: "viral-zone-bd.firebaseapp.com",[span_1](start_span)[span_1](end_span)
-            projectId: "viral-zone-bd",[span_2](start_span)[span_2](end_span)
-            storageBucket: "viral-zone-bd.firebasestorage.app",[span_3](start_span)[span_3](end_span)
-            messagingSenderId: "794737483555",[span_4](start_span)[span_4](end_span)
-            appId: "1:794737483555:web:a275cd96aafff0e640f696",[span_5](start_span)[span_5](end_span)
-            databaseURL: "https://viral-zone-bd-default-rtdb.firebaseio.com[span_6](start_span)"[span_6](end_span)
+            apiKey: "AIzaSyAl0eRqOs5QNUg_J1Pj-4PlEqRDxAXr-oA",
+            authDomain: "viral-zone-bd.firebaseapp.com",
+            projectId: "viral-zone-bd",
+            storageBucket: "viral-zone-bd.firebasestorage.app",
+            messagingSenderId: "794737483555",
+            appId: "1:794737483555:web:a275cd96aafff0e640f696",
+            databaseURL: "https://viral-zone-bd-default-rtdb.firebaseio.com"
         };
 
-        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);[span_7](start_span)[span_7](end_span)
-        const db = firebase.database();[span_8](start_span)[span_8](end_span)
+        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
 
         let userId = "sakil24";
         let userData = { balance: 0, miningStartedAt: 0, boostLevel: 0 };
         let adsController = null;
 
-        try {
-            if (window.Adsgram) {
-                adsController = window.Adsgram.init({ blockId: ADSGRAM_BLOCK_ID });
+        function initAdsgram() {
+            try {
+                if (window.Adsgram) {
+                    adsController = window.Adsgram.init({ blockId: ADSGRAM_BLOCK_ID });
+                }
+            } catch(e) {
+                console.error("Adsgram init error:", e);
             }
-        } catch(e) {}
+        }
+        initAdsgram();
 
         if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
             const u = tg.initDataUnsafe.user;
-            userId = u.username ? u.username : u.id.toString();
+            userId = u.id ? u.id.toString() : (u.username || "sakil24");
         }
 
         const userRef = db.ref('stz_miners/' + userId);
@@ -529,7 +527,7 @@
         setInterval(() => {
             const now = Date.now();
             const elapsed = now - (userData.miningStartedAt || 0);
-            const isMining = elapsed < CYCLE_MS;
+            const isMining = (userData.miningStartedAt > 0) && (elapsed < CYCLE_MS);
 
             let mult = 1.0;
             let boostPct = 0;
@@ -539,7 +537,7 @@
 
             document.getElementById('sheetRateDisplay').innerText = `${(BASE_HOURLY * mult).toFixed(3)}/hour`;
             document.getElementById('aiStepBoostDisplay').innerText = `+${boostPct}%`;
-            document.getElementById('adsStepCounter').innerText = `${userData.boostLevel}/3`;
+            document.getElementById('adsStepCounter').innerText = `${userData.boostLevel || 0}/3`;
 
             const actionBtn = document.getElementById('mineActionBtn');
 
@@ -549,20 +547,19 @@
 
                 const minedSoFar = (elapsed / 1000) * BASE_PER_SEC * mult;
                 document.getElementById('sessionMinedStz').innerText = minedSoFar.toFixed(2);
-                document.getElementById('sessionMinedUsdt').innerText = (minedSoFar * STZ_TO_USDT).toFixed(2);
-
-                document.getElementById('topBarBalance').innerText = (userData.balance + minedSoFar).toFixed(2);
+                document.getElementById('sessionMinedUsdt').innerText = (minedSoFar * STZ_TO_USDT).toFixed(3);
+                document.getElementById('topBarBalance').innerText = ((userData.balance || 0) + minedSoFar).toFixed(2);
 
                 actionBtn.disabled = true;
                 actionBtn.innerText = "Mining In Progress...";
             } else {
                 renderTimerText(0);
                 document.getElementById('sessionMinedStz').innerText = "0.00";
-                document.getElementById('sessionMinedUsdt').innerText = "0.00";
-                document.getElementById('topBarBalance').innerText = userData.balance.toFixed(2);
+                document.getElementById('sessionMinedUsdt').innerText = "0.000";
+                document.getElementById('topBarBalance').innerText = (userData.balance || 0).toFixed(2);
 
                 actionBtn.disabled = false;
-                if (userData.miningStartedAt > 0) {
+                if (userData.miningStartedAt > 0 && elapsed >= CYCLE_MS) {
                     actionBtn.innerText = "Claim STZ";
                 } else {
                     actionBtn.innerText = "Start 12h Mining";
@@ -592,6 +589,25 @@
             }
         }
 
+        function showRewardAd(onSuccess) {
+            if (!adsController) {
+                initAdsgram();
+            }
+
+            if (adsController) {
+                adsController.show().then(() => {
+                    onSuccess();
+                }).catch((err) => {
+                    console.log("Ad show error:", err);
+                    tg.showConfirm("বিজ্ঞাপনটি লোড হতে সমস্যা হয়েছে। আপনি কি বিজ্ঞাপন ছাড়াই কাজ সম্পন্ন করতে চান?", (ok) => {
+                        if (ok) onSuccess();
+                    });
+                });
+            } else {
+                onSuccess();
+            }
+        }
+
         function handleMineActionClick() {
             const now = Date.now();
             const elapsed = now - (userData.miningStartedAt || 0);
@@ -603,7 +619,7 @@
                 else if (userData.boostLevel === 3) mult = 2.00;
 
                 const earned = (CYCLE_MS / 1000) * BASE_PER_SEC * mult;
-                userData.balance += earned;
+                userData.balance = (userData.balance || 0) + earned;
                 userData.miningStartedAt = 0;
                 userData.boostLevel = 0;
             }
@@ -611,11 +627,12 @@
             showRewardAd(() => {
                 userData.miningStartedAt = Date.now();
                 userRef.update({
-                    balance: userData.balance,
+                    balance: userData.balance || 0,
                     miningStartedAt: userData.miningStartedAt,
-                    boostLevel: userData.boostLevel
+                    boostLevel: userData.boostLevel || 0
                 });
                 if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+                tg.showAlert("🚀 ১২ ঘণ্টার মাইনিং শুরু হয়েছে!");
             });
         }
 
@@ -626,23 +643,12 @@
             }
 
             showRewardAd(() => {
-                userData.boostLevel += 1;
+                userData.boostLevel = (userData.boostLevel || 0) + 1;
                 userRef.update({ boostLevel: userData.boostLevel });
                 updateBoostUI();
+                if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
                 tg.showAlert("🚀 মাইনিং স্পিড বৃদ্ধি পেয়েছে!");
             });
-        }
-
-        function showRewardAd(onSuccess) {
-            if (adsController) {
-                adsController.show().then(() => {
-                    onSuccess();
-                }).catch(() => {
-                    tg.showAlert("বিজ্ঞাপনটি সম্পূর্ণ দেখতে হবে!");
-                });
-            } else {
-                onSuccess();
-            }
         }
     </script>
 </body>
