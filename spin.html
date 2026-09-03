@@ -48,10 +48,12 @@
         .container {
             width: 100%;
             max-width: 440px;
-            padding: 16px 18px 95px 18px;
+            padding: 16px 18px 110px 18px;
             display: flex;
             flex-direction: column;
             align-items: center;
+            position: relative;
+            z-index: 1;
         }
 
         /* Top Bar */
@@ -75,6 +77,7 @@
             justify-content: center;
             font-size: 14px;
             cursor: pointer;
+            text-decoration: none;
         }
 
         .brand-text {
@@ -95,6 +98,7 @@
             color: var(--text-dark);
             box-shadow: 0 4px 12px rgba(0,0,0,0.06);
             cursor: pointer;
+            text-decoration: none;
         }
 
         /* Hero Info Card */
@@ -205,6 +209,11 @@
             align-items: center;
             justify-content: center;
             gap: 8px;
+            transition: transform 0.1s ease;
+        }
+
+        .btn-spin-action:active {
+            transform: scale(0.98);
         }
 
         .btn-spin-action:disabled {
@@ -223,8 +232,8 @@
             display: flex;
             justify-content: space-around;
             align-items: center;
-            box-shadow: 0 -4px 20px rgba(0,0,0,0.06);
-            z-index: 100;
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.08);
+            z-index: 99999 !important;
             padding: 0 4px;
         }
 
@@ -232,12 +241,16 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            justify-content: center;
             gap: 3px;
             color: #94a3b8;
             font-size: 10px;
             font-weight: 700;
             cursor: pointer;
             flex: 1;
+            height: 100%;
+            text-decoration: none;
+            -webkit-user-select: none;
         }
 
         .nav-item.active {
@@ -246,6 +259,11 @@
 
         .nav-item i {
             font-size: 17px;
+            pointer-events: none;
+        }
+
+        .nav-item span {
+            pointer-events: none;
         }
     </style>
 </head>
@@ -254,14 +272,14 @@
     <div class="container">
         <!-- Top Nav -->
         <div class="top-nav">
-            <div onclick="goToPage('index.html')" class="back-pill-btn">
+            <a href="./index.html" class="back-pill-btn">
                 <i class="fas fa-chevron-left"></i>
-            </div>
+            </a>
             <span class="brand-text">Lucky Spin</span>
-            <div class="wallet-pill" onclick="goToPage('withdraw.html')">
+            <a href="./withdraw.html" class="wallet-pill">
                 <i class="fas fa-wallet" style="color: var(--primary-blue);"></i>
                 $<span id="topBalance">0.000</span>
-            </div>
+            </a>
         </div>
 
         <!-- Info Card -->
@@ -290,26 +308,26 @@
 
     <!-- 5-Button Bottom Nav -->
     <nav class="bottom-nav">
-        <div onclick="goToPage('index.html')" class="nav-item">
+        <a href="./index.html" class="nav-item">
             <i class="fas fa-magic"></i>
             <span>Prompts</span>
-        </div>
-        <div onclick="goToPage('dashboard.html')" class="nav-item">
+        </a>
+        <a href="./dashboard.html" class="nav-item">
             <i class="fas fa-hammer"></i>
             <span>Mining</span>
-        </div>
-        <div onclick="goToPage('spin.html')" class="nav-item active">
+        </a>
+        <a href="./spin.html" class="nav-item active">
             <i class="fas fa-dharmachakra"></i>
             <span>Spin</span>
-        </div>
-        <div onclick="goToPage('refer.html')" class="nav-item">
+        </a>
+        <a href="./refer.html" class="nav-item">
             <i class="fas fa-user-friends"></i>
             <span>Referral</span>
-        </div>
-        <div onclick="goToPage('withdraw.html')" class="nav-item">
+        </a>
+        <a href="./withdraw.html" class="nav-item">
             <i class="fas fa-wallet"></i>
             <span>Wallet</span>
-        </div>
+        </a>
     </nav>
 
     <!-- Firebase SDKs -->
@@ -317,15 +335,16 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
     <script>
-        const tg = window.Telegram.WebApp;
-        tg.expand();
-
-        function goToPage(target) {
-            window.location.href = target;
-        }
+        let tg = null;
+        try {
+            if (window.Telegram && window.Telegram.WebApp) {
+                tg = window.Telegram.WebApp;
+                tg.expand();
+            }
+        } catch(e) {}
 
         const ADSGRAM_BLOCK_ID = "26734";
-        const STZ_TO_USDT = 0.001; // ১ STZ = $০.০০১ (১০০ STZ = $০.১০)
+        const STZ_TO_USDT = 0.001;
         const ONE_DAY_MS = 24 * 60 * 60 * 1000;
 
         const firebaseConfig = {
@@ -361,7 +380,7 @@
         }
         initAdsgram();
 
-        if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
+        if (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) {
             const u = tg.initDataUnsafe.user;
             userId = u.id ? u.id.toString() : (u.username || "sakil24");
         }
@@ -395,7 +414,6 @@
             const val = snap.val();
             const now = Date.now();
             if (val) {
-                // ২৪ ঘণ্টা অতিক্রান্ত হলে স্পিন কাউন্টার রিসেট
                 if (now - (val.lastReset || 0) > ONE_DAY_MS) {
                     spinHistory = { count: 0, lastReset: now };
                     spinRef.set(spinHistory);
@@ -423,7 +441,6 @@
             }
         }
 
-        // ক্যানভাসে লাকি হুইল অঙ্কন
         function drawWheel() {
             const canvas = document.getElementById('wheelCanvas');
             const ctx = canvas.getContext('2d');
@@ -444,7 +461,6 @@
                 ctx.lineTo(radius, radius);
                 ctx.fill();
 
-                // টেক্সট বসানো
                 ctx.save();
                 ctx.fillStyle = '#ffffff';
                 ctx.font = 'bold 24px Plus Jakarta Sans';
@@ -469,9 +485,13 @@
                     executeWheelSpin();
                 }).catch((err) => {
                     console.log("Ad error / fallback:", err);
-                    tg.showConfirm("বিজ্ঞাপনটি লোড হতে সমস্যা হয়েছে। আপনি কি সরাসরি স্পিন করতে চান?", (ok) => {
-                        if (ok) executeWheelSpin();
-                    });
+                    if (tg && tg.showConfirm) {
+                        tg.showConfirm("বিজ্ঞাপনটি লোড হতে সমস্যা হয়েছে। আপনি কি সরাসরি স্পিন করতে চান?", (ok) => {
+                            if (ok) executeWheelSpin();
+                        });
+                    } else {
+                        executeWheelSpin();
+                    }
                 });
             } else {
                 executeWheelSpin();
@@ -487,13 +507,11 @@
             const numSlices = spinRewards.length;
             const arcDeg = 360 / numSlices;
             
-            // দৈবচয়নভাবে রিওয়ার্ড নির্বাচন
             const winningIndex = Math.floor(Math.random() * numSlices);
             const wonAmount = spinRewards[winningIndex];
 
-            // কাঁটা শীর্ষবিন্দুতে (২৭০ ডিগ্রিতে) পয়েন্ট করে
             const targetDeg = 360 - (winningIndex * arcDeg) - (arcDeg / 2) - 90;
-            const extraRounds = 360 * 5; // ন্যূনতম ৫ চক্কর
+            const extraRounds = 360 * 5;
             currentRotation += extraRounds + (targetDeg - (currentRotation % 360) + 360) % 360;
 
             const canvas = document.getElementById('wheelCanvas');
@@ -502,7 +520,6 @@
             setTimeout(() => {
                 isSpinning = false;
                 
-                // ব্যালেন্সে যোগ (STZ হিসেবে সঞ্চয়: USDT / STZ_TO_USDT)
                 const addedCoins = wonAmount / STZ_TO_USDT;
                 const newTotalBalance = userBalance + addedCoins;
                 const newCount = (spinHistory.count || 0) + 1;
@@ -513,8 +530,12 @@
                 updates['/spin_records/' + userId + '/lastReset'] = spinHistory.lastReset || Date.now();
 
                 db.ref().update(updates).then(() => {
-                    if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
-                    tg.showAlert(`🎉 অভিনন্দন! আপনি জিতেছেন $${wonAmount} USDT!`);
+                    if (tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+                    if (tg && tg.showAlert) {
+                        tg.showAlert(`🎉 অভিনন্দন! আপনি জিতেছেন $${wonAmount} USDT!`);
+                    } else {
+                        alert(`🎉 অভিনন্দন! আপনি জিতেছেন $${wonAmount} USDT!`);
+                    }
                     updateSpinsUI();
                 });
             }, 4200);
