@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STZ Network - Master Admin Portal</title>
+
+    <!-- Google Fonts & FontAwesome -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --primary: #1c64f2;
+            --primary-glow: rgba(28, 100, 242, 0.35);
+            --bg-dark: #090d16;
+            --card-bg: #111827;
+            --border: #1f2937;
+            --text-main: #f9fafb;
+            --text-muted: #9ca3af;
+            --danger: #ef4444;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            background-image: 
+                radial-gradient(circle at 50% 10%, rgba(28, 100, 242, 0.15) 0%, transparent 60%),
+                linear-gradient(180deg, #090d16 0%, #030712 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            color: var(--text-main);
+        }
+
+        .login-card {
+            width: 100%;
+            max-width: 400px;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 36px 28px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+
+        .brand-icon-box {
+            width: 60px;
+            height: 60px;
+            border-radius: 18px;
+            background: linear-gradient(135deg, #1c64f2, #1040a6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            font-size: 24px;
+            box-shadow: 0 10px 25px var(--primary-glow);
+            margin-bottom: 20px;
+        }
+
+        .login-title {
+            font-size: 22px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            margin-bottom: 6px;
+        }
+
+        .login-subtitle {
+            font-size: 13px;
+            color: var(--text-muted);
+            font-weight: 500;
+            margin-bottom: 28px;
+            text-align: center;
+        }
+
+        .form-group {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 18px;
+        }
+
+        .form-group label {
+            font-size: 12px;
+            font-weight: 700;
+            color: #d1d5db;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .input-wrapper {
+            position: relative;
+            width: 100%;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-wrapper i {
+            position: absolute;
+            left: 14px;
+            color: var(--text-muted);
+            font-size: 15px;
+        }
+
+        .styled-input {
+            width: 100%;
+            padding: 14px 14px 14px 42px;
+            background: #030712;
+            border: 1.5px solid var(--border);
+            border-radius: 14px;
+            color: #ffffff;
+            font-size: 14px;
+            font-weight: 600;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        .styled-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px var(--primary-glow);
+            background: #0b1120;
+        }
+
+        .styled-input::placeholder {
+            color: #4b5563;
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 15px;
+            border-radius: 16px;
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            border: none;
+            color: #ffffff;
+            font-size: 15px;
+            font-weight: 800;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: 0 8px 25px var(--primary-glow);
+            margin-top: 10px;
+            transition: transform 0.1s ease;
+        }
+
+        .btn-login:active {
+            transform: scale(0.98);
+        }
+
+        .btn-login:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .alert-box {
+            width: 100%;
+            padding: 12px 14px;
+            border-radius: 12px;
+            background: rgba(239, 68, 68, 0.15);
+            border: 1px solid var(--danger);
+            color: #fca5a5;
+            font-size: 13px;
+            font-weight: 600;
+            display: none;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="login-card">
+        <div class="brand-icon-box">
+            <i class="fas fa-shield-halved"></i>
+        </div>
+
+        <h1 class="login-title">Control Portal</h1>
+        <p class="login-subtitle">STZ Network Central Administration</p>
+
+        <!-- Error Alert -->
+        <div class="alert-box" id="errorNotice"></div>
+
+        <!-- Login Form -->
+        <div class="form-group">
+            <label>Admin Email</label>
+            <div class="input-wrapper">
+                <i class="fas fa-envelope"></i>
+                <input type="email" id="adminEmail" class="styled-input" placeholder="admin@domain.com" autocomplete="off">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Password</label>
+            <div class="input-wrapper">
+                <i class="fas fa-lock"></i>
+                <input type="password" id="adminPassword" class="styled-input" placeholder="••••••••••••" autocomplete="current-password">
+            </div>
+        </div>
+
+        <button class="btn-login" id="loginBtn" onclick="handleAdminLogin()">
+            <span>Sign In</span>
+            <i class="fas fa-arrow-right"></i>
+        </button>
+    </div>
+
+    <!-- Firebase App, Auth & Database SDKs (v8) -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyAl0eRqOs5QNUg_J1Pj-4PlEqRDxAXr-oA",
+            authDomain: "viral-zone-bd.firebaseapp.com",
+            projectId: "viral-zone-bd",
+            storageBucket: "viral-zone-bd.firebasestorage.app",
+            messagingSenderId: "794737483555",
+            appId: "1:794737483555:web:a275cd96aafff0e640f696",
+            databaseURL: "https://viral-zone-bd-default-rtdb.firebaseio.com"
+        };
+
+        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+
+        // যদি অলরেডি লগইন করা থাকে, সরাসরি ড্যাশবোর্ডে রিডাইরেক্ট হবে
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                window.location.href = "admin-dashboard.html";
+            }
+        });
+
+        function handleAdminLogin() {
+            const email = document.getElementById('adminEmail').value.trim();
+            const password = document.getElementById('adminPassword').value.trim();
+            const alertBox = document.getElementById('errorNotice');
+            const loginBtn = document.getElementById('loginBtn');
+
+            alertBox.style.display = 'none';
+
+            if (!email || !password) {
+                showError("অনুগ্রহ করে ইমেইল ও পাসওয়ার্ড প্রদান করুন!");
+                return;
+            }
+
+            loginBtn.disabled = true;
+            loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Authenticating...';
+
+            auth.signInWithEmailAndPassword(email, password)
+                .then((userCredential) => {
+                    // সফল হলে ড্যাশবোর্ডে নিয়ে যাবে
+                    window.location.href = "admin-dashboard.html";
+                })
+                .catch((error) => {
+                    loginBtn.disabled = false;
+                    loginBtn.innerHTML = '<span>Sign In</span> <i class="fas fa-arrow-right"></i>';
+                    
+                    let msg = "ইমেইল বা পাসওয়ার্ড ভুল হয়েছে!";
+                    if (error.code === 'auth/user-not-found') msg = "এই ইমেইলে কোনো এডমিন অ্যাকাউন্ট নেই!";
+                    if (error.code === 'auth/wrong-password') msg = "ভুল পাসওয়ার্ড! আবার চেষ্টা করুন।";
+                    if (error.code === 'auth/too-many-requests') msg = "অতিরিক্ত ভুলের কারণে সাময়িকভাবে ব্লক করা হয়েছে। কিছুক্ষণ পর চেষ্টা করুন।";
+                    showError(msg);
+                });
+        }
+
+        function showError(text) {
+            const alertBox = document.getElementById('errorNotice');
+            alertBox.innerText = text;
+            alertBox.style.display = 'block';
+        }
+
+        // Enter চাপলে লগইন ট্রিগার হবে
+        document.addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                handleAdminLogin();
+            }
+        });
+    </script>
+</body>
+</html>

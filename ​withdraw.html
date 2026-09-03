@@ -73,9 +73,9 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            text-decoration: none;
             backdrop-filter: blur(8px);
             font-size: 14px;
-            cursor: pointer;
         }
 
         .brand-text {
@@ -339,9 +339,9 @@
             align-items: center;
             gap: 3px;
             color: #94a3b8;
+            text-decoration: none;
             font-size: 11px;
             font-weight: 700;
-            cursor: pointer;
         }
 
         .nav-item.active {
@@ -363,8 +363,8 @@
             justify-content: center;
             margin-top: -24px;
             box-shadow: 0 6px 18px rgba(24, 86, 243, 0.4);
+            text-decoration: none;
             font-size: 18px;
-            cursor: pointer;
         }
     </style>
 </head>
@@ -373,9 +373,9 @@
     <div class="container">
         <!-- Top Navigation -->
         <div class="top-nav">
-            <div onclick="goToPage('profile.html')" class="back-pill-btn">
+            <a href="profile.html" class="back-pill-btn">
                 <i class="fas fa-chevron-left"></i>
-            </div>
+            </a>
             <span class="brand-text">Withdraw</span>
             <div style="width: 36px;"></div>
         </div>
@@ -384,7 +384,7 @@
         <div class="balance-hero-card">
             <span class="caption">Withdrawable Balance</span>
             <div class="coin-val"><span id="withdrawableCoins">0.00</span> <span class="coin-name">STZ</span></div>
-            <div class="usdt-val">≈ $<span id="withdrawableUsdt">0.000</span> USDT</div>
+            <div class="usdt-val">≈ $<span id="withdrawableUsdt">0.00</span> USDT</div>
         </div>
 
         <!-- Form Card -->
@@ -413,7 +413,7 @@
                     <span id="feeNotice">Fee: $0.001 USDT</span>
                     <span id="receiveNotice" class="receive-val">Receive: $0.000 USDT</span>
                 </div>
-                <span class="hint-text" id="amountPreview">Min withdrawal: 100 STZ ($0.100 USDT)</span>
+                <span class="hint-text" id="amountPreview">Min withdrawal: 100 STZ ($0.10 USDT)</span>
             </div>
 
             <button class="btn-submit-withdraw" id="submitBtn" onclick="processWithdrawal()">
@@ -432,17 +432,17 @@
 
     <!-- Bottom Navigation Bar -->
     <nav class="bottom-nav">
-        <div onclick="goToPage('index.html')" class="nav-item">
+        <a href="index.html" class="nav-item">
             <i class="fas fa-home"></i>
             <span>Home</span>
-        </div>
-        <div onclick="goToPage('dashboard.html')" class="center-mine-btn">
+        </a>
+        <a href="dashboard.html" class="center-mine-btn">
             <i class="fas fa-hammer"></i>
-        </div>
-        <div onclick="goToPage('refer.html')" class="nav-item">
+        </a>
+        <a href="refer.html" class="nav-item">
             <i class="fas fa-user-friends"></i>
             <span>Referral</span>
-        </div>
+        </a>
     </nav>
 
     <!-- Firebase SDKs -->
@@ -452,11 +452,6 @@
     <script>
         const tg = window.Telegram.WebApp;
         tg.expand();
-
-        function goToPage(target) {
-            const base = window.location.href.substring(0, window.location.href.lastIndexOf('/') + 1);
-            window.location.href = base + target;
-        }
 
         // ----------------- কনফিগারেশন -----------------
         const STZ_TO_USDT = 0.001; // ১ STZ = $০.০০১ USDT (১০০ STZ = $০.১০ USDT)
@@ -481,7 +476,7 @@
 
         if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
             const u = tg.initDataUnsafe.user;
-            userId = u.id ? u.id.toString() : (u.username || "sakil24");
+            userId = u.username ? u.username : u.id.toString();
         }
 
         updatePlaceholder();
