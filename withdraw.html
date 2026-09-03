@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>STZ Network - Wallet & Withdraw</title>
 
     <!-- Telegram SDK -->
@@ -48,7 +48,8 @@
         .container {
             width: 100%;
             max-width: 440px;
-            padding: 16px 18px 110px 18px;
+            /* টেলিগ্রাম টপ বার ও নচ এড়িয়ে চলার জন্য প্যাডিং */
+            padding: calc(env(safe-area-inset-top, 0px) + 55px) 18px 110px 18px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -409,7 +410,7 @@
                 </div>
                 
                 <div class="fee-info-row">
-                    <span id="feeNotice">Fee: $0.00 USDT</span>
+                    <span id="feeNotice">Fee: $0.00 (Free)</span>
                     <span id="receiveNotice" class="receive-val">Receive: $0.000 USDT</span>
                 </div>
                 <span class="hint-text" id="amountPreview">Min withdrawal: $1.00 USDT</span>
@@ -464,9 +465,7 @@
                 tg = window.Telegram.WebApp;
                 tg.expand();
             }
-        } catch(e) {
-            console.log("Telegram SDK not active (Browser mode)");
-        }
+        } catch(e) {}
 
         const STZ_TO_USDT = 0.001;
         let minWithdrawUsdt = 1.00;
