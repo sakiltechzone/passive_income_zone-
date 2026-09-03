@@ -47,7 +47,7 @@
         .container {
             width: 100%;
             max-width: 440px;
-            padding: 16px 18px 95px 18px;
+            padding: 16px 18px 110px 18px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -258,30 +258,35 @@
             color: #15803d;
         }
 
-        /* Bottom Floating Bar */
+        /* 5-Button Modern Bottom Nav Bar */
         .bottom-nav {
             position: fixed;
             bottom: 0;
             left: 0;
             width: 100%;
-            height: 65px;
+            height: 68px;
             background: #ffffff;
             display: flex;
             justify-content: space-around;
             align-items: center;
-            box-shadow: 0 -4px 20px rgba(0,0,0,0.05);
-            z-index: 100;
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.08);
+            z-index: 99999 !important;
+            padding: 0 4px;
         }
 
         .nav-item {
             display: flex;
             flex-direction: column;
             align-items: center;
+            justify-content: center;
             gap: 3px;
             color: #94a3b8;
-            text-decoration: none;
-            font-size: 11px;
+            font-size: 10px;
             font-weight: 700;
+            cursor: pointer;
+            flex: 1;
+            height: 100%;
+            text-decoration: none;
         }
 
         .nav-item.active {
@@ -289,22 +294,12 @@
         }
 
         .nav-item i {
-            font-size: 18px;
+            font-size: 17px;
+            pointer-events: none;
         }
 
-        .center-mine-btn {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #3b76f6, #1856f3);
-            color: #fff;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-top: -24px;
-            box-shadow: 0 6px 18px rgba(24, 86, 243, 0.4);
-            text-decoration: none;
-            font-size: 18px;
+        .nav-item span {
+            pointer-events: none;
         }
     </style>
 </head>
@@ -313,7 +308,7 @@
     <div class="container">
         <!-- Top App Bar -->
         <div class="top-nav">
-            <a href="index.html" class="back-pill-btn">
+            <a href="./index.html" class="back-pill-btn">
                 <i class="fas fa-chevron-left"></i>
             </a>
             <span class="brand-text">Profile</span>
@@ -326,7 +321,7 @@
                 <div class="avatar-core" id="avatarText">S</div>
             </div>
             <div class="user-fullname" id="userDisplayName">Sakil Miner</div>
-            <div class="user-tag" id="userTelegramId">UID: 8645837338</div>
+            <div class="user-tag" id="userTelegramId">UID: Loading...</div>
         </div>
 
         <!-- Balance Snapshot & Direct Withdraw Button -->
@@ -336,7 +331,7 @@
                 <div class="snap-val"><span id="profileBalanceText">0.00</span> STZ</div>
                 <div class="snap-usdt">≈ $<span id="profileUsdtText">0.00</span> USDT</div>
             </div>
-            <a href="withdraw.html" class="btn-withdraw-link">
+            <a href="./withdraw.html" class="btn-withdraw-link">
                 <i class="fas fa-wallet"></i> Withdraw
             </a>
         </div>
@@ -370,12 +365,12 @@
         <!-- Network & Support -->
         <div class="section-label">Community & Network</div>
         <div class="menu-group">
-            <a href="refer.html" class="menu-tile">
+            <a href="./refer.html" class="menu-tile">
                 <div class="menu-left">
                     <div class="tile-icon"><i class="fas fa-users"></i></div>
                     <div class="tile-text-block">
                         <div class="m-title">My Referral Team</div>
-                        <div class="m-desc">View F1 & F2 network bonuses</div>
+                        <div class="m-desc">View Direct (L1) network bonuses</div>
                     </div>
                 </div>
                 <i class="fas fa-chevron-right" style="color: #cbd5e1; font-size: 13px;"></i>
@@ -394,18 +389,27 @@
         </div>
     </div>
 
-    <!-- Bottom Navigation Bar -->
+    <!-- 5-Button Bottom Nav -->
     <nav class="bottom-nav">
-        <a href="index.html" class="nav-item">
-            <i class="fas fa-home"></i>
-            <span>Home</span>
+        <a href="./index.html" class="nav-item">
+            <i class="fas fa-magic"></i>
+            <span>Prompts</span>
         </a>
-        <a href="dashboard.html" class="center-mine-btn">
+        <a href="./dashboard.html" class="nav-item">
             <i class="fas fa-hammer"></i>
+            <span>Mining</span>
         </a>
-        <a href="refer.html" class="nav-item">
+        <a href="./spin.html" class="nav-item">
+            <i class="fas fa-dharmachakra"></i>
+            <span>Spin</span>
+        </a>
+        <a href="./refer.html" class="nav-item">
             <i class="fas fa-user-friends"></i>
             <span>Referral</span>
+        </a>
+        <a href="./withdraw.html" class="nav-item">
+            <i class="fas fa-wallet"></i>
+            <span>Wallet</span>
         </a>
     </nav>
 
@@ -414,36 +418,41 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
     <script>
-        const tg = window.Telegram.WebApp;
-        tg.expand();
+        let tg = null;
+        try {
+            if (window.Telegram && window.Telegram.WebApp) {
+                tg = window.Telegram.WebApp;
+                tg.expand();
+            }
+        } catch(e) {}
 
-        const STZ_TO_USDT = 0.001; // ১ STZ = $০.০০১ USDT (১০০ STZ = $০.১০ USDT)
+        const STZ_TO_USDT = 0.001;
 
         const firebaseConfig = {
-            apiKey: "AIzaSyAl0eRqOs5QNUg_J1Pj-4PlEqRDxAXr-oA",[span_0](start_span)[span_0](end_span)
-            authDomain: "viral-zone-bd.firebaseapp.com",[span_1](start_span)[span_1](end_span)
-            projectId: "viral-zone-bd",[span_2](start_span)[span_2](end_span)
-            storageBucket: "viral-zone-bd.firebasestorage.app",[span_3](start_span)[span_3](end_span)
-            messagingSenderId: "794737483555",[span_4](start_span)[span_4](end_span)
-            appId: "1:794737483555:web:a275cd96aafff0e640f696",[span_5](start_span)[span_5](end_span)
-            databaseURL: "https://viral-zone-bd-default-rtdb.firebaseio.com[span_6](start_span)"[span_6](end_span)
+            apiKey: "AIzaSyAl0eRqOs5QNUg_J1Pj-4PlEqRDxAXr-oA",
+            authDomain: "viral-zone-bd.firebaseapp.com",
+            projectId: "viral-zone-bd",
+            storageBucket: "viral-zone-bd.firebasestorage.app",
+            messagingSenderId: "794737483555",
+            appId: "1:794737483555:web:a275cd96aafff0e640f696",
+            databaseURL: "https://viral-zone-bd-default-rtdb.firebaseio.com"
         };
 
-        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);[span_7](start_span)[span_7](end_span)
-        const db = firebase.database();[span_8](start_span)[span_8](end_span)
+        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
 
         let userId = "sakil24";
         let isHapticOn = true;
 
         // টেলিগ্রাম ইউজার ডেটা লোড
-        if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
+        if (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) {
             const u = tg.initDataUnsafe.user;
-            userId = u.username ? u.username : u.id.toString();
+            userId = u.id ? u.id.toString() : (u.username || "sakil24");
             const fullName = `${u.first_name || ''} ${u.last_name || ''}`.trim() || "Miner";
             
             document.getElementById('userDisplayName').innerText = fullName;
             document.getElementById('avatarText').innerText = fullName[0].toUpperCase();
-            document.getElementById('userTelegramId').innerText = "UID: " + u.id;
+            document.getElementById('userTelegramId').innerText = "UID: " + (u.id || userId);
         }
 
         // ফায়ারবেজ থেকে ব্যালেন্স আনা
@@ -458,19 +467,28 @@
         });
 
         function showVerificationAlert() {
-            tg.showAlert("আপনার টেলিগ্রাম অ্যাকাউন্টটি ইতিমধ্যে সিস্টেমের সাথে ভেরিফাইড রয়েছে।");
+            if (tg && tg.showAlert) {
+                tg.showAlert("আপনার টেলিগ্রাম অ্যাকাউন্টটি ইতিমধ্যে সিস্টেমের সাথে ভেরিফাইড রয়েছে।");
+            } else {
+                alert("আপনার টেলিগ্রাম অ্যাকাউন্টটি ইতিমধ্যে সিস্টেমের সাথে ভেরিফাইড রয়েছে।");
+            }
         }
 
         function toggleHaptics() {
             isHapticOn = !isHapticOn;
             document.getElementById('hapticStatusTxt').innerText = isHapticOn ? "Enabled" : "Disabled";
-            if (isHapticOn && tg.HapticFeedback) {
+            if (isHapticOn && tg && tg.HapticFeedback) {
                 tg.HapticFeedback.notificationOccurred('success');
             }
         }
 
         function openOfficialChannel() {
-            tg.openTelegramLink("https://t.me/passive_income_zone_bot");
+            const link = "https://t.me/passive_income_zone_bot";
+            if (tg && tg.openTelegramLink) {
+                tg.openTelegramLink(link);
+            } else {
+                window.open(link, '_blank');
+            }
         }
     </script>
 </body>
