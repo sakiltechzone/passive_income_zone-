@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>STZ Network - Withdraw Assets</title>
+    <title>STZ Network - Wallet & Withdraw</title>
 
     <!-- Telegram SDK -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -48,10 +48,12 @@
         .container {
             width: 100%;
             max-width: 440px;
-            padding: 16px 18px 95px 18px;
+            padding: 16px 18px 110px 18px; /* পর্যাপ্ত প্যাডিং যাতে বটম বার কন্টেন্ট ঢেকে না দেয় */
             display: flex;
             flex-direction: column;
             align-items: center;
+            position: relative;
+            z-index: 1;
         }
 
         /* Top Bar */
@@ -73,18 +75,18 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            text-decoration: none;
-            backdrop-filter: blur(8px);
             font-size: 14px;
+            cursor: pointer;
+            text-decoration: none;
         }
 
         .brand-text {
             font-size: 19px;
-            font-weight: 700;
+            font-weight: 800;
             color: #ffffff;
         }
 
-        /* Balance Card */
+        /* Balance Hero Card */
         .balance-hero-card {
             width: 100%;
             background: var(--card-glass);
@@ -105,25 +107,20 @@
             letter-spacing: 0.5px;
         }
 
-        .balance-hero-card .coin-val {
-            font-size: 34px;
+        .balance-hero-card .usdt-val {
+            font-size: 36px;
             font-weight: 800;
             color: var(--text-dark);
             margin: 4px 0 2px 0;
         }
 
-        .balance-hero-card .coin-val .coin-name {
-            font-size: 18px;
+        .balance-hero-card .coin-val {
+            font-size: 13px;
+            font-weight: 700;
             color: var(--primary-blue);
         }
 
-        .balance-hero-card .usdt-val {
-            font-size: 14px;
-            font-weight: 700;
-            color: var(--success);
-        }
-
-        /* Withdraw Form */
+        /* Withdraw Form Card */
         .form-card {
             width: 100%;
             background: #ffffff;
@@ -192,7 +189,7 @@
             justify-content: space-between;
             font-size: 11px;
             font-weight: 700;
-            margin-top: 2px;
+            margin-top: 4px;
         }
 
         .fee-val {
@@ -207,9 +204,10 @@
             font-size: 11px;
             color: var(--text-muted);
             font-weight: 600;
+            margin-top: 2px;
         }
 
-        /* Submit Action Button */
+        /* Submit Button */
         .btn-submit-withdraw {
             width: 100%;
             padding: 16px;
@@ -309,6 +307,11 @@
             background: #dcfce7;
         }
 
+        .history-item .status-badge.rejected {
+            color: #b91c1c;
+            background: #fee2e2;
+        }
+
         .empty-history {
             text-align: center;
             padding: 18px;
@@ -318,30 +321,36 @@
             border-radius: 16px;
         }
 
-        /* Bottom Floating Bar */
+        /* 5-Button Modern Bottom Nav Bar - সর্বোচ্চ লেয়ার নিশ্চিত */
         .bottom-nav {
             position: fixed;
             bottom: 0;
             left: 0;
             width: 100%;
-            height: 65px;
+            height: 68px;
             background: #ffffff;
             display: flex;
             justify-content: space-around;
             align-items: center;
-            box-shadow: 0 -4px 20px rgba(0,0,0,0.05);
-            z-index: 100;
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.08);
+            z-index: 99999 !important; /* সর্বোচ্চ লেয়ার */
+            padding: 0 4px;
         }
 
         .nav-item {
             display: flex;
             flex-direction: column;
             align-items: center;
+            justify-content: center;
             gap: 3px;
             color: #94a3b8;
-            text-decoration: none;
-            font-size: 11px;
+            font-size: 10px;
             font-weight: 700;
+            cursor: pointer;
+            flex: 1;
+            height: 100%;
+            text-decoration: none;
+            -webkit-user-select: none;
         }
 
         .nav-item.active {
@@ -349,42 +358,32 @@
         }
 
         .nav-item i {
-            font-size: 18px;
+            font-size: 17px;
+            pointer-events: none; /* ক্লিকের সমস্যা সমাধান */
         }
 
-        .center-mine-btn {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #3b76f6, #1856f3);
-            color: #fff;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-top: -24px;
-            box-shadow: 0 6px 18px rgba(24, 86, 243, 0.4);
-            text-decoration: none;
-            font-size: 18px;
+        .nav-item span {
+            pointer-events: none;
         }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <!-- Top Navigation -->
+        <!-- Top App Bar -->
         <div class="top-nav">
-            <a href="profile.html" class="back-pill-btn">
+            <a href="index.html" class="back-pill-btn">
                 <i class="fas fa-chevron-left"></i>
             </a>
-            <span class="brand-text">Withdraw</span>
+            <span class="brand-text">Wallet & Payout</span>
             <div style="width: 36px;"></div>
         </div>
 
         <!-- Available Balance Display -->
         <div class="balance-hero-card">
             <span class="caption">Withdrawable Balance</span>
-            <div class="coin-val"><span id="withdrawableCoins">0.00</span> <span class="coin-name">STZ</span></div>
-            <div class="usdt-val">≈ $<span id="withdrawableUsdt">0.00</span> USDT</div>
+            <div class="usdt-val">$<span id="withdrawableUsdt">0.000</span> <span style="font-size: 18px;">USDT</span></div>
+            <div class="coin-val"><span id="withdrawableCoins">0.00</span> STZ Assets</div>
         </div>
 
         <!-- Form Card -->
@@ -392,28 +391,28 @@
             <div class="form-group">
                 <label>Payout Network</label>
                 <select class="styled-select" id="withdrawNetwork" onchange="updatePlaceholder()">
-                    <option value="Ton Address">Ton Address</option>
                     <option value="Binance Pay ID">Binance Pay ID</option>
+                    <option value="Ton Address">TON Wallet Address</option>
                 </select>
             </div>
 
             <div class="form-group">
-                <label id="addrLabel">Ton Wallet Address</label>
-                <input type="text" class="styled-input" id="withdrawAddress" placeholder="Your ton address">
+                <label id="addrLabel">Binance Pay ID</label>
+                <input type="text" class="styled-input" id="withdrawAddress" placeholder="Your Binance Pay ID">
             </div>
 
             <div class="form-group">
-                <label>Amount (STZ)</label>
+                <label>Amount (USDT)</label>
                 <div class="input-with-max">
-                    <input type="number" class="styled-input" id="withdrawAmount" placeholder="Min: 100 STZ" oninput="calculatePreview()">
+                    <input type="number" step="0.01" class="styled-input" id="withdrawAmount" placeholder="Min: $1.00 USDT" oninput="calculatePreview()">
                     <button class="btn-max" onclick="setMaxAmount()">MAX</button>
                 </div>
                 
                 <div class="fee-info-row">
-                    <span id="feeNotice">Fee: $0.001 USDT</span>
+                    <span id="feeNotice">Fee: $0.00 USDT</span>
                     <span id="receiveNotice" class="receive-val">Receive: $0.000 USDT</span>
                 </div>
-                <span class="hint-text" id="amountPreview">Min withdrawal: 100 STZ ($0.10 USDT)</span>
+                <span class="hint-text" id="amountPreview">Min withdrawal: $1.00 USDT</span>
             </div>
 
             <button class="btn-submit-withdraw" id="submitBtn" onclick="processWithdrawal()">
@@ -430,18 +429,27 @@
         </div>
     </div>
 
-    <!-- Bottom Navigation Bar -->
+    <!-- 5-Button Bottom Nav (সরাসরি href এবং ক্লিক-নিরাপদ) -->
     <nav class="bottom-nav">
         <a href="index.html" class="nav-item">
-            <i class="fas fa-home"></i>
-            <span>Home</span>
+            <i class="fas fa-magic"></i>
+            <span>Prompts</span>
         </a>
-        <a href="dashboard.html" class="center-mine-btn">
+        <a href="dashboard.html" class="nav-item">
             <i class="fas fa-hammer"></i>
+            <span>Mining</span>
+        </a>
+        <a href="spin.html" class="nav-item">
+            <i class="fas fa-dharmachakra"></i>
+            <span>Spin</span>
         </a>
         <a href="refer.html" class="nav-item">
             <i class="fas fa-user-friends"></i>
             <span>Referral</span>
+        </a>
+        <a href="withdraw.html" class="nav-item active">
+            <i class="fas fa-wallet"></i>
+            <span>Wallet</span>
         </a>
     </nav>
 
@@ -450,13 +458,21 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
     <script>
-        const tg = window.Telegram.WebApp;
-        tg.expand();
+        // নিরাপদ টেলিগ্রাম ইনিশিয়ালাইজেশন (HopWeb-এ ক্র্যাশ ঠেকানোর জন্য)
+        let tg = null;
+        try {
+            if (window.Telegram && window.Telegram.WebApp) {
+                tg = window.Telegram.WebApp;
+                tg.expand();
+            }
+        } catch(e) {
+            console.log("Telegram SDK not active (Browser mode)");
+        }
 
         // ----------------- কনফিগারেশন -----------------
-        const STZ_TO_USDT = 0.001; // ১ STZ = $০.০০১ USDT (১০০ STZ = $০.১০ USDT)
-        const MIN_WITHDRAW_STZ = 100; // মিনিমাম ১০০ STZ ($০.১০)
-        const TON_FEE_USDT = 0.001; // টন অ্যাড্রেসে ফি $০.০০১ USDT
+        const STZ_TO_USDT = 0.001;
+        let minWithdrawUsdt = 1.00;
+        const TON_FEE_USDT = 0.001;
 
         const firebaseConfig = {
             apiKey: "AIzaSyAl0eRqOs5QNUg_J1Pj-4PlEqRDxAXr-oA",
@@ -472,23 +488,34 @@
         const db = firebase.database();
 
         let userId = "sakil24";
-        let userBalance = 0;
+        let userBalanceCoins = 0;
 
-        if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
+        if (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) {
             const u = tg.initDataUnsafe.user;
-            userId = u.username ? u.username : u.id.toString();
+            userId = u.id ? u.id.toString() : (u.username || "sakil24");
         }
 
         updatePlaceholder();
+
+        // অ্যাডমিন সিস্টেম সেটিংস থেকে মিনিমাম লিমিট সিঙ্ক
+        db.ref('system_settings').on('value', snap => {
+            const val = snap.val();
+            if (val && val.minWithdraw) {
+                minWithdrawUsdt = parseFloat(val.minWithdraw);
+                document.getElementById('amountPreview').innerText = `Min withdrawal: $${minWithdrawUsdt.toFixed(2)} USDT`;
+                document.getElementById('withdrawAmount').placeholder = `Min: $${minWithdrawUsdt.toFixed(2)} USDT`;
+            }
+        });
 
         // ফায়ারবেজ থেকে ব্যালেন্স আনা
         const userRef = db.ref('stz_miners/' + userId);
         userRef.on('value', snap => {
             const val = snap.val();
             if (val) {
-                userBalance = val.balance || 0;
-                document.getElementById('withdrawableCoins').innerText = userBalance.toFixed(2);
-                document.getElementById('withdrawableUsdt').innerText = (userBalance * STZ_TO_USDT).toFixed(3);
+                userBalanceCoins = val.balance || 0;
+                const balanceInUsdt = userBalanceCoins * STZ_TO_USDT;
+                document.getElementById('withdrawableCoins').innerText = userBalanceCoins.toFixed(2);
+                document.getElementById('withdrawableUsdt').innerText = balanceInUsdt.toFixed(3);
             }
         });
 
@@ -509,6 +536,11 @@
             list.forEach(req => {
                 const dateStr = new Date(req.timestamp).toLocaleDateString();
                 const isPaid = req.status === "Approved" || req.status === "Paid";
+                const isRejected = req.status === "Rejected";
+                let statusClass = '';
+                if (isPaid) statusClass = 'paid';
+                else if (isRejected) statusClass = 'rejected';
+
                 html += `
                     <div class="history-item">
                         <div>
@@ -517,7 +549,7 @@
                         </div>
                         <div class="amt-col">
                             <div class="amt-val">-$${req.finalUsdt.toFixed(3)} USDT</div>
-                            <span class="status-badge ${isPaid ? 'paid' : ''}">${req.status}</span>
+                            <span class="status-badge ${statusClass}">${req.status}</span>
                         </div>
                     </div>
                 `;
@@ -531,19 +563,18 @@
             const label = document.getElementById('addrLabel');
 
             if (net === "Ton Address") {
-                label.innerText = "Ton Wallet Address";
-                input.placeholder = "Your ton address";
+                label.innerText = "TON Wallet Address";
+                input.placeholder = "Your TON address (EQ...)";
             } else {
                 label.innerText = "Binance Pay ID";
-                input.placeholder = "Your pay id";
+                input.placeholder = "Your Binance Pay ID";
             }
             calculatePreview();
         }
 
         function calculatePreview() {
             const net = document.getElementById('withdrawNetwork').value;
-            const amt = parseFloat(document.getElementById('withdrawAmount').value) || 0;
-            const rawUsdt = amt * STZ_TO_USDT;
+            const amtUsdt = parseFloat(document.getElementById('withdrawAmount').value) || 0;
 
             let fee = 0;
             if (net === "Ton Address") {
@@ -554,32 +585,34 @@
                 document.getElementById('feeNotice').innerText = `Fee: $0.00 (Free)`;
             }
 
-            const finalUsdt = Math.max(0, rawUsdt - fee);
+            const finalUsdt = Math.max(0, amtUsdt - fee);
             document.getElementById('receiveNotice').innerText = `Receive: $${finalUsdt.toFixed(3)} USDT`;
         }
 
         function setMaxAmount() {
-            document.getElementById('withdrawAmount').value = Math.floor(userBalance);
+            const maxUsdt = userBalanceCoins * STZ_TO_USDT;
+            document.getElementById('withdrawAmount').value = maxUsdt.toFixed(2);
             calculatePreview();
         }
 
         function processWithdrawal() {
             const network = document.getElementById('withdrawNetwork').value;
             const address = document.getElementById('withdrawAddress').value.trim();
-            const amount = parseFloat(document.getElementById('withdrawAmount').value);
+            const amountUsdt = parseFloat(document.getElementById('withdrawAmount').value);
+            const userTotalUsdt = userBalanceCoins * STZ_TO_USDT;
 
             if (!address) {
-                tg.showAlert(network === "Ton Address" ? "অনুগ্রহ করে Your ton address দিন!" : "অনুগ্রহ করে Your pay id দিন!");
+                showModalAlert(network === "Ton Address" ? "অনুগ্রহ করে আপনার TON ওয়ালেট অ্যাড্রেস দিন!" : "অনুগ্রহ করে আপনার Binance Pay ID দিন!");
                 return;
             }
 
-            if (isNaN(amount) || amount < MIN_WITHDRAW_STZ) {
-                tg.showAlert(`ন্যূনতম উইথড্রয়াল ${MIN_WITHDRAW_STZ} STZ ($0.10 USDT)!`);
+            if (isNaN(amountUsdt) || amountUsdt < minWithdrawUsdt) {
+                showModalAlert(`ন্যূনতম উইথড্রয়াল $${minWithdrawUsdt.toFixed(2)} USDT!`);
                 return;
             }
 
-            if (amount > userBalance) {
-                tg.showAlert("আপনার একাউন্টে পর্যাপ্ত ব্যালেন্স নেই!");
+            if (amountUsdt > userTotalUsdt) {
+                showModalAlert("আপনার একাউন্টে পর্যাপ্ত ব্যালেন্স নেই!");
                 return;
             }
 
@@ -587,10 +620,10 @@
             btn.disabled = true;
             btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
 
-            const rawUsdt = amount * STZ_TO_USDT;
             const fee = (network === "Ton Address") ? TON_FEE_USDT : 0;
-            const finalUsdt = rawUsdt - fee;
-            const updatedBalance = userBalance - amount;
+            const finalUsdt = amountUsdt - fee;
+            const coinsToDeduct = amountUsdt / STZ_TO_USDT;
+            const updatedBalanceCoins = userBalanceCoins - coinsToDeduct;
 
             const requestKey = historyRef.push().key;
             const requestPayload = {
@@ -598,7 +631,8 @@
                 userId: userId,
                 network: network,
                 address: address,
-                amountStz: amount,
+                amountStz: coinsToDeduct,
+                amountUsdt: amountUsdt,
                 feeUsdt: fee,
                 finalUsdt: finalUsdt,
                 status: "Pending",
@@ -608,7 +642,7 @@
             const updates = {};
             updates['/withdraw_requests/' + userId + '/' + requestKey] = requestPayload;
             updates['/admin_withdraw_queue/' + requestKey] = requestPayload;
-            updates['/stz_miners/' + userId + '/balance'] = updatedBalance;
+            updates['/stz_miners/' + userId + '/balance'] = updatedBalanceCoins;
 
             db.ref().update(updates).then(() => {
                 btn.disabled = false;
@@ -617,13 +651,22 @@
                 document.getElementById('withdrawAmount').value = "";
                 calculatePreview();
 
-                if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
-                tg.showAlert(`✅ উইথড্রয়াল সফলভাবে জমা হয়েছে!\nনেটওয়ার্ক: ${network}\nফি: $${fee} USDT\nপ্রাপ্য: $${finalUsdt.toFixed(3)} USDT`);
+                if (tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+                showModalAlert(`✅ উইথড্রয়াল রিকোয়েস্ট সফলভাবে জমা হয়েছে!\nনেটওয়ার্ক: ${network}\nপ্রাপ্য: $${finalUsdt.toFixed(3)} USDT\nস্ট্যাটাস: Pending`);
             }).catch(err => {
                 btn.disabled = false;
                 btn.innerHTML = '<i class="fas fa-paper-plane"></i> Submit Request';
-                tg.showAlert("ত্রুটি ঘটেছে: " + err.message);
+                showModalAlert("ত্রুটি ঘটেছে: " + err.message);
             });
+        }
+
+        // নিরাপদ অ্যালার্ট হেল্পার (টেলিগ্রাম বা সাধারণ ব্রাউজার উভয়ের জন্যই)
+        function showModalAlert(msg) {
+            if (tg && tg.showAlert) {
+                tg.showAlert(msg);
+            } else {
+                alert(msg);
+            }
         }
     </script>
 </body>

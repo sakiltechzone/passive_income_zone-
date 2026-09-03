@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>STZ Network - Referral Network</title>
+    <title>STZ Network - Referral Team</title>
 
     <!-- Telegram SDK -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -20,6 +20,7 @@
             --text-muted: #64748b;
             --card-glass: rgba(255, 255, 255, 0.94);
             --card-white: #ffffff;
+            --success: #10b981;
         }
 
         * {
@@ -47,7 +48,7 @@
         .container {
             width: 100%;
             max-width: 440px;
-            padding: 16px 18px 105px 18px;
+            padding: 16px 18px 95px 18px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -72,313 +73,254 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            text-decoration: none;
-            backdrop-filter: blur(8px);
             font-size: 14px;
+            cursor: pointer;
         }
 
         .brand-text {
             font-size: 19px;
-            font-weight: 700;
+            font-weight: 800;
             color: #ffffff;
         }
 
-        /* Speed Hero Card */
-        .speed-hero-card {
+        .wallet-pill {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 6px 14px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            font-weight: 800;
+            color: var(--text-dark);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+            cursor: pointer;
+        }
+
+        /* Hero Card */
+        .refer-hero-card {
             width: 100%;
             background: var(--card-glass);
             border: 1px solid rgba(255, 255, 255, 0.8);
             backdrop-filter: blur(12px);
             border-radius: 24px;
-            padding: 22px 18px 18px 18px;
+            padding: 22px 18px;
             text-align: center;
             box-shadow: 0 8px 25px rgba(15, 75, 216, 0.08);
-            margin-bottom: 12px;
+            margin-bottom: 16px;
         }
 
-        .deco-icons-row {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 8px;
+        .refer-hero-card .gift-icon {
+            font-size: 38px;
+            color: var(--primary-blue);
             margin-bottom: 8px;
+            filter: drop-shadow(0 4px 10px rgba(28, 100, 242, 0.3));
         }
 
-        .deco-disc {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            background: var(--primary-blue);
-            color: #fff;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 13px;
-        }
-
-        .deco-ring {
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            border: 3px solid #60a5fa;
-        }
-
-        .deco-plus {
+        .refer-hero-card h3 {
             font-size: 20px;
             font-weight: 800;
-            color: #3b82f6;
-        }
-
-        .speed-number {
-            font-size: 34px;
-            font-weight: 800;
             color: var(--text-dark);
-            line-height: 1;
         }
 
-        .speed-caption {
-            font-size: 13px;
+        .refer-hero-card p {
+            font-size: 12px;
             color: var(--text-muted);
-            margin-top: 3px;
+            margin-top: 4px;
             font-weight: 600;
         }
 
-        .rule-note {
+        .bonus-highlight-pill {
+            display: inline-block;
+            margin-top: 10px;
+            background: #dcfce7;
+            color: #15803d;
+            font-size: 13px;
+            font-weight: 800;
+            padding: 5px 14px;
+            border-radius: 12px;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            width: 100%;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .stat-card {
+            background: #ffffff;
+            border-radius: 18px;
+            padding: 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.04);
+        }
+
+        .stat-card .stat-label {
             font-size: 11px;
-            color: #94a3b8;
-            margin: 6px 0 16px 0;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        .stat-card .stat-val {
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--text-dark);
+        }
+
+        .stat-card .stat-sub {
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--primary-blue);
+        }
+
+        /* Link Box Card */
+        .link-share-card {
+            width: 100%;
+            background: #ffffff;
+            border-radius: 22px;
+            padding: 18px;
+            box-shadow: 0 8px 25px rgba(15, 75, 216, 0.06);
+            margin-bottom: 16px;
+        }
+
+        .link-share-card label {
+            font-size: 12px;
+            font-weight: 700;
+            color: #475569;
+            margin-bottom: 8px;
             display: block;
         }
 
-        .tier-grid {
+        .invite-link-input {
+            width: 100%;
+            padding: 12px 14px;
+            border-radius: 14px;
+            border: 1.5px solid #e2e8f0;
+            background: #f8fafc;
+            color: var(--text-dark);
+            font-size: 12px;
+            font-weight: 600;
+            outline: none;
+            margin-bottom: 12px;
+        }
+
+        .share-actions-row {
             display: flex;
             gap: 10px;
         }
 
-        .tier-box {
+        .btn-copy-link, .btn-telegram-share {
             flex: 1;
-            background: #ffffff;
-            border-radius: 16px;
-            padding: 12px 10px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
-        }
-
-        .tier-box .t-tag {
-            font-size: 12px;
-            font-weight: 700;
-            color: var(--text-muted);
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-
-        .tier-box .t-val {
-            font-size: 19px;
-            font-weight: 800;
-            color: var(--text-dark);
-            margin: 2px 0;
-        }
-
-        .tier-box .t-count {
-            font-size: 10px;
-            color: #94a3b8;
-            font-weight: 600;
-        }
-
-        /* Input Card Boxes */
-        .card-box {
-            width: 100%;
-            background: #ffffff;
-            border-radius: 18px;
-            padding: 14px 18px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
-            margin-bottom: 10px;
-        }
-
-        .code-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 4px;
-        }
-
-        .code-title {
-            font-size: 11px;
-            font-weight: 600;
-            color: #94a3b8;
-        }
-
-        .code-text {
-            font-size: 17px;
-            font-weight: 800;
-            color: var(--text-dark);
-        }
-
-        .copy-action-btn {
-            background: none;
-            border: none;
-            font-size: 18px;
-            color: var(--text-muted);
-            cursor: pointer;
-            padding: 4px;
-        }
-
-        .copy-action-btn:active {
-            color: var(--primary-blue);
-        }
-
-        .inviter-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            padding: 13px;
+            border-radius: 14px;
             font-size: 13px;
-            font-weight: 600;
-            color: #475569;
-        }
-
-        .blue-bold {
-            color: var(--primary-blue);
-            font-weight: 700;
-        }
-
-        /* Referral List Section */
-        .ref-section {
-            width: 100%;
-            margin-top: 6px;
-        }
-
-        .ref-section h4 {
-            font-size: 15px;
             font-weight: 800;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            border: none;
+            transition: transform 0.1s;
+        }
+
+        .btn-copy-link {
+            background: #ecf3ff;
+            color: var(--primary-blue);
+        }
+
+        .btn-telegram-share {
+            background: linear-gradient(135deg, #3b76f6, #1856f3);
+            color: #ffffff;
+            box-shadow: 0 4px 14px rgba(24, 86, 243, 0.3);
+        }
+
+        .btn-copy-link:active, .btn-telegram-share:active {
+            transform: scale(0.97);
+        }
+
+        /* Single Level Card */
+        .team-levels-section {
+            width: 100%;
+        }
+
+        .team-levels-section h4 {
+            font-size: 14px;
+            font-weight: 700;
             color: #ffffff;
             margin-bottom: 10px;
-            margin-left: 2px;
+            margin-left: 4px;
             text-shadow: 0 1px 2px rgba(0,0,0,0.1);
         }
 
-        .toggle-group {
-            display: flex;
-            background: #e2edff;
-            border-radius: 14px;
-            padding: 4px;
-            gap: 4px;
-            margin-bottom: 10px;
-        }
-
-        .tab-btn {
-            flex: 1;
-            padding: 10px 0;
-            border-radius: 12px;
-            border: none;
-            background: transparent;
-            font-size: 12px;
-            font-weight: 700;
-            color: var(--text-muted);
-            cursor: pointer;
-        }
-
-        .tab-btn.active {
-            background: var(--text-dark);
-            color: #ffffff;
-        }
-
-        .team-list {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            width: 100%;
-            min-height: 100px;
-        }
-
-        .empty-team {
-            text-align: center;
-            padding: 24px 10px;
-            color: #94a3b8;
-            font-size: 12px;
-            background: rgba(255, 255, 255, 0.7);
+        .level-row-card {
+            background: #ffffff;
             border-radius: 16px;
-        }
-
-        .team-user-item {
-            background: #fff;
-            border-radius: 14px;
-            padding: 12px 14px;
+            padding: 16px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
         }
 
-        .user-left-info {
+        .level-left-col {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
         }
 
-        .user-dot-icon {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
+        .lvl-badge {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
             background: #eff6ff;
             color: var(--primary-blue);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 12px;
             font-weight: 800;
+            font-size: 16px;
         }
 
-        .user-id-text {
-            font-size: 13px;
-            font-weight: 700;
+        .lvl-info .title {
+            font-size: 14px;
+            font-weight: 800;
             color: var(--text-dark);
         }
 
-        .bonus-tag {
-            font-size: 12px;
+        .lvl-info .speed-sub {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        .level-members-count {
+            font-size: 18px;
             font-weight: 800;
             color: var(--primary-blue);
         }
 
-        /* Action Invite Button */
-        .invite-submit-btn {
-            width: 100%;
-            padding: 16px;
-            border-radius: 18px;
-            background: linear-gradient(135deg, #3b76f6, #1856f3);
-            border: none;
-            color: #fff;
-            font-size: 16px;
-            font-weight: 800;
-            cursor: pointer;
-            box-shadow: 0 8px 25px rgba(24, 86, 243, 0.35);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            margin-top: 14px;
-        }
-
-        .invite-submit-btn:active {
-            transform: scale(0.98);
-        }
-
-        /* Bottom Floating Bar */
+        /* 5-Button Modern Bottom Nav Bar */
         .bottom-nav {
             position: fixed;
             bottom: 0;
             left: 0;
             width: 100%;
-            height: 65px;
+            height: 68px;
             background: #ffffff;
             display: flex;
             justify-content: space-around;
             align-items: center;
-            box-shadow: 0 -4px 20px rgba(0,0,0,0.05);
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.06);
             z-index: 100;
+            padding: 0 4px;
         }
 
         .nav-item {
@@ -387,9 +329,10 @@
             align-items: center;
             gap: 3px;
             color: #94a3b8;
-            text-decoration: none;
-            font-size: 11px;
+            font-size: 10px;
             font-weight: 700;
+            cursor: pointer;
+            flex: 1;
         }
 
         .nav-item.active {
@@ -397,109 +340,103 @@
         }
 
         .nav-item i {
-            font-size: 18px;
-        }
-
-        .center-mine-btn {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #3b76f6, #1856f3);
-            color: #fff;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-top: -24px;
-            box-shadow: 0 6px 18px rgba(24, 86, 243, 0.4);
-            text-decoration: none;
-            font-size: 18px;
+            font-size: 17px;
         }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <!-- Top Navigation -->
+        <!-- Top App Bar -->
         <div class="top-nav">
-            <a href="index.html" class="back-pill-btn"><i class="fas fa-chevron-left"></i></a>
-            <span class="brand-text">Referral Network</span>
-            <div style="width: 36px;"></div>
+            <div onclick="goToPage('index.html')" class="back-pill-btn">
+                <i class="fas fa-chevron-left"></i>
+            </div>
+            <span class="brand-text">Referrals</span>
+            <div class="wallet-pill" onclick="goToPage('withdraw.html')">
+                <i class="fas fa-wallet" style="color: var(--primary-blue);"></i>
+                $<span id="topBalance">0.000</span>
+            </div>
         </div>
 
-        <!-- Speed Hero Card -->
-        <div class="speed-hero-card">
-            <div class="deco-icons-row">
-                <div class="deco-disc"><i class="fas fa-layer-group"></i></div>
-                <div class="deco-ring"></div>
-                <div class="deco-plus">+</div>
+        <!-- Hero Card -->
+        <div class="refer-hero-card">
+            <i class="fas fa-users-rays gift-icon"></i>
+            <h3>Invite Friends, Earn USDT</h3>
+            <p>Build your viral creator network & multiply your daily revenue.</p>
+            <div class="bonus-highlight-pill">
+                Instant Bonus: +$<span id="referBonusRateText">0.10</span> USDT / Friend
             </div>
-            <div class="speed-number" id="totalSpeedBoost">+0%</div>
-            <div class="speed-caption">mining speed</div>
-            <span class="rule-note">Only active referrals count</span>
+        </div>
 
-            <div class="tier-grid">
-                <div class="tier-box">
-                    <span class="t-tag"><i class="fas fa-user"></i> F1</span>
-                    <span class="t-val" id="f1BoostVal">+0%</span>
-                    <span class="t-count" id="f1Count">0 active</span>
+        <!-- Stats Grid -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <span class="stat-label">Direct Referrals</span>
+                <span class="stat-val" id="totalRefCount">0</span>
+                <span class="stat-sub">Active members</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-label">Referral Profits</span>
+                <span class="stat-val">$<span id="referTotalEarnedUsdt">0.00</span></span>
+                <span class="stat-sub">Earned USDT</span>
+            </div>
+        </div>
+
+        <!-- Link Share Box -->
+        <div class="link-share-card">
+            <label>Your Unique Invite Link</label>
+            <input type="text" id="referralLinkInput" class="invite-link-input" readonly value="Loading link...">
+            
+            <div class="share-actions-row">
+                <button class="btn-copy-link" onclick="copyReferralLink()">
+                    <i class="fas fa-copy"></i> Copy
+                </button>
+                <button class="btn-telegram-share" onclick="shareOnTelegram()">
+                    <i class="fab fa-telegram-plane"></i> Invite Friends
+                </button>
+            </div>
+        </div>
+
+        <!-- Single Level Section -->
+        <div class="team-levels-section">
+            <h4>Referral Speed Boost</h4>
+            
+            <div class="level-row-card">
+                <div class="level-left-col">
+                    <div class="lvl-badge"><i class="fas fa-user-plus"></i></div>
+                    <div class="lvl-info">
+                        <div class="title">Direct Friends (Level 1)</div>
+                        <div class="speed-sub">+10% Mining Speed each friend</div>
+                    </div>
                 </div>
-                <div class="tier-box">
-                    <span class="t-tag"><i class="fas fa-users"></i> F2</span>
-                    <span class="t-val" id="f2BoostVal">+0%</span>
-                    <span class="t-count" id="f2Count">0 active</span>
-                </div>
+                <div class="level-members-count" id="f1CountDisplay">0</div>
             </div>
         </div>
-
-        <!-- Invite Code Box -->
-        <div class="card-box">
-            <span class="code-title">Your invite code</span>
-            <div class="code-row">
-                <span class="code-text" id="displayInviteCode">STZ_USER</span>
-                <button class="copy-action-btn" onclick="copyCode()"><i class="far fa-copy"></i></button>
-            </div>
-        </div>
-
-        <!-- Inviter Box -->
-        <div class="card-box">
-            <div class="inviter-row">
-                <span>Inviter's referral code:</span>
-                <span class="blue-bold" id="displayInviter">official_node</span>
-            </div>
-        </div>
-
-        <!-- Referrals List -->
-        <div class="ref-section">
-            <h4>Your referral</h4>
-            <div class="toggle-group">
-                <button class="tab-btn active" id="btn-direct" onclick="switchFilter('direct')">Direct</button>
-                <button class="tab-btn" id="btn-indirect" onclick="switchFilter('indirect')">Indirect</button>
-            </div>
-
-            <div class="team-list" id="teamListContainer">
-                <div class="empty-team">No referrals in Direct network yet.</div>
-            </div>
-        </div>
-
-        <!-- Invite Button -->
-        <button class="invite-submit-btn" onclick="sendInvite()">
-            <i class="fas fa-user-plus"></i> Invite Now
-        </button>
     </div>
 
-    <!-- Bottom Navigation Bar -->
+    <!-- 5-Button Bottom Nav -->
     <nav class="bottom-nav">
-        <a href="index.html" class="nav-item">
-            <i class="fas fa-home"></i>
-            <span>Home</span>
-        </a>
-        <a href="dashboard.html" class="center-mine-btn">
+        <div onclick="goToPage('index.html')" class="nav-item">
+            <i class="fas fa-magic"></i>
+            <span>Prompts</span>
+        </div>
+        <div onclick="goToPage('dashboard.html')" class="nav-item">
             <i class="fas fa-hammer"></i>
-        </a>
-        <a href="refer.html" class="nav-item active">
+            <span>Mining</span>
+        </div>
+        <div onclick="goToPage('spin.html')" class="nav-item">
+            <i class="fas fa-dharmachakra"></i>
+            <span>Spin</span>
+        </div>
+        <div onclick="goToPage('refer.html')" class="nav-item active">
             <i class="fas fa-user-friends"></i>
             <span>Referral</span>
-        </a>
+        </div>
+        <div onclick="goToPage('withdraw.html')" class="nav-item">
+            <i class="fas fa-wallet"></i>
+            <span>Wallet</span>
+        </div>
     </nav>
 
     <!-- Firebase SDKs -->
@@ -509,6 +446,13 @@
     <script>
         const tg = window.Telegram.WebApp;
         tg.expand();
+
+        function goToPage(target) {
+            window.location.href = target;
+        }
+
+        const STZ_TO_USDT = 0.001; // ১ STZ = $০.০০১ USDT
+        const BOT_USERNAME = "passive_income_zone_bot"; // আপনার টেলিগ্রাম বটের ইউজারনেম
 
         const firebaseConfig = {
             apiKey: "AIzaSyAl0eRqOs5QNUg_J1Pj-4PlEqRDxAXr-oA",
@@ -524,85 +468,78 @@
         const db = firebase.database();
 
         let userId = "sakil24";
-        let activeTab = "direct";
-        let referralData = { f1: [], f2: [] };
+        let referBonusRate = 0.10; // অ্যাডমিন থেকে লাইভ সিঙ্ক হবে
 
         if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
             const u = tg.initDataUnsafe.user;
-            userId = u.username ? u.username : u.id.toString();
+            userId = u.id ? u.id.toString() : (u.username || "sakil24");
         }
-        document.getElementById('displayInviteCode').innerText = userId;
 
-        // Firebase Referral Listener
-        const refLink = db.ref('stz_referrals/' + userId);
-        refLink.on('value', snap => {
+        // ইনভাইট লিংক তৈরি
+        const inviteLink = `https://t.me/${BOT_USERNAME}?start=ref_${userId}`;
+        document.getElementById('referralLinkInput').value = inviteLink;
+
+        // অ্যাডমিন সিস্টেম সেটিংস থেকে রেফার বোনাস রেট আনা
+        db.ref('system_settings').on('value', snap => {
+            const val = snap.val();
+            if (val && val.referBonus) {
+                referBonusRate = parseFloat(val.referBonus);
+                document.getElementById('referBonusRateText').innerText = referBonusRate.toFixed(2);
+            }
+        });
+
+        // ব্যালেন্স ট্র্যাকিং
+        const userRef = db.ref('stz_miners/' + userId);
+        userRef.on('value', snap => {
+            const val = snap.val();
+            if (val) {
+                const totalUsdt = (val.balance || 0) * STZ_TO_USDT;
+                document.getElementById('topBalance').innerText = totalUsdt.toFixed(3);
+            }
+        });
+
+        // শুধুমাত্র ১-লেভেল (Direct Friends) ট্র্যাকিং
+        const refRef = db.ref('stz_referrals/' + userId);
+        refRef.on('value', snap => {
             const val = snap.val() || {};
-            referralData.f1 = val.f1 ? Object.keys(val.f1).map(k => ({ id: k, ...val.f1[k] })) : [];
-            referralData.f2 = val.f2 ? Object.keys(val.f2).map(k => ({ id: k, ...val.f2[k] })) : [];
+            const f1Count = val.f1 ? Object.keys(val.f1).length : (typeof val.directCount === 'number' ? val.directCount : 0);
 
-            const f1Speed = referralData.f1.length * 10;
-            const f2Speed = referralData.f2.length * 5;
-            const totalSpeed = f1Speed + f2Speed;
+            document.getElementById('f1CountDisplay').innerText = f1Count;
+            document.getElementById('totalRefCount').innerText = f1Count;
 
-            document.getElementById('f1Count').innerText = `${referralData.f1.length} active`;
-            document.getElementById('f2Count').innerText = `${referralData.f2.length} active`;
-            document.getElementById('f1BoostVal').innerText = `+${f1Speed}%`;
-            document.getElementById('f2BoostVal').innerText = `+${f2Speed}%`;
-            document.getElementById('totalSpeedBoost').innerText = `+${totalSpeed}%`;
-
-            renderList();
+            // রেফারেল আয় হিসাব
+            const earnedUsdt = f1Count * referBonusRate;
+            document.getElementById('referTotalEarnedUsdt').innerText = earnedUsdt.toFixed(2);
         });
 
-        // Inviter Lookup
-        db.ref('users_inviters/' + userId).once('value', snap => {
-            if (snap.exists()) {
-                document.getElementById('displayInviter').innerText = snap.val();
+        // লিংক কপি করা
+        function copyReferralLink() {
+            const linkInput = document.getElementById('referralLinkInput');
+            linkInput.select();
+            linkInput.setSelectionRange(0, 99999);
+
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(linkInput.value).then(() => {
+                    if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+                    tg.showAlert("✅ রেফারেল লিংক ক্লিপবোর্ডে কপি হয়েছে!");
+                });
+            } else {
+                document.execCommand("copy");
+                if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+                tg.showAlert("✅ রেফারেল লিংক ক্লিপবোর্ডে কপি হয়েছে!");
             }
-        });
+        }
 
-        function renderList() {
-            const list = activeTab === "direct" ? referralData.f1 : referralData.f2;
-            const container = document.getElementById('teamListContainer');
-
-            if (!list || list.length === 0) {
-                container.innerHTML = `<div class="empty-team">No referrals in ${activeTab === 'direct' ? 'Direct' : 'Indirect'} network yet.</div>`;
-                return;
+        // টেলিগ্রামে সরাসরি শেয়ার করা
+        function shareOnTelegram() {
+            const shareText = encodeURIComponent(`🔥 Join STZ Network! Unlock viral AI video prompts, mine crypto & earn daily USDT prizes free!\n\n👇 Start now:`);
+            const shareUrl = `https://t.me/share/url?url=${encodeURIComponent(inviteLink)}&text=${shareText}`;
+            
+            if (tg.openTelegramLink) {
+                tg.openTelegramLink(shareUrl);
+            } else {
+                window.open(shareUrl, '_blank');
             }
-
-            let html = '';
-            list.forEach(item => {
-                const initial = (item.id || 'U')[0].toUpperCase();
-                html += `
-                    <div class="team-user-item">
-                        <div class="user-left-info">
-                            <div class="user-dot-icon">${initial}</div>
-                            <span class="user-id-text">@${item.id}</span>
-                        </div>
-                        <span class="bonus-tag">${activeTab === 'direct' ? '+10%' : '+5%'}</span>
-                    </div>
-                `;
-            });
-            container.innerHTML = html;
-        }
-
-        function switchFilter(type) {
-            activeTab = type;
-            document.getElementById('btn-direct').classList.toggle('active', type === 'direct');
-            document.getElementById('btn-indirect').classList.toggle('active', type === 'indirect');
-            renderList();
-        }
-
-        function copyCode() {
-            navigator.clipboard.writeText(userId);
-            if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
-            tg.showAlert("Invite Code Copied!");
-        }
-
-        function sendInvite() {
-            const botUsername = "passive_income_zone_bot";
-            const link = `https://t.me/${botUsername}?start=${userId}`;
-            const msg = `Join my STZ Mining team and earn crypto together! Code: ${userId}`;
-            tg.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(link)}&text=${encodeURIComponent(msg)}`);
         }
     </script>
 </body>

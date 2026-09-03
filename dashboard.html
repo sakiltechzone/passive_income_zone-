@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>STZ Network - Mine Dashboard</title>
+    <title>STZ Network - Mining Hub</title>
 
     <!-- Telegram & Adsgram SDK -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -20,6 +20,8 @@
             --text-dark: #0f172a;
             --text-muted: #64748b;
             --card-glass: rgba(255, 255, 255, 0.94);
+            --card-white: #ffffff;
+            --success: #10b981;
         }
 
         * {
@@ -59,7 +61,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 6px;
+            margin-bottom: 8px;
         }
 
         .back-pill-btn {
@@ -72,14 +74,13 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            text-decoration: none;
-            backdrop-filter: blur(8px);
             font-size: 14px;
+            cursor: pointer;
         }
 
         .brand-text {
             font-size: 19px;
-            font-weight: 700;
+            font-weight: 800;
             color: #ffffff;
         }
 
@@ -94,12 +95,148 @@
             font-weight: 800;
             color: var(--text-dark);
             box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+            cursor: pointer;
         }
 
-        /* Token Counter Block */
+        /* ---------------- VIEW 1: IDLE / READY STATE ---------------- */
+        #idleStateView {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .scale-title-sub {
+            font-size: 13px;
+            font-weight: 700;
+            color: rgba(255, 255, 255, 0.9);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 4px;
+        }
+
+        .scale-total-val {
+            font-size: 38px;
+            font-weight: 800;
+            color: #ffffff;
+            margin: 2px 0 16px 0;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.15);
+        }
+
+        .orb-flank-row {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .flank-card {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border-radius: 18px;
+            padding: 12px 14px;
+            min-width: 95px;
+            text-align: center;
+            box-shadow: 0 6px 16px rgba(15, 75, 216, 0.08);
+        }
+
+        .flank-card .num {
+            font-size: 16px;
+            font-weight: 800;
+            color: var(--text-dark);
+        }
+
+        .flank-card .lbl {
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        /* 3-Card AI Accelerate Row */
+        .accelerate-section {
+            width: 100%;
+            margin-top: 14px;
+            margin-bottom: 20px;
+        }
+
+        .accelerate-section h4 {
+            font-size: 15px;
+            font-weight: 800;
+            color: var(--text-dark);
+            margin-left: 2px;
+        }
+
+        .accelerate-section .sub-lbl {
+            font-size: 12px;
+            color: #475569;
+            font-weight: 600;
+            margin-bottom: 12px;
+            margin-left: 2px;
+        }
+
+        .acc-cards-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            width: 100%;
+        }
+
+        .acc-boost-card {
+            background: #ffffff;
+            border-radius: 18px;
+            padding: 14px 10px;
+            text-align: center;
+            position: relative;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.04);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .check-badge {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            font-size: 14px;
+            color: var(--primary-blue);
+        }
+
+        .bolt-icon {
+            font-size: 26px;
+            color: var(--light-blue);
+            margin-top: 4px;
+        }
+
+        .acc-boost-card .pct-text {
+            font-size: 14px;
+            font-weight: 800;
+            color: var(--text-dark);
+        }
+
+        .pill-acc-btn {
+            font-size: 10px;
+            font-weight: 800;
+            background: #eff6ff;
+            color: var(--primary-blue);
+            padding: 4px 8px;
+            border-radius: 10px;
+            width: 100%;
+        }
+
+        /* ---------------- VIEW 2: ACTIVE MINING STATE ---------------- */
+        #activeStateView {
+            width: 100%;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+        }
+
         .token-header-block {
             text-align: center;
-            margin: 4px 0 10px 0;
+            margin: 2px 0 8px 0;
             color: #fff;
         }
 
@@ -118,89 +255,16 @@
             font-size: 12px;
             font-weight: 700;
             color: #022b7a;
-            margin-top: 1px;
         }
 
-        /* ================= 100% PERFECT CIRCULAR ORB ================= */
-        .orb-center-anchor {
-            width: 120px;
-            height: 120px;
-            aspect-ratio: 1 / 1;
-            position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 4px 0 14px 0;
-            flex-shrink: 0;
-        }
-
-        .orb-outer-ring {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            border: 2px solid rgba(255, 255, 255, 0.6);
-            border-bottom: 3.5px solid var(--primary-blue);
-            transform: rotate(-35deg);
-            pointer-events: none;
-        }
-
-        .orb-core-sphere {
-            width: 104px;
-            height: 104px;
-            aspect-ratio: 1 / 1;
-            border-radius: 50%;
-            background: radial-gradient(circle at 35% 30%, #ffffff 0%, #8ec5fc 35%, #2575fc 75%, #0d47a1 100%);
-            box-shadow: 
-                0 12px 30px rgba(28, 100, 242, 0.4),
-                inset -5px -5px 16px rgba(10, 37, 100, 0.7),
-                inset 5px 5px 12px rgba(255, 255, 255, 0.9);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            animation: orbFloat 4s ease-in-out infinite;
-        }
-
-        .orb-eyes-row {
-            display: flex;
-            gap: 18px;
-            align-items: center;
-        }
-
-        .orb-eye {
-            width: 5px;
-            height: 13px;
-            background: #ffffff;
-            border-radius: 4px;
-            box-shadow: 0 0 8px #ffffff;
-        }
-
-        /* Session Timer Pill */
-        .session-timer-pill {
-            background: var(--card-glass);
-            border: 1px solid rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(12px);
-            border-radius: 20px;
-            padding: 8px 18px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 13px;
-            font-weight: 700;
-            color: #0f172a;
-            margin-bottom: 14px;
-            box-shadow: 0 6px 16px rgba(15, 75, 216, 0.06);
-        }
-
-        /* Sheet Card Details */
         .white-sheet-card {
             width: 100%;
             background: #ffffff;
             border-radius: 22px;
             padding: 18px;
             box-shadow: 0 8px 25px rgba(15, 75, 216, 0.08);
-            margin-bottom: 14px;
+            margin-top: 14px;
+            margin-bottom: 16px;
         }
 
         .sheet-head-row {
@@ -209,11 +273,6 @@
             font-size: 13px;
             font-weight: 700;
             margin-bottom: 10px;
-        }
-
-        .sheet-head-row .rate-txt {
-            color: var(--primary-blue);
-            font-weight: 800;
         }
 
         .list-stat-item {
@@ -233,18 +292,8 @@
             color: #334155;
         }
 
-        .list-stat-item .tag-pct {
-            font-weight: 700;
-            color: #64748b;
-        }
-
-        .text-blue {
-            color: var(--primary-blue) !important;
-        }
-
-        /* Step Slider */
         .step-slider-track {
-            margin: 18px 0 10px 0;
+            margin: 16px 0 10px 0;
         }
 
         .step-line-bg {
@@ -293,15 +342,72 @@
             gap: 6px;
         }
 
-        .sheet-hint {
-            display: block;
-            text-align: center;
-            font-size: 11px;
-            color: #94a3b8;
-            margin-top: 6px;
+        /* ---------------- COMMON ORB SPHERE ---------------- */
+        .orb-center-anchor {
+            width: 120px;
+            height: 120px;
+            aspect-ratio: 1 / 1;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 4px 0 12px 0;
         }
 
-        /* Main Blue Action Button */
+        .orb-outer-ring {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.6);
+            border-bottom: 3.5px solid var(--primary-blue);
+            transform: rotate(-35deg);
+            pointer-events: none;
+        }
+
+        .orb-core-sphere {
+            width: 104px;
+            height: 104px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 35% 30%, #ffffff 0%, #8ec5fc 35%, #2575fc 75%, #0d47a1 100%);
+            box-shadow: 0 12px 30px rgba(28, 100, 242, 0.4), inset -5px -5px 16px rgba(10, 37, 100, 0.7), inset 5px 5px 12px rgba(255, 255, 255, 0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            animation: orbFloat 4s ease-in-out infinite;
+        }
+
+        .orb-eyes-row {
+            display: flex;
+            gap: 18px;
+            align-items: center;
+        }
+
+        .orb-eye {
+            width: 5px;
+            height: 13px;
+            background: #ffffff;
+            border-radius: 4px;
+            box-shadow: 0 0 8px #ffffff;
+        }
+
+        .session-timer-pill {
+            background: var(--card-glass);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            border-radius: 20px;
+            padding: 8px 18px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            font-weight: 700;
+            color: #0f172a;
+            box-shadow: 0 6px 16px rgba(15, 75, 216, 0.06);
+        }
+
+        /* Main Blue Button */
         .btn-main-action {
             width: 100%;
             padding: 17px;
@@ -320,19 +426,20 @@
             cursor: not-allowed;
         }
 
-        /* Bottom Navigation Bar */
+        /* 5-Button Modern Bottom Nav Bar */
         .bottom-nav {
             position: fixed;
             bottom: 0;
             left: 0;
             width: 100%;
-            height: 65px;
+            height: 68px;
             background: #ffffff;
             display: flex;
             justify-content: space-around;
             align-items: center;
-            box-shadow: 0 -4px 20px rgba(0,0,0,0.05);
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.06);
             z-index: 100;
+            padding: 0 4px;
         }
 
         .nav-item {
@@ -341,9 +448,10 @@
             align-items: center;
             gap: 3px;
             color: #94a3b8;
-            text-decoration: none;
-            font-size: 11px;
+            font-size: 10px;
             font-weight: 700;
+            cursor: pointer;
+            flex: 1;
         }
 
         .nav-item.active {
@@ -351,22 +459,7 @@
         }
 
         .nav-item i {
-            font-size: 18px;
-        }
-
-        .center-mine-btn {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #3b76f6, #1856f3);
-            color: #fff;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-top: -24px;
-            box-shadow: 0 6px 18px rgba(24, 86, 243, 0.4);
-            text-decoration: none;
-            font-size: 18px;
+            font-size: 17px;
         }
 
         @keyframes orbFloat {
@@ -380,96 +473,163 @@
     <div class="container">
         <!-- Top App Bar -->
         <div class="top-nav">
-            <a href="index.html" class="back-pill-btn">
+            <div onclick="goToPage('index.html')" class="back-pill-btn">
                 <i class="fas fa-chevron-left"></i>
-            </a>
-            <span class="brand-text">Mine</span>
-            <div class="mine-wallet-tag">
-                <i class="fas fa-coins text-blue"></i>
-                <span id="topBarBalance">0.00</span>
+            </div>
+            <span class="brand-text">STZ Mining</span>
+            <div class="mine-wallet-tag" onclick="goToPage('withdraw.html')">
+                <i class="fas fa-wallet" style="color: var(--primary-blue);"></i>
+                $<span id="topBarBalanceUsdt">0.000</span>
             </div>
         </div>
 
-        <!-- Mined Figure Display -->
-        <div class="token-header-block">
-            <div class="token-value"><span id="sessionMinedStz">0.00</span> <span class="unit">STZ</span></div>
-            <div class="usdt-sub">≈ $<span id="sessionMinedUsdt">0.00</span> USDT</div>
-        </div>
+        <!-- ==================== VIEW 1: IDLE / START SCREEN ==================== -->
+        <div id="idleStateView">
+            <span class="scale-title-sub">Total STZ Balance</span>
+            <div class="scale-total-val" id="idleTotalStz">0.00</div>
 
-        <!-- 100% Circular AI Sphere -->
-        <div class="orb-center-anchor">
-            <div class="orb-outer-ring"></div>
-            <div class="orb-core-sphere">
-                <div class="orb-eyes-row">
-                    <span class="orb-eye"></span>
-                    <span class="orb-eye"></span>
+            <!-- Flank Cards & Orb Arena -->
+            <div class="orb-flank-row">
+                <div class="flank-card">
+                    <div class="num" id="idleHourlyRate">0.42</div>
+                    <div class="lbl">STZ/hour</div>
                 </div>
-            </div>
-        </div>
 
-        <!-- Next Session Timer -->
-        <div class="session-timer-pill">
-            <i class="far fa-clock text-blue"></i> Next session in <span id="mineTimerText">12:00:00</span>
-        </div>
-
-        <!-- Sheet Card Details -->
-        <div class="white-sheet-card">
-            <div class="sheet-head-row">
-                <span>Current rate</span>
-                <span class="rate-txt" id="sheetRateDisplay">0.083/hour</span>
-            </div>
-
-            <div class="list-stat-item">
-                <div class="left-row"><i class="fas fa-user-friends"></i> F1 acceleration 0</div>
-                <span class="tag-pct">+0%</span>
-            </div>
-            <div class="list-stat-item">
-                <div class="left-row"><i class="fas fa-users"></i> F2 acceleration 0</div>
-                <span class="tag-pct">+0%</span>
-            </div>
-            <div class="list-stat-item">
-                <div class="left-row"><i class="fas fa-network-wired"></i> AI acceleration <span id="adsStepCounter">0/3</span></div>
-                <span class="tag-pct text-blue" id="aiStepBoostDisplay">+0%</span>
-            </div>
-
-            <!-- Step Slider -->
-            <div class="step-slider-track">
-                <div class="step-line-bg">
-                    <div class="step-line-fill" id="sliderLineFill"></div>
+                <div class="orb-center-anchor">
+                    <div class="orb-outer-ring"></div>
+                    <div class="orb-core-sphere">
+                        <div class="orb-eyes-row">
+                            <span class="orb-eye"></span>
+                            <span class="orb-eye"></span>
+                        </div>
+                    </div>
                 </div>
-                <div class="points-row">
-                    <span class="point active">+0%</span>
-                    <span class="point" id="dot-step-1">+30%</span>
-                    <span class="point" id="dot-step-2">+60%</span>
-                    <span class="point" id="dot-step-3">+100%</span>
+
+                <div class="flank-card">
+                    <div class="num" id="idleBoostRateTag">+0%</div>
+                    <div class="lbl">Hourly rate</div>
                 </div>
             </div>
 
-            <button class="sheet-mini-acc-btn" onclick="triggerBoostAd()">
-                <i class="fas fa-bolt"></i> Accelerate (Watch Ad)
+            <div class="session-timer-pill" style="margin-bottom: 16px;">
+                <i class="far fa-clock" style="color: var(--primary-blue);"></i> Ready to Mine (12h)
+            </div>
+
+            <!-- AI Accelerate 3 Cards -->
+            <div class="accelerate-section">
+                <h4>AI accelerate</h4>
+                <div class="sub-lbl">Activate mining to accelerate</div>
+
+                <div class="acc-cards-grid">
+                    <div class="acc-boost-card">
+                        <i class="fas fa-check-circle check-badge"></i>
+                        <i class="fas fa-bolt bolt-icon"></i>
+                        <span class="pct-text">+30%</span>
+                        <span class="pill-acc-btn">Tier 1</span>
+                    </div>
+                    <div class="acc-boost-card">
+                        <i class="fas fa-check-circle check-badge"></i>
+                        <i class="fas fa-bolt bolt-icon"></i>
+                        <span class="pct-text">+60%</span>
+                        <span class="pill-acc-btn">Tier 2</span>
+                    </div>
+                    <div class="acc-boost-card">
+                        <i class="fas fa-check-circle check-badge"></i>
+                        <i class="fas fa-bolt bolt-icon"></i>
+                        <span class="pct-text">+100%</span>
+                        <span class="pill-acc-btn">Tier 3</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Start Action Button -->
+            <button class="btn-main-action" id="startMiningBtn" onclick="handleMineActionClick()">
+                Start 12h Mining
             </button>
-            <span class="sheet-hint">Resets every 12 hours session</span>
         </div>
 
-        <!-- Action Button -->
-        <button class="btn-main-action" id="mineActionBtn" onclick="handleMineActionClick()">
-            Start 12h Mining
-        </button>
+        <!-- ==================== VIEW 2: ACTIVE MINING SCREEN ==================== -->
+        <div id="activeStateView">
+            <div class="token-header-block">
+                <div class="token-value"><span id="sessionMinedStz">0.00</span> <span class="unit">STZ</span></div>
+                <div class="usdt-sub">≈ $<span id="sessionMinedUsdt">0.000</span> USDT</div>
+            </div>
+
+            <div class="orb-center-anchor">
+                <div class="orb-outer-ring"></div>
+                <div class="orb-core-sphere">
+                    <div class="orb-eyes-row">
+                        <span class="orb-eye"></span>
+                        <span class="orb-eye"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="session-timer-pill">
+                <i class="far fa-clock" style="color: var(--primary-blue);"></i> Next session in <span id="mineTimerText">12:00:00</span>
+            </div>
+
+            <div class="white-sheet-card">
+                <div class="sheet-head-row">
+                    <span>Current rate</span>
+                    <span style="color: var(--primary-blue); font-weight: 800;" id="sheetRateDisplay">0.417/hour</span>
+                </div>
+
+                <div class="list-stat-item">
+                    <div class="left-row"><i class="fas fa-user-friends"></i> F1 acceleration <span id="f1CountTag">0</span></div>
+                    <span style="font-weight: 700; color: #64748b;" id="f1BoostTag">+0%</span>
+                </div>
+                <div class="list-stat-item">
+                    <div class="left-row"><i class="fas fa-network-wired"></i> AI acceleration <span id="adsStepCounter">0/3</span></div>
+                    <span style="color: var(--primary-blue); font-weight: 700;" id="aiStepBoostDisplay">+0%</span>
+                </div>
+
+                <!-- Step Slider -->
+                <div class="step-slider-track">
+                    <div class="step-line-bg">
+                        <div class="step-line-fill" id="sliderLineFill"></div>
+                    </div>
+                    <div class="points-row">
+                        <span class="point active">+0%</span>
+                        <span class="point" id="dot-step-1">+30%</span>
+                        <span class="point" id="dot-step-2">+60%</span>
+                        <span class="point" id="dot-step-3">+100%</span>
+                    </div>
+                </div>
+
+                <button class="sheet-mini-acc-btn" onclick="triggerBoostAd()">
+                    <i class="fas fa-bolt"></i> Accelerate (Watch Ad)
+                </button>
+            </div>
+
+            <button class="btn-main-action" id="activeMiningBtn" disabled>
+                Mining In Progress...
+            </button>
+        </div>
     </div>
 
-    <!-- Bottom Navigation Bar -->
+    <!-- 5-Button Bottom Nav -->
     <nav class="bottom-nav">
-        <a href="index.html" class="nav-item">
-            <i class="fas fa-home"></i>
-            <span>Home</span>
-        </a>
-        <a href="dashboard.html" class="center-mine-btn">
+        <div onclick="goToPage('index.html')" class="nav-item">
+            <i class="fas fa-magic"></i>
+            <span>Prompts</span>
+        </div>
+        <div onclick="goToPage('dashboard.html')" class="nav-item active">
             <i class="fas fa-hammer"></i>
-        </a>
-        <a href="refer.html" class="nav-item">
+            <span>Mining</span>
+        </div>
+        <div onclick="goToPage('spin.html')" class="nav-item">
+            <i class="fas fa-dharmachakra"></i>
+            <span>Spin</span>
+        </div>
+        <div onclick="goToPage('refer.html')" class="nav-item">
             <i class="fas fa-user-friends"></i>
             <span>Referral</span>
-        </a>
+        </div>
+        <div onclick="goToPage('withdraw.html')" class="nav-item">
+            <i class="fas fa-wallet"></i>
+            <span>Wallet</span>
+        </div>
     </nav>
 
     <!-- Firebase SDKs -->
@@ -480,40 +640,51 @@
         const tg = window.Telegram.WebApp;
         tg.expand();
 
+        function goToPage(target) {
+            window.location.href = target;
+        }
+
         const ADSGRAM_BLOCK_ID = "26734";
-        const STZ_TO_USDT = 0.001; // ১ STZ = $০.০০১ USDT (১০০ STZ = $০.১০ USDT)
+        const STZ_TO_USDT = 0.001;
         const CYCLE_MS = 12 * 60 * 60 * 1000;
         const BASE_HOURLY = 5 / 12;
         const BASE_PER_SEC = BASE_HOURLY / 3600;
 
         const firebaseConfig = {
-            apiKey: "AIzaSyAl0eRqOs5QNUg_J1Pj-4PlEqRDxAXr-oA",[span_0](start_span)[span_0](end_span)
-            authDomain: "viral-zone-bd.firebaseapp.com",[span_1](start_span)[span_1](end_span)
-            projectId: "viral-zone-bd",[span_2](start_span)[span_2](end_span)
-            storageBucket: "viral-zone-bd.firebasestorage.app",[span_3](start_span)[span_3](end_span)
-            messagingSenderId: "794737483555",[span_4](start_span)[span_4](end_span)
-            appId: "1:794737483555:web:a275cd96aafff0e640f696",[span_5](start_span)[span_5](end_span)
-            databaseURL: "https://viral-zone-bd-default-rtdb.firebaseio.com[span_6](start_span)"[span_6](end_span)
+            apiKey: "AIzaSyAl0eRqOs5QNUg_J1Pj-4PlEqRDxAXr-oA",
+            authDomain: "viral-zone-bd.firebaseapp.com",
+            projectId: "viral-zone-bd",
+            storageBucket: "viral-zone-bd.firebasestorage.app",
+            messagingSenderId: "794737483555",
+            appId: "1:794737483555:web:a275cd96aafff0e640f696",
+            databaseURL: "https://viral-zone-bd-default-rtdb.firebaseio.com"
         };
 
-        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);[span_7](start_span)[span_7](end_span)
-        const db = firebase.database();[span_8](start_span)[span_8](end_span)
+        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
 
         let userId = "sakil24";
         let userData = { balance: 0, miningStartedAt: 0, boostLevel: 0 };
         let adsController = null;
+        let refMultiplier = 1.0;
 
-        try {
-            if (window.Adsgram) {
-                adsController = window.Adsgram.init({ blockId: ADSGRAM_BLOCK_ID });
+        function initAdsgram() {
+            try {
+                if (window.Adsgram) {
+                    adsController = window.Adsgram.init({ blockId: ADSGRAM_BLOCK_ID });
+                }
+            } catch(e) {
+                console.error("Adsgram init error:", e);
             }
-        } catch(e) {}
+        }
+        initAdsgram();
 
         if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
             const u = tg.initDataUnsafe.user;
-            userId = u.username ? u.username : u.id.toString();
+            userId = u.id ? u.id.toString() : (u.username || "sakil24");
         }
 
+        // ইউজার মাইনিং ডেটা সিঙ্ক
         const userRef = db.ref('stz_miners/' + userId);
         userRef.on('value', snap => {
             const val = snap.val();
@@ -522,50 +693,68 @@
             } else {
                 userRef.set(userData);
             }
+            document.getElementById('idleTotalStz').innerText = (userData.balance || 0).toFixed(2);
             updateBoostUI();
         });
 
-        // লাইভ টাইমার ও মাইনিং লুপ
+        // ডিরেক্ট রেফারেল (F1) ট্র্যাকিং
+        db.ref('stz_referrals/' + userId).on('value', snap => {
+            const val = snap.val() || {};
+            const f1Count = val.f1 ? Object.keys(val.f1).length : (typeof val.directCount === 'number' ? val.directCount : 0);
+            const f1Boost = f1Count * 10;
+
+            document.getElementById('f1CountTag').innerText = f1Count;
+            document.getElementById('f1BoostTag').innerText = `+${f1Boost}%`;
+            refMultiplier = 1 + (f1Boost / 100);
+        });
+
+        // লাইভ স্টেট মনিটর ও ভিউ সুইচিং
         setInterval(() => {
             const now = Date.now();
             const elapsed = now - (userData.miningStartedAt || 0);
-            const isMining = elapsed < CYCLE_MS;
+            const isMining = (userData.miningStartedAt > 0) && (elapsed < CYCLE_MS);
 
-            let mult = 1.0;
+            let aiMult = 1.0;
             let boostPct = 0;
-            if (userData.boostLevel === 1) { mult = 1.30; boostPct = 30; }
-            else if (userData.boostLevel === 2) { mult = 1.60; boostPct = 60; }
-            else if (userData.boostLevel === 3) { mult = 2.00; boostPct = 100; }
+            if (userData.boostLevel === 1) { aiMult = 1.30; boostPct = 30; }
+            else if (userData.boostLevel === 2) { aiMult = 1.60; boostPct = 60; }
+            else if (userData.boostLevel === 3) { aiMult = 2.00; boostPct = 100; }
 
-            document.getElementById('sheetRateDisplay').innerText = `${(BASE_HOURLY * mult).toFixed(3)}/hour`;
-            document.getElementById('aiStepBoostDisplay').innerText = `+${boostPct}%`;
-            document.getElementById('adsStepCounter').innerText = `${userData.boostLevel}/3`;
-
-            const actionBtn = document.getElementById('mineActionBtn');
+            const totalMult = aiMult * refMultiplier;
 
             if (isMining) {
+                // ২য় স্ক্রিনশটের অ্যাক্টিভ ভিউ
+                document.getElementById('idleStateView').style.display = 'none';
+                document.getElementById('activeStateView').style.display = 'flex';
+
                 const rem = CYCLE_MS - elapsed;
                 renderTimerText(rem);
 
-                const minedSoFar = (elapsed / 1000) * BASE_PER_SEC * mult;
+                const minedSoFar = (elapsed / 1000) * BASE_PER_SEC * totalMult;
                 document.getElementById('sessionMinedStz').innerText = minedSoFar.toFixed(2);
-                document.getElementById('sessionMinedUsdt').innerText = (minedSoFar * STZ_TO_USDT).toFixed(2);
+                document.getElementById('sessionMinedUsdt').innerText = (minedSoFar * STZ_TO_USDT).toFixed(3);
 
-                document.getElementById('topBarBalance').innerText = (userData.balance + minedSoFar).toFixed(2);
+                const totalCurrentBalance = (userData.balance || 0) + minedSoFar;
+                document.getElementById('topBarBalanceUsdt').innerText = (totalCurrentBalance * STZ_TO_USDT).toFixed(3);
 
-                actionBtn.disabled = true;
-                actionBtn.innerText = "Mining In Progress...";
+                document.getElementById('sheetRateDisplay').innerText = `${(BASE_HOURLY * totalMult).toFixed(3)}/hour`;
+                document.getElementById('aiStepBoostDisplay').innerText = `+${boostPct}%`;
+                document.getElementById('adsStepCounter').innerText = `${userData.boostLevel || 0}/3`;
             } else {
-                renderTimerText(0);
-                document.getElementById('sessionMinedStz').innerText = "0.00";
-                document.getElementById('sessionMinedUsdt').innerText = "0.00";
-                document.getElementById('topBarBalance').innerText = userData.balance.toFixed(2);
+                // ১ম স্ক্রিনশটের আইডল ভিউ
+                document.getElementById('activeStateView').style.display = 'none';
+                document.getElementById('idleStateView').style.display = 'flex';
 
-                actionBtn.disabled = false;
-                if (userData.miningStartedAt > 0) {
-                    actionBtn.innerText = "Claim STZ";
+                document.getElementById('idleTotalStz').innerText = (userData.balance || 0).toFixed(2);
+                document.getElementById('topBarBalanceUsdt').innerText = ((userData.balance || 0) * STZ_TO_USDT).toFixed(3);
+                document.getElementById('idleHourlyRate').innerText = (BASE_HOURLY * refMultiplier).toFixed(2);
+                document.getElementById('idleBoostRateTag').innerText = `+${Math.round((refMultiplier - 1) * 100)}%`;
+
+                const startBtn = document.getElementById('startMiningBtn');
+                if (userData.miningStartedAt > 0 && elapsed >= CYCLE_MS) {
+                    startBtn.innerText = "Claim STZ & Start";
                 } else {
-                    actionBtn.innerText = "Start 12h Mining";
+                    startBtn.innerText = "Start 12h Mining";
                 }
             }
         }, 1000);
@@ -592,18 +781,37 @@
             }
         }
 
+        function showRewardAd(onSuccess) {
+            if (!adsController) {
+                initAdsgram();
+            }
+
+            if (adsController) {
+                adsController.show().then(() => {
+                    onSuccess();
+                }).catch((err) => {
+                    console.log("Ad fallback triggered:", err);
+                    tg.showConfirm("বিজ্ঞাপন লোড হতে সমস্যা হয়েছে। আপনি কি সরাসরি মাইনিং চালু করতে চান?", (ok) => {
+                        if (ok) onSuccess();
+                    });
+                });
+            } else {
+                onSuccess();
+            }
+        }
+
         function handleMineActionClick() {
             const now = Date.now();
             const elapsed = now - (userData.miningStartedAt || 0);
 
             if (userData.miningStartedAt > 0 && elapsed >= CYCLE_MS) {
-                let mult = 1.0;
-                if (userData.boostLevel === 1) mult = 1.30;
-                else if (userData.boostLevel === 2) mult = 1.60;
-                else if (userData.boostLevel === 3) mult = 2.00;
+                let aiMult = 1.0;
+                if (userData.boostLevel === 1) aiMult = 1.30;
+                else if (userData.boostLevel === 2) aiMult = 1.60;
+                else if (userData.boostLevel === 3) aiMult = 2.00;
 
-                const earned = (CYCLE_MS / 1000) * BASE_PER_SEC * mult;
-                userData.balance += earned;
+                const earned = (CYCLE_MS / 1000) * BASE_PER_SEC * (aiMult * refMultiplier);
+                userData.balance = (userData.balance || 0) + earned;
                 userData.miningStartedAt = 0;
                 userData.boostLevel = 0;
             }
@@ -611,38 +819,28 @@
             showRewardAd(() => {
                 userData.miningStartedAt = Date.now();
                 userRef.update({
-                    balance: userData.balance,
+                    balance: userData.balance || 0,
                     miningStartedAt: userData.miningStartedAt,
-                    boostLevel: userData.boostLevel
+                    boostLevel: userData.boostLevel || 0
                 });
                 if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+                tg.showAlert("🚀 ১২ ঘণ্টার মাইনিং সফলভাবে শুরু হয়েছে!");
             });
         }
 
         function triggerBoostAd() {
             if (userData.boostLevel >= 3) {
-                tg.showAlert("সর্বোচ্চ +১০০% বুস্ট ইতিমধ্যে সক্রিয় আছে!");
+                tg.showAlert("সর্বোচ্চ +১০০% বুস্ট ইতিমধ্যে সক্রিয় রয়েছে!");
                 return;
             }
 
             showRewardAd(() => {
-                userData.boostLevel += 1;
+                userData.boostLevel = (userData.boostLevel || 0) + 1;
                 userRef.update({ boostLevel: userData.boostLevel });
                 updateBoostUI();
+                if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
                 tg.showAlert("🚀 মাইনিং স্পিড বৃদ্ধি পেয়েছে!");
             });
-        }
-
-        function showRewardAd(onSuccess) {
-            if (adsController) {
-                adsController.show().then(() => {
-                    onSuccess();
-                }).catch(() => {
-                    tg.showAlert("বিজ্ঞাপনটি সম্পূর্ণ দেখতে হবে!");
-                });
-            } else {
-                onSuccess();
-            }
         }
     </script>
 </body>
