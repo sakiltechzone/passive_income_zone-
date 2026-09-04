@@ -29,6 +29,7 @@
             margin: 0;
             padding: 0;
             user-select: none;
+            -webkit-user-select: none;
             font-family: 'Plus Jakarta Sans', sans-serif;
             -webkit-tap-highlight-color: transparent;
         }
@@ -235,10 +236,17 @@
             color: var(--text-dark);
         }
 
-        .prompt-preview-snippet {
+        /* Prompt Snippet Box (Protected & Blur by Default) */
+        .prompt-preview-wrapper {
+            position: relative;
             background: #f8fafc;
             border: 1px dashed #cbd5e1;
             border-radius: 12px;
+            overflow: hidden;
+            min-height: 65px;
+        }
+
+        .prompt-preview-snippet {
             padding: 10px;
             font-size: 12px;
             color: var(--text-muted);
@@ -246,8 +254,46 @@
             line-height: 1.4;
             max-height: 70px;
             overflow-y: auto;
-            user-select: text;
-            -webkit-user-select: text;
+            /* ডিফল্টভাবে সম্পূর্ণ কপি ব্লক */
+            user-select: none !important;
+            -webkit-user-select: none !important;
+            -webkit-touch-callout: none !important;
+            filter: blur(5px);
+            pointer-events: none;
+            transition: filter 0.3s ease;
+        }
+
+        /* আনলক হওয়ার পর টেক্সট ক্লিয়ার এবং কপি উপযোগী হবে */
+        .prompt-preview-wrapper.unlocked .prompt-preview-snippet {
+            filter: none !important;
+            pointer-events: auto !important;
+            user-select: text !important;
+            -webkit-user-select: text !important;
+            -webkit-touch-callout: default !important;
+        }
+
+        .lock-overlay-badge {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(6px);
+            color: #ffffff;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 5px 12px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            pointer-events: none;
+            white-space: nowrap;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+        }
+
+        .prompt-preview-wrapper.unlocked .lock-overlay-badge {
+            display: none !important;
         }
 
         .btn-unlock-copy {
@@ -503,7 +549,13 @@
                         </div>
                         <div class="card-content">
                             <div class="card-title">${item.title}</div>
-                            <div class="prompt-preview-snippet" id="snippet-${item.id}">${item.promptText}</div>
+                            
+                            <!-- লকড / ব্লার কন্টেইনার -->
+                            <div class="prompt-preview-wrapper ${isUnlocked ? 'unlocked' : ''}" id="wrap-${item.id}">
+                                <div class="prompt-preview-snippet" id="snippet-${item.id}">${item.promptText}</div>
+                                <div class="lock-overlay-badge"><i class="fas fa-lock"></i> Watch Ad to Unlock</div>
+                            </div>
+
                             <button class="btn-unlock-copy ${isUnlocked ? 'unlocked' : ''}" id="btn-${item.id}" onclick="handlePromptAction('${item.id}')">
                                 ${isUnlocked ? '<i class="fas fa-copy"></i> Copy Prompt' : '<i class="fas fa-play"></i> Watch Ad & Copy Prompt'}
                             </button>
@@ -519,9 +571,9 @@
             const targetPrompt = allPrompts.find(p => p.id === promptId);
             if (!targetPrompt) return;
 
-            // যদি ইতিমধ্যে আনলক করা থাকে, সরাসরি কপি হবে
+            // যদি ইতিমধ্যে আনলক হয়ে থাকে, তবে ট্যাপ করলেই দ্রুত কপি হবে
             if (unlockedPrompts.has(promptId)) {
-                executeCopy(targetPrompt.promptText);
+                performSafeCopy(targetPrompt.promptText);
                 return;
             }
 
@@ -536,33 +588,38 @@
 
             if (adsController) {
                 adsController.show().then(() => {
-                    markPromptAsUnlocked(promptId, targetPrompt.promptText);
-                    executeCopy(targetPrompt.promptText);
+                    // অ্যাড সফলভাবে শেষ হয়েছে
+                    unlockCardUI(promptId);
+                    performSafeCopy(targetPrompt.promptText);
                 }).catch((err) => {
-                    console.log("Ad error or closed:", err);
+                    console.log("Ad error or skipped:", err);
                     if (btn) {
                         btn.innerHTML = '<i class="fas fa-play"></i> Watch Ad & Copy Prompt';
                     }
                     if (tg && tg.showConfirm) {
-                        tg.showConfirm("বিজ্ঞাপনটি সম্পন্ন হয়নি। আপনি কি সরাসরি আনলক করতে চান?", (ok) => {
+                        tg.showConfirm("বিজ্ঞাপনটি লোড হতে সমস্যা হয়েছে। আপনি কি আনলক করতে চান?", (ok) => {
                             if (ok) {
-                                markPromptAsUnlocked(promptId, targetPrompt.promptText);
-                                executeCopy(targetPrompt.promptText);
+                                unlockCardUI(promptId);
+                                performSafeCopy(targetPrompt.promptText);
                             }
                         });
-                    } else {
-                        markPromptAsUnlocked(promptId, targetPrompt.promptText);
-                        executeCopy(targetPrompt.promptText);
                     }
                 });
             } else {
-                markPromptAsUnlocked(promptId, targetPrompt.promptText);
-                executeCopy(targetPrompt.promptText);
+                unlockCardUI(promptId);
+                performSafeCopy(targetPrompt.promptText);
             }
         }
 
-        function markPromptAsUnlocked(promptId, text) {
+        // কার্ড আনলক করা (ব্লার দূর করা এবং কপি বাটন দেওয়া)
+        function unlockCardUI(promptId) {
             unlockedPrompts.add(promptId);
+
+            // র‍্যাপার থেকে ব্লার সরানো
+            const wrap = document.getElementById(`wrap-${promptId}`);
+            if (wrap) wrap.classList.add('unlocked');
+
+            // বাটন পরিবর্তন
             const btn = document.getElementById(`btn-${promptId}`);
             if (btn) {
                 btn.className = "btn-unlock-copy unlocked";
@@ -570,54 +627,46 @@
             }
         }
 
-        function executeCopy(text) {
-            let copied = false;
-
-            // মেথড ১: আধুনিক ক্লিপবোর্ড এপিআই
+        // কপি লজিক (অবাঞ্ছিত অ্যালার্ট সম্পূর্ণ বন্ধ)
+        function performSafeCopy(text) {
             if (navigator.clipboard && window.isSecureContext) {
                 navigator.clipboard.writeText(text).then(() => {
-                    showCopySuccess();
+                    triggerSuccessVibe();
                 }).catch(() => {
-                    fallbackCopy(text);
+                    fallbackCopySilently(text);
                 });
-                return;
+            } else {
+                fallbackCopySilently(text);
             }
-
-            // মেথড ২: নির্ভরযোগ্য টেলিগ্রাম ফলব্যাক
-            fallbackCopy(text);
         }
 
-        function fallbackCopy(text) {
+        function fallbackCopySilently(text) {
             try {
-                const textArea = document.createElement("textarea");
-                textArea.value = text;
-                textArea.style.position = "fixed";
-                textArea.style.left = "-999999px";
-                textArea.style.top = "-999999px";
-                document.body.appendChild(textArea);
-                textArea.focus();
-                textArea.select();
-                const successful = document.execCommand('copy');
-                document.body.removeChild(textArea);
-
-                if (successful) {
-                    showCopySuccess();
-                } else {
-                    alertModal("প্রম্পটটি স্ক্রিন থেকে ম্যানুয়ালি কপি করে নিন।");
-                }
-            } catch (err) {
-                alertModal("প্রম্পটটি স্ক্রিন থেকে ম্যানুয়ালি কপি করে নিন।");
+                const ta = document.createElement("textarea");
+                ta.value = text;
+                ta.style.position = "fixed";
+                ta.style.opacity = "0";
+                ta.style.left = "-9999px";
+                document.body.appendChild(ta);
+                ta.focus();
+                ta.select();
+                document.execCommand("copy");
+                document.body.removeChild(ta);
+                triggerSuccessVibe();
+            } catch(e) {
+                console.log("Silent copy fallback failed", e);
             }
         }
 
-        function showCopySuccess() {
-            if (tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
-            alertModal("✅ প্রম্পট সফলভাবে ক্লিপবোর্ডে কপি হয়েছে!");
-        }
-
-        function alertModal(msg) {
-            if (tg && tg.showAlert) tg.showAlert(msg);
-            else alert(msg);
+        function triggerSuccessVibe() {
+            if (tg && tg.HapticFeedback) {
+                tg.HapticFeedback.notificationOccurred('success');
+            }
+            if (tg && tg.showAlert) {
+                tg.showAlert("✅ প্রম্পট সফলভাবে কপি হয়েছে!");
+            } else {
+                alert("✅ প্রম্পট সফলভাবে কপি হয়েছে!");
+            }
         }
     </script>
 </body>
