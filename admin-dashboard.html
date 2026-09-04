@@ -208,6 +208,21 @@
             opacity: 0.9;
         }
 
+        .btn-cancel-edit {
+            background: #1f2937;
+            color: var(--text-muted);
+            border: 1px solid var(--border);
+            padding: 12px 18px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            gap: 6px;
+            margin-left: 8px;
+        }
+
         /* Prompts Feed */
         .prompt-item {
             background: #030712;
@@ -241,6 +256,22 @@
             background: rgba(28, 100, 242, 0.18);
             color: #60a5fa;
             text-transform: uppercase;
+        }
+
+        .prompt-actions {
+            display: flex;
+            gap: 6px;
+        }
+
+        .btn-edit {
+            background: rgba(59, 130, 246, 0.15);
+            color: #60a5fa;
+            border: 1px solid #3b82f6;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
         }
 
         .btn-delete {
@@ -325,7 +356,7 @@
         <!-- 1. AI Prompts Manager Tab -->
         <div id="promptsTab" class="content-tab">
             <div class="section-card">
-                <h3><i class="fas fa-plus-circle" style="color: var(--primary);"></i> Publish Viral AI Prompt</h3>
+                <h3 id="promptFormTitle"><i class="fas fa-plus-circle" style="color: var(--primary);"></i> Publish Viral AI Prompt</h3>
                 <div class="form-grid">
                     <div class="form-group">
                         <label>Category / Platform</label>
@@ -349,7 +380,8 @@
                         <textarea id="promptText" class="styled-textarea" placeholder="Paste the exact prompt text here..."></textarea>
                     </div>
                 </div>
-                <button class="btn-action" onclick="uploadPrompt()"><i class="fas fa-cloud-arrow-up"></i> Publish to Feed</button>
+                <button class="btn-action" id="btnUploadPrompt" onclick="uploadPrompt()"><i class="fas fa-cloud-arrow-up"></i> <span id="btnUploadText">Publish to Feed</span></button>
+                <button class="btn-cancel-edit" id="btnCancelEdit" onclick="cancelEditPrompt()"><i class="fas fa-xmark"></i> Cancel Edit</button>
             </div>
 
             <div class="section-card">
@@ -430,6 +462,9 @@
         const auth = firebase.auth();
         const db = firebase.database();
 
+        let editingPromptKey = null;
+        let cachedPromptsData = {};
+
         // রিয়েল-টাইম অথেন্টিকেশন গার্ড
         auth.onAuthStateChanged((user) => {
             if (!user) {
@@ -469,9 +504,11 @@
                 const data = snap.val();
                 if (!data) {
                     container.innerHTML = '<p style="color: var(--text-muted); font-size: 13px;">No prompts uploaded yet.</p>';
+                    cachedPromptsData = {};
                     return;
                 }
 
+                cachedPromptsData = data;
                 let html = '';
                 Object.keys(data).reverse().forEach(key => {
                     const item = data[key];
@@ -480,10 +517,13 @@
                             <div class="prompt-info">
                                 <span class="badge-cat">${item.category}</span>
                                 <h4>${item.title}</h4>
-                                <p>${item.promptText.substring(0, 100)}...</p>
-                                <a href="${item.mediaUrl}" target="_blank" style="color: #60a5fa; font-size: 11px;">View Media</a>
+                                <p>${(item.promptText || '').substring(0, 100)}...</p>
+                                ${item.mediaUrl ? `<a href="${item.mediaUrl}" target="_blank" style="color: #60a5fa; font-size: 11px;">View Media</a>` : ''}
                             </div>
-                            <button class="btn-delete" onclick="deletePrompt('${key}')"><i class="fas fa-trash"></i></button>
+                            <div class="prompt-actions">
+                                <button class="btn-edit" onclick="editPrompt('${key}')"><i class="fas fa-pen-to-square"></i></button>
+                                <button class="btn-delete" onclick="deletePrompt('${key}')"><i class="fas fa-trash"></i></button>
+                            </div>
                         </div>
                     `;
                 });
@@ -535,7 +575,37 @@
             });
         }
 
-        // প্রম্পট পাবলিশ
+        // প্রম্পট এডিট মোড চালু করা
+        function editPrompt(key) {
+            const item = cachedPromptsData[key];
+            if (!item) return;
+
+            editingPromptKey = key;
+            document.getElementById('promptCategory').value = item.category || 'facebook';
+            document.getElementById('promptTitle').value = item.title || '';
+            document.getElementById('promptMediaUrl').value = item.mediaUrl || '';
+            document.getElementById('promptText').value = item.promptText || '';
+
+            document.getElementById('promptFormTitle').innerHTML = '<i class="fas fa-pen-to-square" style="color: var(--warning);"></i> Edit Viral AI Prompt';
+            document.getElementById('btnUploadText').innerText = 'Update Prompt';
+            document.getElementById('btnCancelEdit').style.display = 'inline-flex';
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // প্রম্পট এডিট বাতিল করা
+        function cancelEditPrompt() {
+            editingPromptKey = null;
+            document.getElementById('promptTitle').value = "";
+            document.getElementById('promptMediaUrl').value = "";
+            document.getElementById('promptText').value = "";
+
+            document.getElementById('promptFormTitle').innerHTML = '<i class="fas fa-plus-circle" style="color: var(--primary);"></i> Publish Viral AI Prompt';
+            document.getElementById('btnUploadText').innerText = 'Publish to Feed';
+            document.getElementById('btnCancelEdit').style.display = 'none';
+        }
+
+        // প্রম্পট পাবলিশ ও আপডেট হ্যান্ডলার
         function uploadPrompt() {
             const cat = document.getElementById('promptCategory').value;
             const title = document.getElementById('promptTitle').value.trim();
@@ -547,26 +617,43 @@
                 return;
             }
 
-            const newPromptKey = db.ref('ai_prompts').push().key;
-            db.ref('ai_prompts/' + newPromptKey).set({
-                id: newPromptKey,
-                category: cat,
-                title: title,
-                mediaUrl: media || "",
-                promptText: prompt,
-                createdAt: Date.now()
-            }).then(() => {
-                document.getElementById('promptTitle').value = "";
-                document.getElementById('promptMediaUrl').value = "";
-                document.getElementById('promptText').value = "";
-                alert("প্রম্পট সফলভাবে লাইভ করা হয়েছে!");
-            });
+            if (editingPromptKey) {
+                // বিদ্যমান প্রম্পট আপডেট
+                db.ref('ai_prompts/' + editingPromptKey).update({
+                    category: cat,
+                    title: title,
+                    mediaUrl: media || "",
+                    promptText: prompt,
+                    updatedAt: Date.now()
+                }).then(() => {
+                    cancelEditPrompt();
+                    alert("প্রম্পট সফলভাবে আপডেট করা হয়েছে!");
+                });
+            } else {
+                // নতুন প্রম্পট তৈরি
+                const newPromptKey = db.ref('ai_prompts').push().key;
+                db.ref('ai_prompts/' + newPromptKey).set({
+                    id: newPromptKey,
+                    category: cat,
+                    title: title,
+                    mediaUrl: media || "",
+                    promptText: prompt,
+                    createdAt: Date.now()
+                }).then(() => {
+                    cancelEditPrompt();
+                    alert("প্রম্পট সফলভাবে লাইভ করা হয়েছে!");
+                });
+            }
         }
 
         // প্রম্পট ডিলিট
         function deletePrompt(key) {
             if (confirm("আপনি কি নিশ্চিত এই প্রম্পটটি ডিলিট করতে চান?")) {
-                db.ref('ai_prompts/' + key).remove();
+                db.ref('ai_prompts/' + key).remove().then(() => {
+                    if (editingPromptKey === key) {
+                        cancelEditPrompt();
+                    }
+                });
             }
         }
 
