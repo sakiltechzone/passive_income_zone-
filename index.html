@@ -221,6 +221,32 @@
             display: flex;
             align-items: center;
             gap: 5px;
+            z-index: 2;
+        }
+
+        /* Video Sound Toggle Button */
+        .sound-toggle-btn {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(8px);
+            color: #ffffff;
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 13px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            z-index: 3;
+            transition: transform 0.15s ease, background 0.2s;
+        }
+
+        .sound-toggle-btn:active {
+            transform: scale(0.9);
         }
 
         .card-content {
@@ -254,7 +280,6 @@
             line-height: 1.4;
             max-height: 70px;
             overflow-y: auto;
-            /* ডিফল্টভাবে সম্পূর্ণ কপি ব্লক */
             user-select: none !important;
             -webkit-user-select: none !important;
             -webkit-touch-callout: none !important;
@@ -263,7 +288,6 @@
             transition: filter 0.3s ease;
         }
 
-        /* আনলক হওয়ার পর টেক্সট ক্লিয়ার এবং কপি উপযোগী হবে */
         .prompt-preview-wrapper.unlocked .prompt-preview-snippet {
             filter: none !important;
             pointer-events: auto !important;
@@ -534,9 +558,14 @@
 
             let html = '';
             filtered.forEach(item => {
-                const isVideo = item.mediaUrl && item.mediaUrl.endsWith('.mp4');
+                const isVideo = item.mediaUrl && (item.mediaUrl.endsWith('.mp4') || item.mediaUrl.includes('/video/'));
                 const mediaTag = isVideo 
-                    ? `<video src="${item.mediaUrl}" autoplay loop muted playsinline></video>` 
+                    ? `
+                        <video id="vid-${item.id}" src="${item.mediaUrl}" autoplay loop muted playsinline preload="metadata"></video>
+                        <div class="sound-toggle-btn" onclick="toggleVideoSound('${item.id}', this)">
+                            <i class="fas fa-volume-mute"></i>
+                        </div>
+                      ` 
                     : `<img src="${item.mediaUrl || 'https://via.placeholder.com/400x200?text=AI+Preview'}" alt="${item.title}">`;
 
                 const isUnlocked = unlockedPrompts.has(item.id);
@@ -567,11 +596,24 @@
             container.innerHTML = html;
         }
 
+        // অডিও টগল ফাংশন (মিউট ও আনমিউট)
+        function toggleVideoSound(id, btn) {
+            const video = document.getElementById(`vid-${id}`);
+            if (!video) return;
+
+            if (video.muted) {
+                video.muted = false;
+                btn.innerHTML = '<i class="fas fa-volume-up"></i>';
+            } else {
+                video.muted = true;
+                btn.innerHTML = '<i class="fas fa-volume-mute"></i>';
+            }
+        }
+
         function handlePromptAction(promptId) {
             const targetPrompt = allPrompts.find(p => p.id === promptId);
             if (!targetPrompt) return;
 
-            // যদি ইতিমধ্যে আনলক হয়ে থাকে, তবে ট্যাপ করলেই দ্রুত কপি হবে
             if (unlockedPrompts.has(promptId)) {
                 performSafeCopy(targetPrompt.promptText);
                 return;
@@ -588,7 +630,6 @@
 
             if (adsController) {
                 adsController.show().then(() => {
-                    // অ্যাড সফলভাবে শেষ হয়েছে
                     unlockCardUI(promptId);
                     performSafeCopy(targetPrompt.promptText);
                 }).catch((err) => {
@@ -611,15 +652,12 @@
             }
         }
 
-        // কার্ড আনলক করা (ব্লার দূর করা এবং কপি বাটন দেওয়া)
         function unlockCardUI(promptId) {
             unlockedPrompts.add(promptId);
 
-            // র‍্যাপার থেকে ব্লার সরানো
             const wrap = document.getElementById(`wrap-${promptId}`);
             if (wrap) wrap.classList.add('unlocked');
 
-            // বাটন পরিবর্তন
             const btn = document.getElementById(`btn-${promptId}`);
             if (btn) {
                 btn.className = "btn-unlock-copy unlocked";
@@ -627,7 +665,6 @@
             }
         }
 
-        // কপি লজিক (অবাঞ্ছিত অ্যালার্ট সম্পূর্ণ বন্ধ)
         function performSafeCopy(text) {
             if (navigator.clipboard && window.isSecureContext) {
                 navigator.clipboard.writeText(text).then(() => {
