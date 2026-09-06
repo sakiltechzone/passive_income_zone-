@@ -508,6 +508,35 @@
             renderMediaFeed();
         }
 
+        // আইফ্রেম বা ডিরেক্ট ভিডিও শনাক্ত করার হেল্পার
+        function isWebPlayerUrl(url) {
+            if (!url) return false;
+            return url.includes('mediadelivery.net') || 
+                   url.includes('streamwish') || 
+                   url.includes('dood') || 
+                   url.includes('streamhg') ||
+                   !url.match(/\.(mp4|webm|mkv|mov)(\?.*)?$/i);
+        }
+
+        // ফুল প্লেয়ারের HTML তৈরি করার হেল্পার
+        function generatePlayerHTML(id, url) {
+            if (isWebPlayerUrl(url)) {
+                return `
+                    <iframe 
+                        id="player-${id}" 
+                        src="${url}" 
+                        loading="lazy" 
+                        allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture; fullscreen" 
+                        allowfullscreen="true">
+                    </iframe>
+                `;
+            } else {
+                return `
+                    <video id="player-${id}" src="${url}" controls autoplay playsinline controlsList="nodownload"></video>
+                `;
+            }
+        }
+
         function renderMediaFeed() {
             const container = document.getElementById('mediaFeedContainer');
             const filtered = currentFilter === "all" ? allMedia : allMedia.filter(m => m.category === currentFilter);
@@ -523,10 +552,9 @@
 
                 let mediaHTML = '';
                 if (isUnlocked) {
-                    // আনলকড অবস্থা: ফুল ভিডিও প্লেয়ার (টেনে দেখার জন্য controls সহ)
-                    mediaHTML = `
-                        <video id="player-${item.id}" src="${item.fullVideoUrl || item.previewUrl}" controls autoplay playsinline controlsList="nodownload"></video>
-                    `;
+                    // আনলকড অবস্থা: আইফ্রেম অথবা এমপি৪ প্লেয়ার
+                    const targetUrl = item.fullVideoUrl || item.previewUrl;
+                    mediaHTML = generatePlayerHTML(item.id, targetUrl);
                 } else {
                     // লকড অবস্থা: প্রিভিউ ভিডিও (লুপ ও মিউট) + সাউন্ড টগল
                     mediaHTML = `
@@ -615,10 +643,11 @@
             const target = allMedia.find(m => m.id === id);
             if (!target) return;
 
+            const targetUrl = target.fullVideoUrl || target.previewUrl;
             const frame = document.getElementById(`frame-${id}`);
             if (frame) {
                 frame.innerHTML = `
-                    <video id="player-${id}" src="${target.fullVideoUrl || target.previewUrl}" controls autoplay playsinline controlsList="nodownload"></video>
+                    ${generatePlayerHTML(id, targetUrl)}
                     <span class="media-tag"><i class="fas fa-tag"></i> ${formatCategoryName(target.category)}</span>
                 `;
             }
@@ -626,7 +655,9 @@
             const btn = document.getElementById(`btn-${id}`);
             if (btn) {
                 btn.className = "btn-watch-full unlocked";
-                btn.innerHTML = '<i class="fas fa-expand"></i> Full Screen';
+                btn.innerHTML = isWebPlayerUrl(targetUrl) 
+                    ? '<i class="fas fa-check-circle"></i> Playing Full Video' 
+                    : '<i class="fas fa-expand"></i> Full Screen';
             }
 
             if (tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
