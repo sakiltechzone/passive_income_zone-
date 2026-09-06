@@ -28,8 +28,10 @@
             margin: 0;
             padding: 0;
             user-select: none;
+            -webkit-user-select: none;
             font-family: 'Plus Jakarta Sans', sans-serif;
             -webkit-tap-highlight-color: transparent;
+            -webkit-touch-callout: none !important;
         }
 
         body {
@@ -46,15 +48,15 @@
         }
 
         .container {
-    width: 100%;
-    max-width: 440px;
-    padding: calc(env(safe-area-inset-top, 0px) + 55px) 18px 110px 18px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    position: relative;
-    z-index: 1;
-}
+            width: 100%;
+            max-width: 440px;
+            padding: calc(env(safe-area-inset-top, 0px) + 55px) 18px 110px 18px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }
 
         /* Top Bar */
         .top-nav {
@@ -78,6 +80,7 @@
             font-size: 14px;
             cursor: pointer;
             text-decoration: none;
+            -webkit-touch-callout: none !important;
         }
 
         .brand-text {
@@ -99,6 +102,7 @@
             box-shadow: 0 4px 12px rgba(0,0,0,0.06);
             cursor: pointer;
             text-decoration: none;
+            -webkit-touch-callout: none !important;
         }
 
         /* Hero Info Card */
@@ -210,6 +214,7 @@
             justify-content: center;
             gap: 8px;
             transition: transform 0.1s ease;
+            -webkit-touch-callout: none !important;
         }
 
         .btn-spin-action:active {
@@ -250,7 +255,9 @@
             flex: 1;
             height: 100%;
             text-decoration: none;
-            -webkit-user-select: none;
+            -webkit-touch-callout: none !important;
+            -webkit-user-select: none !important;
+            user-select: none !important;
         }
 
         .nav-item.active {
@@ -272,14 +279,14 @@
     <div class="container">
         <!-- Top Nav -->
         <div class="top-nav">
-            <a href="./index.html" class="back-pill-btn">
+            <div onclick="location.href='./index.html'" class="back-pill-btn">
                 <i class="fas fa-chevron-left"></i>
-            </a>
+            </div>
             <span class="brand-text">Lucky Spin</span>
-            <a href="./withdraw.html" class="wallet-pill">
+            <div onclick="location.href='./withdraw.html'" class="wallet-pill">
                 <i class="fas fa-wallet" style="color: var(--primary-blue);"></i>
                 $<span id="topBalance">0.000</span>
-            </a>
+            </div>
         </div>
 
         <!-- Info Card -->
@@ -306,28 +313,28 @@
         </button>
     </div>
 
-    <!-- 5-Button Bottom Nav -->
+    <!-- 5-Button Bottom Nav (Protected against context menu) -->
     <nav class="bottom-nav">
-        <a href="./index.html" class="nav-item">
+        <div class="nav-item" onclick="location.href='./index.html'">
             <i class="fas fa-magic"></i>
             <span>Prompts</span>
-        </a>
-        <a href="./dashboard.html" class="nav-item">
+        </div>
+        <div class="nav-item" onclick="location.href='./dashboard.html'">
             <i class="fas fa-hammer"></i>
             <span>Mining</span>
-        </a>
-        <a href="./spin.html" class="nav-item active">
+        </div>
+        <div class="nav-item active" onclick="location.href='./spin.html'">
             <i class="fas fa-dharmachakra"></i>
             <span>Spin</span>
-        </a>
-        <a href="./refer.html" class="nav-item">
+        </div>
+        <div class="nav-item" onclick="location.href='./refer.html'">
             <i class="fas fa-user-friends"></i>
             <span>Referral</span>
-        </a>
-        <a href="./withdraw.html" class="nav-item">
+        </div>
+        <div class="nav-item" onclick="location.href='./withdraw.html'">
             <i class="fas fa-wallet"></i>
             <span>Wallet</span>
-        </a>
+        </div>
     </nav>
 
     <!-- Firebase SDKs -->
@@ -335,6 +342,11 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
     <script>
+        // লং প্রেস ও ব্রাউজার ডিফল্ট কনটেক্সট মেনু সম্পূর্ণ বন্ধ করা
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+        });
+
         let tg = null;
         try {
             if (window.Telegram && window.Telegram.WebApp) {
