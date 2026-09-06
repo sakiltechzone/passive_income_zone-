@@ -330,9 +330,9 @@
         <!-- User Identity Card -->
         <div class="profile-hero-card">
             <div class="avatar-ring">
-                <div class="avatar-core" id="avatarText">S</div>
+                <div class="avatar-core" id="avatarText">U</div>
             </div>
-            <div class="user-fullname" id="userDisplayName">Sakil Miner</div>
+            <div class="user-fullname" id="userDisplayName">User</div>
             <div class="user-tag" id="userTelegramId">UID: Loading...</div>
         </div>
 
@@ -401,15 +401,15 @@
         </div>
     </div>
 
-    <!-- 5-Button Bottom Nav (Protected against context menu) -->
+    <!-- 5-Button Bottom Nav (With Movies Tab) -->
     <nav class="bottom-nav">
         <div class="nav-item" onclick="location.href='./index.html'">
             <i class="fas fa-magic"></i>
             <span>Prompts</span>
         </div>
         <div class="nav-item" onclick="location.href='./dashboard.html'">
-            <i class="fas fa-hammer"></i>
-            <span>Mining</span>
+            <i class="fas fa-play-circle"></i>
+            <span>Movies</span>
         </div>
         <div class="nav-item" onclick="location.href='./spin.html'">
             <i class="fas fa-dharmachakra"></i>
@@ -458,14 +458,14 @@
         if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
-        let userId = "sakil24";
+        let userId = "user_default";
         let isHapticOn = true;
 
         // টেলিগ্রাম ইউজার ডেটা লোড
         if (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) {
             const u = tg.initDataUnsafe.user;
-            userId = u.id ? u.id.toString() : (u.username || "sakil24");
-            const fullName = `${u.first_name || ''} ${u.last_name || ''}`.trim() || "Miner";
+            userId = u.id ? u.id.toString() : (u.username || "user_default");
+            const fullName = `${u.first_name || ''} ${u.last_name || ''}`.trim() || "User";
             
             document.getElementById('userDisplayName').innerText = fullName;
             document.getElementById('avatarText').innerText = fullName[0].toUpperCase();
