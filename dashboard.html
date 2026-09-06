@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>STZ Network - Mining Hub</title>
+    <title>STZ Network - Movies & Viral Hub</title>
 
     <!-- Telegram & Adsgram SDK -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -65,32 +65,35 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 8px;
+            margin-bottom: 12px;
         }
 
-        .back-pill-btn {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.25);
-            border: 1px solid rgba(255, 255, 255, 0.4);
+        .brand-badge {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logo-box {
+            width: 34px;
+            height: 34px;
+            background: #0f4bd8;
+            border-radius: 10px;
             color: #fff;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 14px;
-            cursor: pointer;
-            text-decoration: none;
-            -webkit-touch-callout: none !important;
+            font-size: 15px;
+            box-shadow: 0 4px 10px rgba(15, 75, 216, 0.3);
         }
 
         .brand-text {
-            font-size: 19px;
+            font-size: 18px;
             font-weight: 800;
             color: #ffffff;
         }
 
-        .mine-wallet-tag {
+        .wallet-pill {
             background: rgba(255, 255, 255, 0.95);
             border-radius: 20px;
             padding: 6px 14px;
@@ -106,334 +109,206 @@
             -webkit-touch-callout: none !important;
         }
 
-        /* ---------------- VIEW 1: IDLE / READY STATE ---------------- */
-        #idleStateView {
+        /* Hero Banner */
+        .hero-banner {
             width: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .scale-title-sub {
-            font-size: 13px;
-            font-weight: 700;
-            color: rgba(255, 255, 255, 0.9);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-top: 4px;
-        }
-
-        .scale-total-val {
-            font-size: 38px;
-            font-weight: 800;
-            color: #ffffff;
-            margin: 2px 0 16px 0;
-            text-shadow: 0 2px 10px rgba(0,0,0,0.15);
-        }
-
-        .orb-flank-row {
-            width: 100%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 12px;
-        }
-
-        .flank-card {
-            background: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(10px);
-            border-radius: 18px;
-            padding: 12px 14px;
-            min-width: 95px;
-            text-align: center;
-            box-shadow: 0 6px 16px rgba(15, 75, 216, 0.08);
-        }
-
-        .flank-card .num {
-            font-size: 16px;
-            font-weight: 800;
-            color: var(--text-dark);
-        }
-
-        .flank-card .lbl {
-            font-size: 10px;
-            font-weight: 700;
-            color: var(--text-muted);
-            margin-top: 2px;
-        }
-
-        /* 3-Card AI Accelerate Row */
-        .accelerate-section {
-            width: 100%;
-            margin-top: 14px;
-            margin-bottom: 20px;
-        }
-
-        .accelerate-section h4 {
-            font-size: 15px;
-            font-weight: 800;
-            color: var(--text-dark);
-            margin-left: 2px;
-        }
-
-        .accelerate-section .sub-lbl {
-            font-size: 12px;
-            color: #475569;
-            font-weight: 600;
-            margin-bottom: 12px;
-            margin-left: 2px;
-        }
-
-        .acc-cards-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            width: 100%;
-        }
-
-        .acc-boost-card {
-            background: #ffffff;
-            border-radius: 18px;
-            padding: 14px 10px;
-            text-align: center;
-            position: relative;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.04);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .check-badge {
-            position: absolute;
-            top: 8px;
-            right: 8px;
-            font-size: 14px;
-            color: var(--primary-blue);
-        }
-
-        .bolt-icon {
-            font-size: 26px;
-            color: var(--light-blue);
-            margin-top: 4px;
-        }
-
-        .acc-boost-card .pct-text {
-            font-size: 14px;
-            font-weight: 800;
-            color: var(--text-dark);
-        }
-
-        .pill-acc-btn {
-            font-size: 10px;
-            font-weight: 800;
-            background: #eff6ff;
-            color: var(--primary-blue);
-            padding: 4px 8px;
-            border-radius: 10px;
-            width: 100%;
-        }
-
-        /* ---------------- VIEW 2: ACTIVE MINING STATE ---------------- */
-        #activeStateView {
-            width: 100%;
-            display: none;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .token-header-block {
-            text-align: center;
-            margin: 2px 0 8px 0;
-            color: #fff;
-        }
-
-        .token-value {
-            font-size: 36px;
-            font-weight: 800;
-            letter-spacing: -0.5px;
-        }
-
-        .token-value .unit {
-            font-size: 17px;
-            font-weight: 600;
-        }
-
-        .usdt-sub {
-            font-size: 12px;
-            font-weight: 700;
-            color: #022b7a;
-        }
-
-        .white-sheet-card {
-            width: 100%;
-            background: #ffffff;
-            border-radius: 22px;
-            padding: 18px;
-            box-shadow: 0 8px 25px rgba(15, 75, 216, 0.08);
-            margin-top: 14px;
-            margin-bottom: 16px;
-        }
-
-        .sheet-head-row {
-            display: flex;
-            justify-content: space-between;
-            font-size: 13px;
-            font-weight: 700;
-            margin-bottom: 10px;
-        }
-
-        .list-stat-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 9px 0;
-            border-bottom: 1px solid #f1f5f9;
-            font-size: 13px;
-            font-weight: 600;
-        }
-
-        .list-stat-item .left-row {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            color: #334155;
-        }
-
-        .step-slider-track {
-            margin: 16px 0 10px 0;
-        }
-
-        .step-line-bg {
-            width: 100%;
-            height: 5px;
-            background: #e2e8f0;
-            border-radius: 4px;
-            position: relative;
-        }
-
-        .step-line-fill {
-            width: 0%;
-            height: 100%;
-            background: var(--primary-blue);
-            border-radius: 4px;
-            transition: width 0.3s ease;
-        }
-
-        .points-row {
-            display: flex;
-            justify-content: space-between;
-            font-size: 11px;
-            font-weight: 700;
-            color: #94a3b8;
-            margin-top: 8px;
-        }
-
-        .points-row .point.active {
-            color: var(--primary-blue);
-        }
-
-        .sheet-mini-acc-btn {
-            width: 100%;
-            padding: 12px;
-            border-radius: 14px;
-            background: #ecf3ff;
-            border: none;
-            color: var(--primary-blue);
-            font-size: 13px;
-            font-weight: 700;
-            margin-top: 10px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-            -webkit-touch-callout: none !important;
-        }
-
-        /* ---------------- COMMON ORB SPHERE ---------------- */
-        .orb-center-anchor {
-            width: 120px;
-            height: 120px;
-            aspect-ratio: 1 / 1;
-            position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 4px 0 12px 0;
-        }
-
-        .orb-outer-ring {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            border: 2px solid rgba(255, 255, 255, 0.6);
-            border-bottom: 3.5px solid var(--primary-blue);
-            transform: rotate(-35deg);
-            pointer-events: none;
-        }
-
-        .orb-core-sphere {
-            width: 104px;
-            height: 104px;
-            border-radius: 50%;
-            background: radial-gradient(circle at 35% 30%, #ffffff 0%, #8ec5fc 35%, #2575fc 75%, #0d47a1 100%);
-            box-shadow: 0 12px 30px rgba(28, 100, 242, 0.4), inset -5px -5px 16px rgba(10, 37, 100, 0.7), inset 5px 5px 12px rgba(255, 255, 255, 0.9);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            animation: orbFloat 4s ease-in-out infinite;
-        }
-
-        .orb-eyes-row {
-            display: flex;
-            gap: 18px;
-            align-items: center;
-        }
-
-        .orb-eye {
-            width: 5px;
-            height: 13px;
-            background: #ffffff;
-            border-radius: 4px;
-            box-shadow: 0 0 8px #ffffff;
-        }
-
-        .session-timer-pill {
             background: var(--card-glass);
             border: 1px solid rgba(255, 255, 255, 0.8);
             backdrop-filter: blur(12px);
             border-radius: 20px;
-            padding: 8px 18px;
+            padding: 16px;
+            margin-bottom: 14px;
+            box-shadow: 0 6px 20px rgba(15, 75, 216, 0.08);
+            text-align: left;
+        }
+
+        .hero-banner h3 {
+            font-size: 16px;
+            font-weight: 800;
+            color: var(--text-dark);
             display: flex;
             align-items: center;
             gap: 8px;
-            font-size: 13px;
-            font-weight: 700;
-            color: #0f172a;
-            box-shadow: 0 6px 16px rgba(15, 75, 216, 0.06);
         }
 
-        /* Main Blue Button */
-        .btn-main-action {
+        .hero-banner p {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 3px;
+            font-weight: 600;
+        }
+
+        /* Category Filter Tabs */
+        .cat-scroll-track {
             width: 100%;
-            padding: 17px;
-            border-radius: 18px;
-            background: linear-gradient(135deg, #3b76f6, #1856f3);
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding-bottom: 4px;
+            margin-bottom: 14px;
+            scrollbar-width: none;
+        }
+
+        .cat-scroll-track::-webkit-scrollbar {
+            display: none;
+        }
+
+        .cat-btn {
+            background: rgba(255, 255, 255, 0.85);
             border: none;
-            color: #fff;
-            font-size: 16px;
-            font-weight: 800;
-            box-shadow: 0 8px 22px rgba(24, 86, 243, 0.35);
+            padding: 8px 14px;
+            border-radius: 14px;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text-muted);
+            white-space: nowrap;
             cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
             -webkit-touch-callout: none !important;
         }
 
-        .btn-main-action:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
+        .cat-btn.active {
+            background: var(--text-dark);
+            color: #ffffff;
+            box-shadow: 0 4px 12px rgba(15, 23, 42, 0.2);
+        }
+
+        /* Video Feed Grid */
+        .media-feed-grid {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .media-card {
+            background: #ffffff;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .player-frame-box {
+            width: 100%;
+            height: 220px;
+            background: #000000;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .player-frame-box video, .player-frame-box iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            object-fit: cover;
+        }
+
+        .media-tag {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(8px);
+            color: #fff;
+            padding: 4px 10px;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: capitalize;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            z-index: 2;
+        }
+
+        .sound-toggle-btn {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(8px);
+            color: #ffffff;
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 13px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            z-index: 3;
+            transition: transform 0.15s ease;
+        }
+
+        .sound-toggle-btn:active {
+            transform: scale(0.9);
+        }
+
+        .card-content {
+            padding: 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .card-title {
+            font-size: 15px;
+            font-weight: 800;
+            color: var(--text-dark);
+        }
+
+        .card-desc {
+            font-size: 12px;
+            color: var(--text-muted);
+            line-height: 1.4;
+            font-weight: 500;
+        }
+
+        .btn-watch-full {
+            width: 100%;
+            padding: 13px;
+            border-radius: 14px;
+            background: linear-gradient(135deg, #3b76f6, #1856f3);
+            border: none;
+            color: #fff;
+            font-size: 14px;
+            font-weight: 800;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 4px 15px rgba(24, 86, 243, 0.3);
+            margin-top: 4px;
+            transition: background 0.2s, transform 0.1s;
+        }
+
+        .btn-watch-full.unlocked {
+            background: linear-gradient(135deg, #10b981, #059669);
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-watch-full:active {
+            transform: scale(0.98);
+        }
+
+        .empty-state {
+            width: 100%;
+            text-align: center;
+            padding: 40px 16px;
+            background: rgba(255, 255, 255, 0.85);
+            border-radius: 20px;
+            color: var(--text-muted);
+            font-size: 13px;
+            font-weight: 600;
         }
 
         /* 5-Button Modern Bottom Nav Bar */
@@ -482,11 +357,6 @@
         .nav-item span {
             pointer-events: none;
         }
-
-        @keyframes orbFloat {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-5px); }
-        }
     </style>
 </head>
 <body>
@@ -494,150 +364,48 @@
     <div class="container">
         <!-- Top App Bar -->
         <div class="top-nav">
-            <div onclick="location.href='./index.html'" class="back-pill-btn">
-                <i class="fas fa-chevron-left"></i>
+            <div class="brand-badge">
+                <div class="logo-box"><i class="fas fa-play-circle"></i></div>
+                <span class="brand-text">Movies & Viral</span>
             </div>
-            <span class="brand-text">STZ Mining</span>
-            <div onclick="location.href='./withdraw.html'" class="mine-wallet-tag">
+            
+            <div onclick="location.href='./withdraw.html'" class="wallet-pill">
                 <i class="fas fa-wallet" style="color: var(--primary-blue);"></i>
-                $<span id="topBarBalanceUsdt">0.000</span>
+                $<span id="topBalance">0.000</span>
             </div>
         </div>
 
-        <!-- ==================== VIEW 1: IDLE / START SCREEN ==================== -->
-        <div id="idleStateView">
-            <span class="scale-title-sub">Total STZ Balance</span>
-            <div class="scale-total-val" id="idleTotalStz">0.00</div>
-
-            <!-- Flank Cards & Orb Arena -->
-            <div class="orb-flank-row">
-                <div class="flank-card">
-                    <div class="num" id="idleHourlyRate">0.42</div>
-                    <div class="lbl">STZ/hour</div>
-                </div>
-
-                <div class="orb-center-anchor">
-                    <div class="orb-outer-ring"></div>
-                    <div class="orb-core-sphere">
-                        <div class="orb-eyes-row">
-                            <span class="orb-eye"></span>
-                            <span class="orb-eye"></span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="flank-card">
-                    <div class="num" id="idleBoostRateTag">+0%</div>
-                    <div class="lbl">Hourly rate</div>
-                </div>
-            </div>
-
-            <div class="session-timer-pill" style="margin-bottom: 16px;">
-                <i class="far fa-clock" style="color: var(--primary-blue);"></i> Ready to Mine (12h)
-            </div>
-
-            <!-- AI Accelerate 3 Cards -->
-            <div class="accelerate-section">
-                <h4>AI accelerate</h4>
-                <div class="sub-lbl">Activate mining to accelerate</div>
-
-                <div class="acc-cards-grid">
-                    <div class="acc-boost-card">
-                        <i class="fas fa-check-circle check-badge"></i>
-                        <i class="fas fa-bolt bolt-icon"></i>
-                        <span class="pct-text">+30%</span>
-                        <span class="pill-acc-btn">Tier 1</span>
-                    </div>
-                    <div class="acc-boost-card">
-                        <i class="fas fa-check-circle check-badge"></i>
-                        <i class="fas fa-bolt bolt-icon"></i>
-                        <span class="pct-text">+60%</span>
-                        <span class="pill-acc-btn">Tier 2</span>
-                    </div>
-                    <div class="acc-boost-card">
-                        <i class="fas fa-check-circle check-badge"></i>
-                        <i class="fas fa-bolt bolt-icon"></i>
-                        <span class="pct-text">+100%</span>
-                        <span class="pill-acc-btn">Tier 3</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Main Start Action Button -->
-            <button class="btn-main-action" id="startMiningBtn" onclick="handleMineActionClick()">
-                Start Mining
-            </button>
+        <!-- Banner -->
+        <div class="hero-banner">
+            <h3><i class="fas fa-film" style="color: #ef4444;"></i> Watch Movies & Viral Clipes</h3>
+            <p>Watch a short ad to unlock full videos, seek freely and enjoy full-screen playback.</p>
         </div>
 
-        <!-- ==================== VIEW 2: ACTIVE MINING SCREEN ==================== -->
-        <div id="activeStateView">
-            <div class="token-header-block">
-                <div class="token-value"><span id="sessionMinedStz">0.00</span> <span class="unit">STZ</span></div>
-                <div class="usdt-sub">≈ $<span id="sessionMinedUsdt">0.000</span> USDT</div>
-            </div>
+        <!-- Category Scroll Filters -->
+        <div class="cat-scroll-track">
+            <button class="cat-btn active" onclick="filterCategory('all', this)"><i class="fas fa-globe"></i> All</button>
+            <button class="cat-btn" onclick="filterCategory('new_movie', this)"><i class="fas fa-video"></i> New Movie</button>
+            <button class="cat-btn" onclick="filterCategory('viral_video', this)"><i class="fas fa-fire"></i> Viral Video</button>
+            <button class="cat-btn" onclick="filterCategory('facebook', this)"><i class="fab fa-facebook"></i> Facebook Viral</button>
+            <button class="cat-btn" onclick="filterCategory('instagram', this)"><i class="fab fa-instagram"></i> Instagram Viral</button>
+            <button class="cat-btn" onclick="filterCategory('tiktok', this)"><i class="fab fa-tiktok"></i> TikTok Viral</button>
+        </div>
 
-            <div class="orb-center-anchor">
-                <div class="orb-outer-ring"></div>
-                <div class="orb-core-sphere">
-                    <div class="orb-eyes-row">
-                        <span class="orb-eye"></span>
-                        <span class="orb-eye"></span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="session-timer-pill">
-                <i class="far fa-clock" style="color: var(--primary-blue);"></i> Next session in <span id="mineTimerText">12:00:00</span>
-            </div>
-
-            <div class="white-sheet-card">
-                <div class="sheet-head-row">
-                    <span>Current rate</span>
-                    <span style="color: var(--primary-blue); font-weight: 800;" id="sheetRateDisplay">0.417/hour</span>
-                </div>
-
-                <div class="list-stat-item">
-                    <div class="left-row"><i class="fas fa-user-friends"></i> F1 acceleration <span id="f1CountTag">0</span></div>
-                    <span style="font-weight: 700; color: #64748b;" id="f1BoostTag">+0%</span>
-                </div>
-                <div class="list-stat-item">
-                    <div class="left-row"><i class="fas fa-network-wired"></i> AI acceleration <span id="adsStepCounter">0/3</span></div>
-                    <span style="color: var(--primary-blue); font-weight: 700;" id="aiStepBoostDisplay">+0%</span>
-                </div>
-
-                <!-- Step Slider -->
-                <div class="step-slider-track">
-                    <div class="step-line-bg">
-                        <div class="step-line-fill" id="sliderLineFill"></div>
-                    </div>
-                    <div class="points-row">
-                        <span class="point active">+0%</span>
-                        <span class="point" id="dot-step-1">+30%</span>
-                        <span class="point" id="dot-step-2">+60%</span>
-                        <span class="point" id="dot-step-3">+100%</span>
-                    </div>
-                </div>
-
-                <button class="sheet-mini-acc-btn" onclick="triggerBoostAd()">
-                    <i class="fas fa-bolt"></i> Accelerate (Watch Ad)
-                </button>
-            </div>
-
-            <button class="btn-main-action" id="activeMiningBtn" disabled>
-                Mining In Progress...
-            </button>
+        <!-- Media Feed -->
+        <div class="media-feed-grid" id="mediaFeedContainer">
+            <div class="empty-state">Loading latest videos...</div>
         </div>
     </div>
 
-    <!-- 5-Button Bottom Nav (Protected against context menu) -->
+    <!-- 5-Button Bottom Nav -->
     <nav class="bottom-nav">
         <div class="nav-item" onclick="location.href='./index.html'">
             <i class="fas fa-magic"></i>
             <span>Prompts</span>
         </div>
         <div class="nav-item active" onclick="location.href='./dashboard.html'">
-            <i class="fas fa-hammer"></i>
-            <span>Mining</span>
+            <i class="fas fa-play-circle"></i>
+            <span>Movies</span>
         </div>
         <div class="nav-item" onclick="location.href='./spin.html'">
             <i class="fas fa-dharmachakra"></i>
@@ -658,7 +426,7 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
     <script>
-        // লং প্রেস ও ব্রাউজার ডিফল্ট কনটেক্সট মেনু সম্পূর্ণ বন্ধ করা
+        // লং-প্রেস ও ব্রাউজার পপআপ মেনু বন্ধ করা
         document.addEventListener('contextmenu', function(e) {
             e.preventDefault();
         });
@@ -673,9 +441,6 @@
 
         const ADSGRAM_BLOCK_ID = "26734";
         const STZ_TO_USDT = 0.001;
-        const CYCLE_MS = 12 * 60 * 60 * 1000;
-        const BASE_HOURLY = 5 / 12;
-        const BASE_PER_SEC = BASE_HOURLY / 3600;
 
         const firebaseConfig = {
             apiKey: "AIzaSyAl0eRqOs5QNUg_J1Pj-4PlEqRDxAXr-oA",
@@ -691,9 +456,10 @@
         const db = firebase.database();
 
         let userId = "sakil24";
-        let userData = { balance: 0, miningStartedAt: 0, boostLevel: 0 };
         let adsController = null;
-        let refMultiplier = 1.0;
+        let allMedia = [];
+        let currentFilter = "all";
+        const unlockedMedia = new Set();
 
         function initAdsgram() {
             try {
@@ -711,170 +477,159 @@
             userId = u.id ? u.id.toString() : (u.username || "sakil24");
         }
 
-        // ইউজার মাইনিং ডেটা সিঙ্ক
+        // লাইভ ব্যালেন্স ট্র্যাকিং
         const userRef = db.ref('stz_miners/' + userId);
         userRef.on('value', snap => {
             const val = snap.val();
             if (val) {
-                userData = Object.assign(userData, val);
-            } else {
-                userRef.set(userData);
+                const totalUsdt = (val.balance || 0) * STZ_TO_USDT;
+                document.getElementById('topBalance').innerText = totalUsdt.toFixed(3);
             }
-            document.getElementById('idleTotalStz').innerText = (userData.balance || 0).toFixed(2);
-            updateBoostUI();
         });
 
-        // ডিরেক্ট রেফারেল (F1) ট্র্যাকিং
-        db.ref('stz_referrals/' + userId).on('value', snap => {
-            const val = snap.val() || {};
-            const f1Count = val.f1 ? Object.keys(val.f1).length : (typeof val.directCount === 'number' ? val.directCount : 0);
-            const f1Boost = f1Count * 10;
+        // ফায়ারবেজ থেকে মুভি ও ভিডিও ডেটা লোড
+        db.ref('movie_posts').on('value', snap => {
+            const data = snap.val();
+            const container = document.getElementById('mediaFeedContainer');
 
-            document.getElementById('f1CountTag').innerText = f1Count;
-            document.getElementById('f1BoostTag').innerText = `+${f1Boost}%`;
-            refMultiplier = 1 + (f1Boost / 100);
-        });
-
-        // লাইভ স্টেট মনিটর ও ভিউ সুইচিং
-        setInterval(() => {
-            const now = Date.now();
-            const elapsed = now - (userData.miningStartedAt || 0);
-            const isMining = (userData.miningStartedAt > 0) && (elapsed < CYCLE_MS);
-
-            let aiMult = 1.0;
-            let boostPct = 0;
-            if (userData.boostLevel === 1) { aiMult = 1.30; boostPct = 30; }
-            else if (userData.boostLevel === 2) { aiMult = 1.60; boostPct = 60; }
-            else if (userData.boostLevel === 3) { aiMult = 2.00; boostPct = 100; }
-
-            const totalMult = aiMult * refMultiplier;
-
-            if (isMining) {
-                document.getElementById('idleStateView').style.display = 'none';
-                document.getElementById('activeStateView').style.display = 'flex';
-
-                const rem = CYCLE_MS - elapsed;
-                renderTimerText(rem);
-
-                const minedSoFar = (elapsed / 1000) * BASE_PER_SEC * totalMult;
-                document.getElementById('sessionMinedStz').innerText = minedSoFar.toFixed(2);
-                document.getElementById('sessionMinedUsdt').innerText = (minedSoFar * STZ_TO_USDT).toFixed(3);
-
-                const totalCurrentBalance = (userData.balance || 0) + minedSoFar;
-                document.getElementById('topBarBalanceUsdt').innerText = (totalCurrentBalance * STZ_TO_USDT).toFixed(3);
-
-                document.getElementById('sheetRateDisplay').innerText = `${(BASE_HOURLY * totalMult).toFixed(3)}/hour`;
-                document.getElementById('aiStepBoostDisplay').innerText = `+${boostPct}%`;
-                document.getElementById('adsStepCounter').innerText = `${userData.boostLevel || 0}/3`;
-            } else {
-                document.getElementById('activeStateView').style.display = 'none';
-                document.getElementById('idleStateView').style.display = 'flex';
-
-                document.getElementById('idleTotalStz').innerText = (userData.balance || 0).toFixed(2);
-                document.getElementById('topBarBalanceUsdt').innerText = ((userData.balance || 0) * STZ_TO_USDT).toFixed(3);
-                document.getElementById('idleHourlyRate').innerText = (BASE_HOURLY * refMultiplier).toFixed(2);
-                document.getElementById('idleBoostRateTag').innerText = `+${Math.round((refMultiplier - 1) * 100)}%`;
-
-                const startBtn = document.getElementById('startMiningBtn');
-                if (userData.miningStartedAt > 0 && elapsed >= CYCLE_MS) {
-                    startBtn.innerText = "Claim & Start";
-                } else {
-                    startBtn.innerText = "Start Mining";
-                }
-            }
-        }, 1000);
-
-        function renderTimerText(ms) {
-            const s = Math.max(0, Math.floor(ms / 1000));
-            const hrs = String(Math.floor(s / 3600)).padStart(2, '0');
-            const mins = String(Math.floor((s % 3600) / 60)).padStart(2, '0');
-            const secs = String(s % 60).padStart(2, '0');
-            document.getElementById('mineTimerText').innerText = `${hrs}:${mins}:${secs}`;
-        }
-
-        function updateBoostUI() {
-            const lvl = userData.boostLevel || 0;
-            const fillPct = (lvl / 3) * 100;
-            document.getElementById('sliderLineFill').style.width = fillPct + '%';
-
-            for (let i = 1; i <= 3; i++) {
-                const dot = document.getElementById(`dot-step-${i}`);
-                if (dot) {
-                    if (i <= lvl) dot.classList.add('active');
-                    else dot.classList.remove('active');
-                }
-            }
-        }
-
-        function showRewardAd(onSuccess) {
-            if (!adsController) {
-                initAdsgram();
-            }
-
-            if (adsController) {
-                adsController.show().then(() => {
-                    onSuccess();
-                }).catch((err) => {
-                    console.log("Ad fallback triggered:", err);
-                    if (tg && tg.showConfirm) {
-                        tg.showConfirm("বিজ্ঞাপন লোড হতে সমস্যা হয়েছে। আপনি কি সরাসরি মাইনিং চালু করতে চান?", (ok) => {
-                            if (ok) onSuccess();
-                        });
-                    } else {
-                        onSuccess();
-                    }
-                });
-            } else {
-                onSuccess();
-            }
-        }
-
-        function handleMineActionClick() {
-            const now = Date.now();
-            const elapsed = now - (userData.miningStartedAt || 0);
-
-            if (userData.miningStartedAt > 0 && elapsed >= CYCLE_MS) {
-                let aiMult = 1.0;
-                if (userData.boostLevel === 1) aiMult = 1.30;
-                else if (userData.boostLevel === 2) aiMult = 1.60;
-                else if (userData.boostLevel === 3) aiMult = 2.00;
-
-                const earned = (CYCLE_MS / 1000) * BASE_PER_SEC * (aiMult * refMultiplier);
-                userData.balance = (userData.balance || 0) + earned;
-                userData.miningStartedAt = 0;
-                userData.boostLevel = 0;
-            }
-
-            showRewardAd(() => {
-                userData.miningStartedAt = Date.now();
-                userRef.update({
-                    balance: userData.balance || 0,
-                    miningStartedAt: userData.miningStartedAt,
-                    boostLevel: userData.boostLevel || 0
-                });
-                if (tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
-                alertModal("🚀 ১২ ঘণ্টার মাইনিং সফলভাবে শুরু হয়েছে!");
-            });
-        }
-
-        function triggerBoostAd() {
-            if (userData.boostLevel >= 3) {
-                alertModal("সর্বোচ্চ +১০০% বুস্ট ইতিমধ্যে সক্রিয় রয়েছে!");
+            if (!data) {
+                container.innerHTML = '<div class="empty-state">No videos or movies available right now!</div>';
                 return;
             }
 
-            showRewardAd(() => {
-                userData.boostLevel = (userData.boostLevel || 0) + 1;
-                userRef.update({ boostLevel: userData.boostLevel });
-                updateBoostUI();
-                if (tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
-                alertModal("🚀 মাইনিং স্পিড বৃদ্ধি পেয়েছে!");
-            });
+            allMedia = Object.keys(data).map(k => ({ id: k, ...data[k] })).reverse();
+            renderMediaFeed();
+        });
+
+        function filterCategory(cat, btn) {
+            currentFilter = cat;
+            document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            renderMediaFeed();
         }
 
-        function alertModal(msg) {
-            if (tg && tg.showAlert) tg.showAlert(msg);
-            else alert(msg);
+        function renderMediaFeed() {
+            const container = document.getElementById('mediaFeedContainer');
+            const filtered = currentFilter === "all" ? allMedia : allMedia.filter(m => m.category === currentFilter);
+
+            if (filtered.length === 0) {
+                container.innerHTML = `<div class="empty-state">No content found in this category.</div>`;
+                return;
+            }
+
+            let html = '';
+            filtered.forEach(item => {
+                const isUnlocked = unlockedMedia.has(item.id);
+
+                let mediaHTML = '';
+                if (isUnlocked) {
+                    // আনলকড অবস্থা: ফুল ভিডিও প্লেয়ার (টেনে দেখার জন্য controls সহ)
+                    mediaHTML = `
+                        <video id="player-${item.id}" src="${item.fullVideoUrl || item.previewUrl}" controls autoplay playsinline controlsList="nodownload"></video>
+                    `;
+                } else {
+                    // লকড অবস্থা: প্রিভিউ ভিডিও (লুপ ও মিউট) + সাউন্ড টগল
+                    mediaHTML = `
+                        <video id="vid-${item.id}" src="${item.previewUrl}" autoplay loop muted playsinline preload="metadata"></video>
+                        <div class="sound-toggle-btn" onclick="toggleSound('${item.id}', this)">
+                            <i class="fas fa-volume-mute"></i>
+                        </div>
+                    `;
+                }
+
+                html += `
+                    <div class="media-card">
+                        <div class="player-frame-box" id="frame-${item.id}">
+                            ${mediaHTML}
+                            <span class="media-tag"><i class="fas fa-tag"></i> ${formatCategoryName(item.category)}</span>
+                        </div>
+                        <div class="card-content">
+                            <div class="card-title">${item.title}</div>
+                            <div class="card-desc">${item.description || 'Watch the full video without cuts.'}</div>
+
+                            <button class="btn-watch-full ${isUnlocked ? 'unlocked' : ''}" id="btn-${item.id}" onclick="handleUnlockAction('${item.id}')">
+                                ${isUnlocked ? '<i class="fas fa-play"></i> Playing Full Video' : '<i class="fas fa-film"></i> Watch Full Video (Watch Ad)'}
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        function formatCategoryName(cat) {
+            if (!cat) return 'Movie';
+            return cat.replace('_', ' ').toUpperCase();
+        }
+
+        function toggleSound(id, btn) {
+            const video = document.getElementById(`vid-${id}`);
+            if (!video) return;
+
+            if (video.muted) {
+                video.muted = false;
+                btn.innerHTML = '<i class="fas fa-volume-up"></i>';
+            } else {
+                video.muted = true;
+                btn.innerHTML = '<i class="fas fa-volume-mute"></i>';
+            }
+        }
+
+        function handleUnlockAction(id) {
+            if (unlockedMedia.has(id)) {
+                const vid = document.getElementById(`player-${id}`);
+                if (vid) {
+                    if (vid.requestFullscreen) vid.requestFullscreen();
+                    else if (vid.webkitRequestFullscreen) vid.webkitRequestFullscreen();
+                }
+                return;
+            }
+
+            if (!adsController) initAdsgram();
+
+            const btn = document.getElementById(`btn-${id}`);
+            if (btn) btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading Ad...';
+
+            if (adsController) {
+                adsController.show().then(() => {
+                    unlockVideo(id);
+                }).catch((err) => {
+                    console.log("Ad skipped or error:", err);
+                    if (btn) btn.innerHTML = '<i class="fas fa-film"></i> Watch Full Video (Watch Ad)';
+                    if (tg && tg.showConfirm) {
+                        tg.showConfirm("বিজ্ঞাপন লোড হতে সমস্যা হয়েছে। সরাসরি ভিডিও দেখতে চান?", (ok) => {
+                            if (ok) unlockVideo(id);
+                        });
+                    } else {
+                        unlockVideo(id);
+                    }
+                });
+            } else {
+                unlockVideo(id);
+            }
+        }
+
+        function unlockVideo(id) {
+            unlockedMedia.add(id);
+            const target = allMedia.find(m => m.id === id);
+            if (!target) return;
+
+            const frame = document.getElementById(`frame-${id}`);
+            if (frame) {
+                frame.innerHTML = `
+                    <video id="player-${id}" src="${target.fullVideoUrl || target.previewUrl}" controls autoplay playsinline controlsList="nodownload"></video>
+                    <span class="media-tag"><i class="fas fa-tag"></i> ${formatCategoryName(target.category)}</span>
+                `;
+            }
+
+            const btn = document.getElementById(`btn-${id}`);
+            if (btn) {
+                btn.className = "btn-watch-full unlocked";
+                btn.innerHTML = '<i class="fas fa-expand"></i> Full Screen';
+            }
+
+            if (tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
         }
     </script>
 </body>
