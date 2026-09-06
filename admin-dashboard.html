@@ -223,8 +223,8 @@
             margin-left: 8px;
         }
 
-        /* Prompts Feed */
-        .prompt-item {
+        /* Items Feed */
+        .feed-item {
             background: #030712;
             border: 1px solid var(--border);
             border-radius: 14px;
@@ -236,12 +236,12 @@
             gap: 12px;
         }
 
-        .prompt-info h4 {
+        .feed-info h4 {
             font-size: 14px;
             margin-bottom: 4px;
         }
 
-        .prompt-info p {
+        .feed-info p {
             font-size: 12px;
             color: var(--text-muted);
             margin-bottom: 6px;
@@ -258,7 +258,7 @@
             text-transform: uppercase;
         }
 
-        .prompt-actions {
+        .item-actions {
             display: flex;
             gap: 6px;
         }
@@ -348,13 +348,62 @@
 
         <!-- Navigation Tabs -->
         <div class="tab-nav">
-            <button class="tab-btn active" onclick="switchSection('promptsTab', this)"><i class="fas fa-magic"></i> AI Prompts</button>
+            <button class="tab-btn active" onclick="switchSection('moviesTab', this)"><i class="fas fa-play-circle"></i> Movies & Videos</button>
+            <button class="tab-btn" onclick="switchSection('promptsTab', this)"><i class="fas fa-magic"></i> AI Prompts</button>
             <button class="tab-btn" onclick="switchSection('settingsTab', this)"><i class="fas fa-gear"></i> System Config</button>
             <button class="tab-btn" onclick="switchSection('withdrawTab', this)"><i class="fas fa-wallet"></i> Payout Queue</button>
         </div>
 
-        <!-- 1. AI Prompts Manager Tab -->
-        <div id="promptsTab" class="content-tab">
+        <!-- 1. Movies & Viral Videos Tab (Dashboard Screen Content) -->
+        <div id="moviesTab" class="content-tab">
+            <div class="section-card">
+                <h3 id="movieFormTitle"><i class="fas fa-film" style="color: var(--primary);"></i> Add New Movie / Video</h3>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Category</label>
+                        <select id="movieCategory" class="styled-select">
+                            <option value="new_movie">New Movie</option>
+                            <option value="viral_video">Viral Video</option>
+                            <option value="facebook">Facebook Viral</option>
+                            <option value="instagram">Instagram Viral</option>
+                            <option value="tiktok">TikTok Viral</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Video Title</label>
+                        <input type="text" id="movieTitle" class="styled-input" placeholder="e.g. Action Movie 2026 Trailer">
+                    </div>
+                    <div class="form-group" style="grid-column: 1 / -1;">
+                        <label>Short Description</label>
+                        <textarea id="movieDescription" class="styled-textarea" placeholder="Short overview of the video..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Preview Video Link (10s MP4)</label>
+                        <input type="url" id="moviePreviewUrl" class="styled-input" placeholder="https://example.com/teaser.mp4">
+                    </div>
+                    <div class="form-group">
+                        <label>Full Video Link (MP4 / Stream)</label>
+                        <input type="url" id="movieFullUrl" class="styled-input" placeholder="https://example.com/full_video.mp4">
+                    </div>
+                </div>
+                <button class="btn-action" id="btnUploadMovie" onclick="uploadMoviePost()">
+                    <i class="fas fa-cloud-arrow-up"></i> <span id="btnMovieUploadText">Publish Video</span>
+                </button>
+                <button class="btn-cancel-edit" id="btnCancelMovieEdit" onclick="cancelEditMovie()">
+                    <i class="fas fa-xmark"></i> Cancel Edit
+                </button>
+            </div>
+
+            <div class="section-card">
+                <h3><i class="fas fa-video"></i> Active Movies & Videos Library</h3>
+                <div id="moviesListContainer">
+                    <p style="color: var(--text-muted); font-size: 13px;">Loading uploaded videos...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. AI Prompts Manager Tab -->
+        <div id="promptsTab" class="content-tab" style="display: none;">
             <div class="section-card">
                 <h3 id="promptFormTitle"><i class="fas fa-plus-circle" style="color: var(--primary);"></i> Publish Viral AI Prompt</h3>
                 <div class="form-grid">
@@ -392,7 +441,7 @@
             </div>
         </div>
 
-        <!-- 2. System Settings Tab -->
+        <!-- 3. System Settings Tab -->
         <div id="settingsTab" class="content-tab" style="display: none;">
             <div class="section-card">
                 <h3><i class="fas fa-coins" style="color: var(--warning);"></i> System Economy Variables</h3>
@@ -418,7 +467,7 @@
             </div>
         </div>
 
-        <!-- 3. Withdraw Queue Tab -->
+        <!-- 4. Withdraw Queue Tab -->
         <div id="withdrawTab" class="content-tab" style="display: none;">
             <div class="section-card">
                 <h3><i class="fas fa-clock-rotate-left" style="color: var(--warning);"></i> Pending Payout Requests</h3>
@@ -465,7 +514,10 @@
         let editingPromptKey = null;
         let cachedPromptsData = {};
 
-        // রিয়েল-টাইম অথেন্টিকেশন গার্ড
+        let editingMovieKey = null;
+        let cachedMoviesData = {};
+
+        // অথেন্টিকেশন গার্ড
         auth.onAuthStateChanged((user) => {
             if (!user) {
                 window.location.href = "admin-login.html";
@@ -489,13 +541,39 @@
         }
 
         function loadDashboardData() {
-            // ১. সেটিংস লোড
-            db.ref('system_settings').on('value', snap => {
-                const conf = snap.val() || {};
-                document.getElementById('configReferBonus').value = conf.referBonus || 0.10;
-                document.getElementById('configMinWithdraw').value = conf.minWithdraw || 1.00;
-                document.getElementById('configSpinLimit').value = conf.spinLimit || 5;
-                document.getElementById('configSpinPool').value = conf.spinPool || "0.001, 0.0002, 0.002, 0.0005, 0.005, 0.001";
+            // ১. মুভি ও ভিডিও ডেটা লোড
+            db.ref('movie_posts').on('value', snap => {
+                const container = document.getElementById('moviesListContainer');
+                const data = snap.val();
+                if (!data) {
+                    container.innerHTML = '<p style="color: var(--text-muted); font-size: 13px;">No movies or viral videos uploaded yet.</p>';
+                    cachedMoviesData = {};
+                    return;
+                }
+
+                cachedMoviesData = data;
+                let html = '';
+                Object.keys(data).reverse().forEach(key => {
+                    const item = data[key];
+                    html += `
+                        <div class="feed-item">
+                            <div class="feed-info">
+                                <span class="badge-cat">${(item.category || 'movie').replace('_', ' ')}</span>
+                                <h4>${item.title}</h4>
+                                <p>${(item.description || '').substring(0, 80)}...</p>
+                                <div style="display: flex; gap: 10px; margin-top: 4px;">
+                                    ${item.previewUrl ? `<a href="${item.previewUrl}" target="_blank" style="color: #60a5fa; font-size: 11px;">Preview</a>` : ''}
+                                    ${item.fullVideoUrl ? `<a href="${item.fullVideoUrl}" target="_blank" style="color: #10b981; font-size: 11px;">Full Video</a>` : ''}
+                                </div>
+                            </div>
+                            <div class="item-actions">
+                                <button class="btn-edit" onclick="editMovie('${key}')"><i class="fas fa-pen-to-square"></i></button>
+                                <button class="btn-delete" onclick="deleteMovie('${key}')"><i class="fas fa-trash"></i></button>
+                            </div>
+                        </div>
+                    `;
+                });
+                container.innerHTML = html;
             });
 
             // ২. প্রম্পট লাইব্রেরি লোড
@@ -513,14 +591,14 @@
                 Object.keys(data).reverse().forEach(key => {
                     const item = data[key];
                     html += `
-                        <div class="prompt-item">
-                            <div class="prompt-info">
+                        <div class="feed-item">
+                            <div class="feed-info">
                                 <span class="badge-cat">${item.category}</span>
                                 <h4>${item.title}</h4>
-                                <p>${(item.promptText || '').substring(0, 100)}...</p>
+                                <p>${(item.promptText || '').substring(0, 80)}...</p>
                                 ${item.mediaUrl ? `<a href="${item.mediaUrl}" target="_blank" style="color: #60a5fa; font-size: 11px;">View Media</a>` : ''}
                             </div>
-                            <div class="prompt-actions">
+                            <div class="item-actions">
                                 <button class="btn-edit" onclick="editPrompt('${key}')"><i class="fas fa-pen-to-square"></i></button>
                                 <button class="btn-delete" onclick="deletePrompt('${key}')"><i class="fas fa-trash"></i></button>
                             </div>
@@ -530,7 +608,16 @@
                 container.innerHTML = html;
             });
 
-            // ৩. উইথড্র পেন্ডিং কিউ লোড
+            // ৩. সিস্টেম সেটিংস লোড
+            db.ref('system_settings').on('value', snap => {
+                const conf = snap.val() || {};
+                document.getElementById('configReferBonus').value = conf.referBonus || 0.10;
+                document.getElementById('configMinWithdraw').value = conf.minWithdraw || 1.00;
+                document.getElementById('configSpinLimit').value = conf.spinLimit || 5;
+                document.getElementById('configSpinPool').value = conf.spinPool || "0.001, 0.0002, 0.002, 0.0005, 0.005, 0.001";
+            });
+
+            // ৪. উইথড্র পেন্ডিং কিউ লোড
             db.ref('admin_withdraw_queue').on('value', snap => {
                 const tbody = document.getElementById('withdrawTableBody');
                 const data = snap.val();
@@ -561,21 +648,120 @@
             });
         }
 
-        // সেটিংস সেভ
-        function saveSystemSettings() {
-            const settings = {
-                referBonus: parseFloat(document.getElementById('configReferBonus').value) || 0.10,
-                minWithdraw: parseFloat(document.getElementById('configMinWithdraw').value) || 1.00,
-                spinLimit: parseInt(document.getElementById('configSpinLimit').value) || 5,
-                spinPool: document.getElementById('configSpinPool').value.trim()
+        // ================== MOVIE FUNCTIONS ==================
+        function uploadMoviePost() {
+            const cat = document.getElementById('movieCategory').value;
+            const title = document.getElementById('movieTitle').value.trim();
+            const desc = document.getElementById('movieDescription').value.trim();
+            const previewUrl = document.getElementById('moviePreviewUrl').value.trim();
+            const fullUrl = document.getElementById('movieFullUrl').value.trim();
+
+            if (!title || !previewUrl || !fullUrl) {
+                alert("টাইটেল, প্রিভিউ ভিডিও লিঙ্ক এবং ফুল ভিডিও লিঙ্ক দেওয়া আবশ্যক!");
+                return;
+            }
+
+            const payload = {
+                category: cat,
+                title: title,
+                description: desc || "",
+                previewUrl: previewUrl,
+                fullVideoUrl: fullUrl,
+                updatedAt: Date.now()
             };
 
-            db.ref('system_settings').update(settings).then(() => {
-                alert("সিস্টেম সেটিংস সফলভাবে আপডেট হয়েছে!");
-            });
+            if (editingMovieKey) {
+                db.ref('movie_posts/' + editingMovieKey).update(payload).then(() => {
+                    cancelEditMovie();
+                    alert("ভিডিও সফলভাবে আপডেট করা হয়েছে!");
+                });
+            } else {
+                payload.createdAt = Date.now();
+                const newKey = db.ref('movie_posts').push().key;
+                db.ref('movie_posts/' + newKey).set(payload).then(() => {
+                    cancelEditMovie();
+                    alert("নতুন ভিডিও সফলভাবে পাবলিশ হয়েছে!");
+                });
+            }
         }
 
-        // প্রম্পট এডিট মোড চালু করা
+        function editMovie(key) {
+            const item = cachedMoviesData[key];
+            if (!item) return;
+
+            editingMovieKey = key;
+            document.getElementById('movieCategory').value = item.category || 'new_movie';
+            document.getElementById('movieTitle').value = item.title || '';
+            document.getElementById('movieDescription').value = item.description || '';
+            document.getElementById('moviePreviewUrl').value = item.previewUrl || '';
+            document.getElementById('movieFullUrl').value = item.fullVideoUrl || '';
+
+            document.getElementById('movieFormTitle').innerHTML = '<i class="fas fa-pen-to-square" style="color: var(--warning);"></i> Edit Movie / Video';
+            document.getElementById('btnMovieUploadText').innerText = 'Update Video Post';
+            document.getElementById('btnCancelMovieEdit').style.display = 'inline-flex';
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function cancelEditMovie() {
+            editingMovieKey = null;
+            document.getElementById('movieTitle').value = "";
+            document.getElementById('movieDescription').value = "";
+            document.getElementById('moviePreviewUrl').value = "";
+            document.getElementById('movieFullUrl').value = "";
+
+            document.getElementById('movieFormTitle').innerHTML = '<i class="fas fa-film" style="color: var(--primary);"></i> Add New Movie / Video';
+            document.getElementById('btnMovieUploadText').innerText = 'Publish Video';
+            document.getElementById('btnCancelMovieEdit').style.display = 'none';
+        }
+
+        function deleteMovie(key) {
+            if (confirm("আপনি কি নিশ্চিত এই ভিডিও পোস্টটি ডিলিট করতে চান?")) {
+                db.ref('movie_posts/' + key).remove().then(() => {
+                    if (editingMovieKey === key) cancelEditMovie();
+                });
+            }
+        }
+
+        // ================== PROMPT FUNCTIONS ==================
+        function uploadPrompt() {
+            const cat = document.getElementById('promptCategory').value;
+            const title = document.getElementById('promptTitle').value.trim();
+            const media = document.getElementById('promptMediaUrl').value.trim();
+            const prompt = document.getElementById('promptText').value.trim();
+
+            if (!title || !prompt) {
+                alert("শিরোনাম এবং প্রম্পট টেক্সট দেওয়া আবশ্যক!");
+                return;
+            }
+
+            if (editingPromptKey) {
+                db.ref('ai_prompts/' + editingPromptKey).update({
+                    category: cat,
+                    title: title,
+                    mediaUrl: media || "",
+                    promptText: prompt,
+                    updatedAt: Date.now()
+                }).then(() => {
+                    cancelEditPrompt();
+                    alert("প্রম্পট সফলভাবে আপডেট করা হয়েছে!");
+                });
+            } else {
+                const newPromptKey = db.ref('ai_prompts').push().key;
+                db.ref('ai_prompts/' + newPromptKey).set({
+                    id: newPromptKey,
+                    category: cat,
+                    title: title,
+                    mediaUrl: media || "",
+                    promptText: prompt,
+                    createdAt: Date.now()
+                }).then(() => {
+                    cancelEditPrompt();
+                    alert("প্রম্পট সফলভাবে লাইভ করা হয়েছে!");
+                });
+            }
+        }
+
         function editPrompt(key) {
             const item = cachedPromptsData[key];
             if (!item) return;
@@ -593,7 +779,6 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        // প্রম্পট এডিট বাতিল করা
         function cancelEditPrompt() {
             editingPromptKey = null;
             document.getElementById('promptTitle').value = "";
@@ -605,65 +790,33 @@
             document.getElementById('btnCancelEdit').style.display = 'none';
         }
 
-        // প্রম্পট পাবলিশ ও আপডেট হ্যান্ডলার
-        function uploadPrompt() {
-            const cat = document.getElementById('promptCategory').value;
-            const title = document.getElementById('promptTitle').value.trim();
-            const media = document.getElementById('promptMediaUrl').value.trim();
-            const prompt = document.getElementById('promptText').value.trim();
-
-            if (!title || !prompt) {
-                alert("শিরোনাম এবং প্রম্পট টেক্সট দেওয়া আবশ্যক!");
-                return;
-            }
-
-            if (editingPromptKey) {
-                // বিদ্যমান প্রম্পট আপডেট
-                db.ref('ai_prompts/' + editingPromptKey).update({
-                    category: cat,
-                    title: title,
-                    mediaUrl: media || "",
-                    promptText: prompt,
-                    updatedAt: Date.now()
-                }).then(() => {
-                    cancelEditPrompt();
-                    alert("প্রম্পট সফলভাবে আপডেট করা হয়েছে!");
-                });
-            } else {
-                // নতুন প্রম্পট তৈরি
-                const newPromptKey = db.ref('ai_prompts').push().key;
-                db.ref('ai_prompts/' + newPromptKey).set({
-                    id: newPromptKey,
-                    category: cat,
-                    title: title,
-                    mediaUrl: media || "",
-                    promptText: prompt,
-                    createdAt: Date.now()
-                }).then(() => {
-                    cancelEditPrompt();
-                    alert("প্রম্পট সফলভাবে লাইভ করা হয়েছে!");
-                });
-            }
-        }
-
-        // প্রম্পট ডিলিট
         function deletePrompt(key) {
             if (confirm("আপনি কি নিশ্চিত এই প্রম্পটটি ডিলিট করতে চান?")) {
                 db.ref('ai_prompts/' + key).remove().then(() => {
-                    if (editingPromptKey === key) {
-                        cancelEditPrompt();
-                    }
+                    if (editingPromptKey === key) cancelEditPrompt();
                 });
             }
         }
 
-        // উইথড্র অনুমোদন / বাতিল
+        // ================== SETTINGS & PAYOUT ==================
+        function saveSystemSettings() {
+            const settings = {
+                referBonus: parseFloat(document.getElementById('configReferBonus').value) || 0.10,
+                minWithdraw: parseFloat(document.getElementById('configMinWithdraw').value) || 1.00,
+                spinLimit: parseInt(document.getElementById('configSpinLimit').value) || 5,
+                spinPool: document.getElementById('configSpinPool').value.trim()
+            };
+
+            db.ref('system_settings').update(settings).then(() => {
+                alert("সিস্টেম সেটিংস সফলভাবে আপডেট হয়েছে!");
+            });
+        }
+
         function handleWithdrawStatus(reqKey, uId, newStatus, refundCoins) {
             const updates = {};
             updates['/admin_withdraw_queue/' + reqKey + '/status'] = newStatus;
             updates['/withdraw_requests/' + uId + '/' + reqKey + '/status'] = newStatus;
 
-            // রিজেক্ট হলে কয়েন রিফান্ড
             if (newStatus === "Rejected" && refundCoins) {
                 db.ref('stz_miners/' + uId + '/balance').transaction(current => (current || 0) + refundCoins);
             }
