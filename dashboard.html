@@ -29,8 +29,10 @@
             margin: 0;
             padding: 0;
             user-select: none;
+            -webkit-user-select: none;
             font-family: 'Plus Jakarta Sans', sans-serif;
             -webkit-tap-highlight-color: transparent;
+            -webkit-touch-callout: none !important;
         }
 
         body {
@@ -47,15 +49,15 @@
         }
 
         .container {
-    width: 100%;
-    max-width: 440px;
-    padding: calc(env(safe-area-inset-top, 0px) + 55px) 18px 110px 18px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    position: relative;
-    z-index: 1;
-}
+            width: 100%;
+            max-width: 440px;
+            padding: calc(env(safe-area-inset-top, 0px) + 55px) 18px 110px 18px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }
 
         /* Top Bar */
         .top-nav {
@@ -79,6 +81,7 @@
             font-size: 14px;
             cursor: pointer;
             text-decoration: none;
+            -webkit-touch-callout: none !important;
         }
 
         .brand-text {
@@ -100,6 +103,7 @@
             box-shadow: 0 4px 12px rgba(0,0,0,0.06);
             cursor: pointer;
             text-decoration: none;
+            -webkit-touch-callout: none !important;
         }
 
         /* ---------------- VIEW 1: IDLE / READY STATE ---------------- */
@@ -344,6 +348,7 @@
             align-items: center;
             justify-content: center;
             gap: 6px;
+            -webkit-touch-callout: none !important;
         }
 
         /* ---------------- COMMON ORB SPHERE ---------------- */
@@ -423,6 +428,7 @@
             font-weight: 800;
             box-shadow: 0 8px 22px rgba(24, 86, 243, 0.35);
             cursor: pointer;
+            -webkit-touch-callout: none !important;
         }
 
         .btn-main-action:disabled {
@@ -459,6 +465,9 @@
             flex: 1;
             height: 100%;
             text-decoration: none;
+            -webkit-touch-callout: none !important;
+            -webkit-user-select: none !important;
+            user-select: none !important;
         }
 
         .nav-item.active {
@@ -485,14 +494,14 @@
     <div class="container">
         <!-- Top App Bar -->
         <div class="top-nav">
-            <a href="./index.html" class="back-pill-btn">
+            <div onclick="location.href='./index.html'" class="back-pill-btn">
                 <i class="fas fa-chevron-left"></i>
-            </a>
+            </div>
             <span class="brand-text">STZ Mining</span>
-            <a href="./withdraw.html" class="mine-wallet-tag">
+            <div onclick="location.href='./withdraw.html'" class="mine-wallet-tag">
                 <i class="fas fa-wallet" style="color: var(--primary-blue);"></i>
                 $<span id="topBarBalanceUsdt">0.000</span>
-            </a>
+            </div>
         </div>
 
         <!-- ==================== VIEW 1: IDLE / START SCREEN ==================== -->
@@ -620,28 +629,28 @@
         </div>
     </div>
 
-    <!-- 5-Button Bottom Nav -->
+    <!-- 5-Button Bottom Nav (Protected against context menu) -->
     <nav class="bottom-nav">
-        <a href="./index.html" class="nav-item">
+        <div class="nav-item" onclick="location.href='./index.html'">
             <i class="fas fa-magic"></i>
             <span>Prompts</span>
-        </a>
-        <a href="./dashboard.html" class="nav-item active">
+        </div>
+        <div class="nav-item active" onclick="location.href='./dashboard.html'">
             <i class="fas fa-hammer"></i>
             <span>Mining</span>
-        </a>
-        <a href="./spin.html" class="nav-item">
+        </div>
+        <div class="nav-item" onclick="location.href='./spin.html'">
             <i class="fas fa-dharmachakra"></i>
             <span>Spin</span>
-        </a>
-        <a href="./refer.html" class="nav-item">
+        </div>
+        <div class="nav-item" onclick="location.href='./refer.html'">
             <i class="fas fa-user-friends"></i>
             <span>Referral</span>
-        </a>
-        <a href="./withdraw.html" class="nav-item">
+        </div>
+        <div class="nav-item" onclick="location.href='./withdraw.html'">
             <i class="fas fa-wallet"></i>
             <span>Wallet</span>
-        </a>
+        </div>
     </nav>
 
     <!-- Firebase SDKs -->
@@ -649,6 +658,11 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
     <script>
+        // লং প্রেস ও ব্রাউজার ডিফল্ট কনটেক্সট মেনু সম্পূর্ণ বন্ধ করা
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+        });
+
         let tg = null;
         try {
             if (window.Telegram && window.Telegram.WebApp) {
@@ -763,7 +777,7 @@
 
                 const startBtn = document.getElementById('startMiningBtn');
                 if (userData.miningStartedAt > 0 && elapsed >= CYCLE_MS) {
-                    startBtn.innerText = "Claim STZ & Start";
+                    startBtn.innerText = "Claim & Start";
                 } else {
                     startBtn.innerText = "Start 12h Mining";
                 }
