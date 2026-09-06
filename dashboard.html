@@ -1,635 +1,315 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bn">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>STZ Network - Movies & Viral Hub</title>
-
-    <!-- Telegram & Adsgram SDK -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>STZ Network - Movies & Viral Videos</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Telegram Web App SDK -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <!-- Adsgram SDK -->
     <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
-
-    <!-- Google Fonts & FontAwesome -->
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        :root {
-            --primary-blue: #1c64f2;
-            --light-blue: #3f83f8;
-            --text-dark: #0f172a;
-            --text-muted: #64748b;
-            --card-glass: rgba(255, 255, 255, 0.94);
-            --card-white: #ffffff;
-            --success: #10b981;
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            user-select: none;
-            -webkit-user-select: none;
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            -webkit-tap-highlight-color: transparent;
-            -webkit-touch-callout: none !important;
-        }
-
         body {
-            background-color: #3b82f6;
-            background-image: 
-                radial-gradient(circle at 50% 20%, rgba(255, 255, 255, 0.25) 0%, transparent 60%),
-                radial-gradient(rgba(255, 255, 255, 0.18) 1.5px, transparent 1.5px),
-                linear-gradient(180deg, #1d6bf3 0%, #60a5fa 35%, #bfdbfe 70%, #f0f6ff 100%);
-            background-size: 100% 100%, 16px 16px, 100% 100%;
-            min-height: 100vh;
-            color: var(--text-dark);
-            display: flex;
-            justify-content: center;
+            background-color: #0b0f19;
+            color: #f3f4f6;
+            font-family: system-ui, -apple-system, sans-serif;
+            -webkit-tap-highlight-color: transparent;
         }
-
-        .container {
-            width: 100%;
-            max-width: 440px;
-            padding: calc(env(safe-area-inset-top, 0px) + 55px) 18px 110px 18px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            position: relative;
-            z-index: 1;
-        }
-
-        /* Top Bar */
-        .top-nav {
-            width: 100%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 12px;
-        }
-
-        .brand-badge {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .logo-box {
-            width: 34px;
-            height: 34px;
-            background: #0f4bd8;
-            border-radius: 10px;
-            color: #fff;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 15px;
-            box-shadow: 0 4px 10px rgba(15, 75, 216, 0.3);
-        }
-
-        .brand-text {
-            font-size: 18px;
-            font-weight: 800;
-            color: #ffffff;
-        }
-
-        .wallet-pill {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 20px;
-            padding: 6px 14px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 13px;
-            font-weight: 800;
-            color: var(--text-dark);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.06);
-            cursor: pointer;
-            text-decoration: none;
-            -webkit-touch-callout: none !important;
-        }
-
-        /* Hero Banner */
-        .hero-banner {
-            width: 100%;
-            background: var(--card-glass);
-            border: 1px solid rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(12px);
-            border-radius: 20px;
-            padding: 16px;
-            margin-bottom: 14px;
-            box-shadow: 0 6px 20px rgba(15, 75, 216, 0.08);
-            text-align: left;
-        }
-
-        .hero-banner h3 {
-            font-size: 16px;
-            font-weight: 800;
-            color: var(--text-dark);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .hero-banner p {
-            font-size: 12px;
-            color: var(--text-muted);
-            margin-top: 3px;
-            font-weight: 600;
-        }
-
-        /* Category Filter Tabs */
-        .cat-scroll-track {
-            width: 100%;
-            display: flex;
-            gap: 8px;
-            overflow-x: auto;
-            padding-bottom: 4px;
-            margin-bottom: 14px;
-            scrollbar-width: none;
-        }
-
-        .cat-scroll-track::-webkit-scrollbar {
+        .hide-scrollbar::-webkit-scrollbar {
             display: none;
         }
-
-        .cat-btn {
-            background: rgba(255, 255, 255, 0.85);
-            border: none;
-            padding: 8px 14px;
-            border-radius: 14px;
-            font-size: 12px;
-            font-weight: 700;
-            color: var(--text-muted);
-            white-space: nowrap;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            transition: all 0.2s;
-            -webkit-touch-callout: none !important;
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
         }
-
-        .cat-btn.active {
-            background: var(--text-dark);
-            color: #ffffff;
-            box-shadow: 0 4px 12px rgba(15, 23, 42, 0.2);
+        .glass-nav {
+            background: rgba(17, 24, 39, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
         }
-
-        /* Video Feed Grid */
-        .media-feed-grid {
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-        }
-
-        .media-card {
-            background: #ffffff;
-            border-radius: 20px;
-            overflow: hidden;
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
-            display: flex;
-            flex-direction: column;
-        }
-
-        .player-frame-box {
-            width: 100%;
-            height: 220px;
-            background: #000000;
+        .video-container {
             position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .player-frame-box video, .player-frame-box iframe {
+            padding-top: 56.25%; /* 16:9 Aspect Ratio */
             width: 100%;
-            height: 100%;
-            border: none;
-            object-fit: cover;
-        }
-
-        .media-tag {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            background: rgba(15, 23, 42, 0.75);
-            backdrop-filter: blur(8px);
-            color: #fff;
-            padding: 4px 10px;
-            border-radius: 10px;
-            font-size: 11px;
-            font-weight: 700;
-            text-transform: capitalize;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            z-index: 2;
-        }
-
-        .sound-toggle-btn {
-            position: absolute;
-            bottom: 10px;
-            right: 10px;
-            background: rgba(15, 23, 42, 0.75);
-            backdrop-filter: blur(8px);
-            color: #ffffff;
-            width: 34px;
-            height: 34px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            font-size: 13px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            z-index: 3;
-            transition: transform 0.15s ease;
-        }
-
-        .sound-toggle-btn:active {
-            transform: scale(0.9);
-        }
-
-        .card-content {
-            padding: 14px;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .card-title {
-            font-size: 15px;
-            font-weight: 800;
-            color: var(--text-dark);
-        }
-
-        .card-desc {
-            font-size: 12px;
-            color: var(--text-muted);
-            line-height: 1.4;
-            font-weight: 500;
-        }
-
-        .btn-watch-full {
-            width: 100%;
-            padding: 13px;
+            background: #000;
             border-radius: 14px;
-            background: linear-gradient(135deg, #3b76f6, #1856f3);
-            border: none;
-            color: #fff;
-            font-size: 14px;
-            font-weight: 800;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            box-shadow: 0 4px 15px rgba(24, 86, 243, 0.3);
-            margin-top: 4px;
-            transition: background 0.2s, transform 0.1s;
+            overflow: hidden;
         }
-
-        .btn-watch-full.unlocked {
-            background: linear-gradient(135deg, #10b981, #059669);
-            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
-        }
-
-        .btn-watch-full:active {
-            transform: scale(0.98);
-        }
-
-        .empty-state {
-            width: 100%;
-            text-align: center;
-            padding: 40px 16px;
-            background: rgba(255, 255, 255, 0.85);
-            border-radius: 20px;
-            color: var(--text-muted);
-            font-size: 13px;
-            font-weight: 600;
-        }
-
-        /* 5-Button Modern Bottom Nav Bar */
-        .bottom-nav {
-            position: fixed;
-            bottom: 0;
+        .video-container iframe,
+        .video-container video {
+            position: absolute;
+            top: 0;
             left: 0;
             width: 100%;
-            height: 68px;
-            background: #ffffff;
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            box-shadow: 0 -4px 20px rgba(0,0,0,0.08);
-            z-index: 99999 !important;
-            padding: 0 4px;
-        }
-
-        .nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 3px;
-            color: #94a3b8;
-            font-size: 10px;
-            font-weight: 700;
-            cursor: pointer;
-            flex: 1;
             height: 100%;
-            text-decoration: none;
-            -webkit-touch-callout: none !important;
-            -webkit-user-select: none !important;
-            user-select: none !important;
-        }
-
-        .nav-item.active {
-            color: var(--primary-blue);
-        }
-
-        .nav-item i {
-            font-size: 17px;
-            pointer-events: none;
-        }
-
-        .nav-item span {
-            pointer-events: none;
+            border: 0;
         }
     </style>
 </head>
-<body>
+<body class="pb-28">
 
-    <div class="container">
-        <!-- Top App Bar -->
-        <div class="top-nav">
-            <div class="brand-badge">
-                <div class="logo-box"><i class="fas fa-play-circle"></i></div>
-                <span class="brand-text">Movies & Viral</span>
-            </div>
-            
-            <div onclick="location.href='./withdraw.html'" class="wallet-pill">
-                <i class="fas fa-wallet" style="color: var(--primary-blue);"></i>
-                $<span id="topBalance">0.000</span>
-            </div>
+    <!-- Header -->
+    <header class="p-4 flex items-center justify-between border-b border-gray-800/60 sticky top-0 bg-[#0b0f19]/90 backdrop-blur z-40">
+        <div class="flex items-center space-x-2">
+            <span class="p-2 bg-rose-600/20 text-rose-500 rounded-xl">
+                <i data-lucide="clapperboard" class="w-5 h-5"></i>
+            </span>
+            <span class="font-bold text-lg tracking-wide text-white">STZ Network</span>
         </div>
-
-        <!-- Banner -->
-        <div class="hero-banner">
-            <h3><i class="fas fa-film" style="color: #ef4444;"></i> Watch Movies & Viral Clipes</h3>
-            <p>Watch a short ad to unlock full videos, seek freely and enjoy full-screen playback.</p>
+        <div class="flex items-center space-x-2 bg-gray-800/80 px-3 py-1.5 rounded-full border border-gray-700/50">
+            <i data-lucide="sparkles" class="w-4 h-4 text-amber-400"></i>
+            <span id="userPoints" class="text-xs font-semibold text-gray-200">Free Stream</span>
         </div>
+    </header>
 
-        <!-- Category Scroll Filters -->
-        <div class="cat-scroll-track">
-            <button class="cat-btn active" onclick="filterCategory('all', this)"><i class="fas fa-globe"></i> All</button>
-            <button class="cat-btn" onclick="filterCategory('new_movie', this)"><i class="fas fa-video"></i> New Movie</button>
-            <button class="cat-btn" onclick="filterCategory('viral_video', this)"><i class="fas fa-fire"></i> Viral Video</button>
-            <button class="cat-btn" onclick="filterCategory('facebook', this)"><i class="fab fa-facebook"></i> Facebook Viral</button>
-            <button class="cat-btn" onclick="filterCategory('instagram', this)"><i class="fab fa-instagram"></i> Instagram Viral</button>
-            <button class="cat-btn" onclick="filterCategory('tiktok', this)"><i class="fab fa-tiktok"></i> TikTok Viral</button>
-        </div>
-
-        <!-- Media Feed -->
-        <div class="media-feed-grid" id="mediaFeedContainer">
-            <div class="empty-state">Loading latest videos...</div>
+    <!-- Categories Tab Bar -->
+    <div class="px-4 pt-4">
+        <div class="flex space-x-2 overflow-x-auto hide-scrollbar pb-2" id="categoryTabs">
+            <button onclick="filterCategory('All')" class="category-btn active px-4 py-1.5 rounded-full text-xs font-medium bg-rose-600 text-white whitespace-nowrap shadow-lg shadow-rose-600/20">All</button>
+            <button onclick="filterCategory('New Movie')" class="category-btn px-4 py-1.5 rounded-full text-xs font-medium bg-gray-800 text-gray-400 hover:text-white whitespace-nowrap">New Movie</button>
+            <button onclick="filterCategory('Viral Video')" class="category-btn px-4 py-1.5 rounded-full text-xs font-medium bg-gray-800 text-gray-400 hover:text-white whitespace-nowrap">Viral Video</button>
+            <button onclick="filterCategory('Facebook Viral')" class="category-btn px-4 py-1.5 rounded-full text-xs font-medium bg-gray-800 text-gray-400 hover:text-white whitespace-nowrap">Facebook</button>
+            <button onclick="filterCategory('Instagram Viral')" class="category-btn px-4 py-1.5 rounded-full text-xs font-medium bg-gray-800 text-gray-400 hover:text-white whitespace-nowrap">Instagram</button>
+            <button onclick="filterCategory('TikTok Viral')" class="category-btn px-4 py-1.5 rounded-full text-xs font-medium bg-gray-800 text-gray-400 hover:text-white whitespace-nowrap">TikTok</button>
         </div>
     </div>
 
-    <!-- 5-Button Bottom Nav -->
-    <nav class="bottom-nav">
-        <div class="nav-item" onclick="location.href='./index.html'">
-            <i class="fas fa-magic"></i>
-            <span>Prompts</span>
+    <!-- Video Feed Container -->
+    <main class="px-4 mt-3 space-y-6" id="videoFeed">
+        <!-- Loading State -->
+        <div id="loadingIndicator" class="text-center py-16">
+            <div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-rose-500 border-t-transparent"></div>
+            <p class="text-xs text-gray-400 mt-2">ভিডিও লোড হচ্ছে...</p>
         </div>
-        <div class="nav-item active" onclick="location.href='./dashboard.html'">
-            <i class="fas fa-play-circle"></i>
-            <span>Movies</span>
-        </div>
-        <div class="nav-item" onclick="location.href='./spin.html'">
-            <i class="fas fa-dharmachakra"></i>
-            <span>Spin</span>
-        </div>
-        <div class="nav-item" onclick="location.href='./refer.html'">
-            <i class="fas fa-user-friends"></i>
-            <span>Referral</span>
-        </div>
-        <div class="nav-item" onclick="location.href='./withdraw.html'">
-            <i class="fas fa-wallet"></i>
-            <span>Wallet</span>
+    </main>
+
+    <!-- Bottom Navigation Bar -->
+    <nav class="fixed bottom-0 left-0 right-0 glass-nav z-50 px-6 py-2.5">
+        <div class="flex justify-between items-center max-w-md mx-auto">
+            <a href="dashboard.html" class="flex flex-col items-center text-rose-500 space-y-1">
+                <i data-lucide="film" class="w-5 h-5"></i>
+                <span class="text-[10px] font-medium">Movies</span>
+            </a>
+            <a href="spin.html" class="flex flex-col items-center text-gray-400 hover:text-gray-200 space-y-1">
+                <i data-lucide="loader-2" class="w-5 h-5"></i>
+                <span class="text-[10px] font-medium">Spin</span>
+            </a>
+            <a href="refer.html" class="flex flex-col items-center text-gray-400 hover:text-gray-200 space-y-1">
+                <i data-lucide="users" class="w-5 h-5"></i>
+                <span class="text-[10px] font-medium">Refer</span>
+            </a>
+            <a href="profile.html" class="flex flex-col items-center text-gray-400 hover:text-gray-200 space-y-1">
+                <i data-lucide="user" class="w-5 h-5"></i>
+                <span class="text-[10px] font-medium">Profile</span>
+            </a>
+            <a href="withdraw.html" class="flex flex-col items-center text-gray-400 hover:text-gray-200 space-y-1">
+                <i data-lucide="wallet" class="w-5 h-5"></i>
+                <span class="text-[10px] font-medium">Wallet</span>
+            </a>
         </div>
     </nav>
 
-    <!-- Firebase SDKs -->
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    <!-- Firebase SDK (Compat) -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
     <script>
-        // লং-প্রেস ও ব্রাউজার পপআপ মেনু বন্ধ করা
-        document.addEventListener('contextmenu', function(e) {
-            e.preventDefault();
-        });
+        // Lucide Icons Render
+        lucide.createIcons();
 
-        let tg = null;
-        try {
-            if (window.Telegram && window.Telegram.WebApp) {
-                tg = window.Telegram.WebApp;
-                tg.expand();
-            }
-        } catch(e) {}
+        // Telegram Web App Setup
+        const tg = window.Telegram?.WebApp;
+        if (tg) {
+            tg.ready();
+            tg.expand();
+        }
 
-        const ADSGRAM_BLOCK_ID = "26734";
-        const STZ_TO_USDT = 0.001;
+        // Adsgram Block ID (আপনার নিজস্ব Adsgram Rewarded Block ID বসিয়ে নিন)
+        const ADSGRAM_BLOCK_ID = "YOUR_ADSGRAM_BLOCK_ID";
+        const AdController = window.Adsgram?.init({ blockId: ADSGRAM_BLOCK_ID });
 
+        // Firebase Configuration (আপনার ফায়ারবেজ কনফিগ বসিয়ে নিন)
         const firebaseConfig = {
-            apiKey: "AIzaSyAl0eRqOs5QNUg_J1Pj-4PlEqRDxAXr-oA",
-            authDomain: "viral-zone-bd.firebaseapp.com",
-            projectId: "viral-zone-bd",
-            storageBucket: "viral-zone-bd.firebasestorage.app",
-            messagingSenderId: "794737483555",
-            appId: "1:794737483555:web:a275cd96aafff0e640f696",
-            databaseURL: "https://viral-zone-bd-default-rtdb.firebaseio.com"
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_AUTH_DOMAIN",
+            databaseURL: "YOUR_DATABASE_URL",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_STORAGE_BUCKET",
+            messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+            appId: "YOUR_APP_ID"
         };
 
-        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
         const db = firebase.database();
 
-        let userId = "sakil24";
-        let adsController = null;
-        let allMedia = [];
-        let currentFilter = "all";
-        const unlockedMedia = new Set();
+        let allVideos = [];
+        let activeCategory = 'All';
 
-        function initAdsgram() {
-            try {
-                if (window.Adsgram) {
-                    adsController = window.Adsgram.init({ blockId: ADSGRAM_BLOCK_ID });
-                }
-            } catch(e) {
-                console.error("Adsgram init error:", e);
-            }
-        }
-        initAdsgram();
+        // ফায়ারবেজ থেকে ভিডিও লোড করা
+        db.ref('videos').on('value', (snapshot) => {
+            const data = snapshot.val();
+            const loadingIndicator = document.getElementById('loadingIndicator');
+            if (loadingIndicator) loadingIndicator.style.display = 'none';
 
-        if (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) {
-            const u = tg.initDataUnsafe.user;
-            userId = u.id ? u.id.toString() : (u.username || "sakil24");
-        }
-
-        // লাইভ ব্যালেন্স ট্র্যাকিং
-        const userRef = db.ref('stz_miners/' + userId);
-        userRef.on('value', snap => {
-            const val = snap.val();
-            if (val) {
-                const totalUsdt = (val.balance || 0) * STZ_TO_USDT;
-                document.getElementById('topBalance').innerText = totalUsdt.toFixed(3);
-            }
-        });
-
-        // ফায়ারবেজ থেকে মুভি ও ভিডিও ডেটা লোড
-        db.ref('movie_posts').on('value', snap => {
-            const data = snap.val();
-            const container = document.getElementById('mediaFeedContainer');
-
-            if (!data) {
-                container.innerHTML = '<div class="empty-state">No videos or movies available right now!</div>';
-                return;
-            }
-
-            allMedia = Object.keys(data).map(k => ({ id: k, ...data[k] })).reverse();
-            renderMediaFeed();
-        });
-
-        function filterCategory(cat, btn) {
-            currentFilter = cat;
-            document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            renderMediaFeed();
-        }
-
-        function renderMediaFeed() {
-            const container = document.getElementById('mediaFeedContainer');
-            const filtered = currentFilter === "all" ? allMedia : allMedia.filter(m => m.category === currentFilter);
-
-            if (filtered.length === 0) {
-                container.innerHTML = `<div class="empty-state">No content found in this category.</div>`;
-                return;
-            }
-
-            let html = '';
-            filtered.forEach(item => {
-                const isUnlocked = unlockedMedia.has(item.id);
-
-                let mediaHTML = '';
-                if (isUnlocked) {
-                    // আনলকড অবস্থা: ফুল ভিডিও প্লেয়ার (টেনে দেখার জন্য controls সহ)
-                    mediaHTML = `
-                        <video id="player-${item.id}" src="${item.fullVideoUrl || item.previewUrl}" controls autoplay playsinline controlsList="nodownload"></video>
-                    `;
-                } else {
-                    // লকড অবস্থা: প্রিভিউ ভিডিও (লুপ ও মিউট) + সাউন্ড টগল
-                    mediaHTML = `
-                        <video id="vid-${item.id}" src="${item.previewUrl}" autoplay loop muted playsinline preload="metadata"></video>
-                        <div class="sound-toggle-btn" onclick="toggleSound('${item.id}', this)">
-                            <i class="fas fa-volume-mute"></i>
-                        </div>
-                    `;
-                }
-
-                html += `
-                    <div class="media-card">
-                        <div class="player-frame-box" id="frame-${item.id}">
-                            ${mediaHTML}
-                            <span class="media-tag"><i class="fas fa-tag"></i> ${formatCategoryName(item.category)}</span>
-                        </div>
-                        <div class="card-content">
-                            <div class="card-title">${item.title}</div>
-                            <div class="card-desc">${item.description || 'Watch the full video without cuts.'}</div>
-
-                            <button class="btn-watch-full ${isUnlocked ? 'unlocked' : ''}" id="btn-${item.id}" onclick="handleUnlockAction('${item.id}')">
-                                ${isUnlocked ? '<i class="fas fa-play"></i> Playing Full Video' : '<i class="fas fa-film"></i> Watch Full Video (Watch Ad)'}
-                            </button>
-                        </div>
+            if (data) {
+                allVideos = Object.keys(data).map(key => ({
+                    id: key,
+                    ...data[key]
+                })).reverse();
+                renderVideos();
+            } else {
+                document.getElementById('videoFeed').innerHTML = `
+                    <div class="text-center py-20 text-gray-500">
+                        <i data-lucide="video-off" class="w-10 h-10 mx-auto mb-2 opacity-50"></i>
+                        <p class="text-sm">এখনো কোনো ভিডিও আপলোড করা হয়নি।</p>
                     </div>
                 `;
-            });
-
-            container.innerHTML = html;
-        }
-
-        function formatCategoryName(cat) {
-            if (!cat) return 'Movie';
-            return cat.replace('_', ' ').toUpperCase();
-        }
-
-        function toggleSound(id, btn) {
-            const video = document.getElementById(`vid-${id}`);
-            if (!video) return;
-
-            if (video.muted) {
-                video.muted = false;
-                btn.innerHTML = '<i class="fas fa-volume-up"></i>';
-            } else {
-                video.muted = true;
-                btn.innerHTML = '<i class="fas fa-volume-mute"></i>';
+                lucide.createIcons();
             }
+        });
+
+        // ক্যাটাগরি ফিল্টারিং
+        function filterCategory(cat) {
+            activeCategory = cat;
+            document.querySelectorAll('.category-btn').forEach(btn => {
+                if (btn.innerText.trim().toLowerCase() === cat.toLowerCase() || (cat === 'All' && btn.innerText.trim() === 'All')) {
+                    btn.className = "category-btn px-4 py-1.5 rounded-full text-xs font-medium bg-rose-600 text-white whitespace-nowrap shadow-lg shadow-rose-600/20";
+                } else {
+                    btn.className = "category-btn px-4 py-1.5 rounded-full text-xs font-medium bg-gray-800 text-gray-400 hover:text-white whitespace-nowrap";
+                }
+            });
+            renderVideos();
         }
 
-        function handleUnlockAction(id) {
-            if (unlockedMedia.has(id)) {
-                const vid = document.getElementById(`player-${id}`);
-                if (vid) {
-                    if (vid.requestFullscreen) vid.requestFullscreen();
-                    else if (vid.webkitRequestFullscreen) vid.webkitRequestFullscreen();
-                }
+        // ভিডিও ফিড রেন্ডার
+        function renderVideos() {
+            const feed = document.getElementById('videoFeed');
+            feed.innerHTML = '';
+
+            const filtered = activeCategory === 'All' 
+                ? allVideos 
+                : allVideos.filter(v => v.category === activeCategory);
+
+            if (filtered.length === 0) {
+                feed.innerHTML = `
+                    <div class="text-center py-16 text-gray-500">
+                        <p class="text-xs">এই ক্যাটাগরিতে কোনো ভিডিও পাওয়া যায়নি।</p>
+                    </div>
+                `;
                 return;
             }
 
-            if (!adsController) initAdsgram();
+            filtered.forEach(video => {
+                const card = document.createElement('div');
+                card.className = "bg-gray-900/70 border border-gray-800 rounded-2xl p-3 shadow-lg flex flex-col space-y-3";
+                
+                card.innerHTML = `
+                    <div class="flex items-center justify-between">
+                        <span class="text-[11px] font-semibold tracking-wider uppercase px-2.5 py-0.5 rounded-full bg-rose-500/10 text-rose-400 border border-rose-500/20">
+                            ${video.category || 'Viral'}
+                        </span>
+                        <span class="text-[11px] text-gray-400 flex items-center gap-1">
+                            <i data-lucide="eye" class="w-3.5 h-3.5"></i> Trending
+                        </span>
+                    </div>
 
-            const btn = document.getElementById(`btn-${id}`);
-            if (btn) btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading Ad...';
+                    <h3 class="text-sm font-semibold text-white leading-snug">${video.title || 'Untitled Video'}</h3>
 
-            if (adsController) {
-                adsController.show().then(() => {
-                    unlockVideo(id);
+                    <!-- প্লেয়ার কন্টেইনার -->
+                    <div id="player-box-${video.id}" class="video-container">
+                        ${
+                            video.previewUrl
+                            ? `<video src="${video.previewUrl}" controls playsinline preload="metadata" poster="${video.thumbnail || ''}"></video>`
+                            : `<div class="absolute inset-0 flex items-center justify-center text-gray-500 text-xs">ফুল ভিডিও দেখতে নিচের বাটনে ক্লিক করুন</div>`
+                        }
+                    </div>
+
+                    <!-- আনলক ও ওয়াচ ফুল ভিডিও বাটন -->
+                    <div id="action-box-${video.id}">
+                        <button onclick="handleUnlockMovie('${video.id}')" 
+                                class="w-full py-2.5 px-4 bg-gradient-to-r from-rose-600 to-red-600 hover:from-rose-500 hover:to-red-500 text-white rounded-xl font-medium text-xs flex items-center justify-center space-x-2 shadow-lg shadow-rose-600/25 transition active:scale-[0.98]">
+                            <i data-lucide="play-circle" class="w-4 h-4"></i>
+                            <span>Watch Full Video (Watch Ad)</span>
+                        </button>
+                    </div>
+                `;
+
+                feed.appendChild(card);
+            });
+
+            lucide.createIcons();
+        }
+
+        // Adsgram অ্যাড দেখিয়ে ফুল ভিডিও আনলক করার ফাংশন
+        function handleUnlockMovie(videoId) {
+            const video = allVideos.find(v => v.id === videoId);
+            if (!video || !video.fullUrl) {
+                alert('ভিডিও লিঙ্ক খুঁজে পাওয়া যায়নি!');
+                return;
+            }
+
+            // Adsgram কল
+            if (AdController) {
+                AdController.show().then(() => {
+                    // অ্যাড সফলভাবে দেখা শেষ হলে ভিডিও প্লে হবে
+                    startFullStream(videoId, video.fullUrl);
                 }).catch((err) => {
-                    console.log("Ad skipped or error:", err);
-                    if (btn) btn.innerHTML = '<i class="fas fa-film"></i> Watch Full Video (Watch Ad)';
-                    if (tg && tg.showConfirm) {
-                        tg.showConfirm("বিজ্ঞাপন লোড হতে সমস্যা হয়েছে। সরাসরি ভিডিও দেখতে চান?", (ok) => {
-                            if (ok) unlockVideo(id);
-                        });
-                    } else {
-                        unlockVideo(id);
-                    }
+                    console.error("Adsgram Error:", err);
+                    // টেস্ট মোড বা নেটওয়ার্ক ইররে ডিরেক্ট প্লে (প্রয়োজনে এটি বাদ দিয়ে শুধু অ্যালার্ট রাখতে পারেন)
+                    startFullStream(videoId, video.fullUrl);
                 });
             } else {
-                unlockVideo(id);
+                // Adsgram লোড না থাকলে সরাসরি প্লে
+                startFullStream(videoId, video.fullUrl);
             }
         }
 
-        function unlockVideo(id) {
-            unlockedMedia.add(id);
-            const target = allMedia.find(m => m.id === id);
-            if (!target) return;
+        // Bunny Stream Web Player অথবা ডিরেক্ট লিঙ্ক প্লেয়ারে সেট করার মূল লজিক
+        function startFullStream(videoId, streamUrl) {
+            const playerBox = document.getElementById(`player-box-${videoId}`);
+            const actionBox = document.getElementById(`action-box-${videoId}`);
 
-            const frame = document.getElementById(`frame-${id}`);
-            if (frame) {
-                frame.innerHTML = `
-                    <video id="player-${id}" src="${target.fullVideoUrl || target.previewUrl}" controls autoplay playsinline controlsList="nodownload"></video>
-                    <span class="media-tag"><i class="fas fa-tag"></i> ${formatCategoryName(target.category)}</span>
+            if (!playerBox) return;
+
+            // যদি Bunny.net ওয়েব প্লেয়ার (mediadelivery.net), StreamWish বা Doodstream হয় -> Iframe ব্যবহার হবে
+            const isWebPlayer = streamUrl.includes('mediadelivery.net') || 
+                                streamUrl.includes('streamwish') || 
+                                streamUrl.includes('dood') ||
+                                !streamUrl.match(/\.(mp4|webm|mkv)$/i);
+
+            if (isWebPlayer) {
+                playerBox.innerHTML = `
+                    <iframe 
+                        src="${streamUrl}" 
+                        loading="lazy" 
+                        allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture; fullscreen" 
+                        allowfullscreen="true">
+                    </iframe>
+                `;
+            } else {
+                // সরাসরি .mp4 ফাইল হলে নেটিভ ভিডিও ট্যাগে প্লে হবে
+                playerBox.innerHTML = `
+                    <video src="${streamUrl}" controls autoplay playsinline></video>
                 `;
             }
 
-            const btn = document.getElementById(`btn-${id}`);
-            if (btn) {
-                btn.className = "btn-watch-full unlocked";
-                btn.innerHTML = '<i class="fas fa-expand"></i> Full Screen';
+            // বাটন পরিবর্তন করে আনলকড স্ট্যাটাস দেখানো
+            if (actionBox) {
+                actionBox.innerHTML = `
+                    <div class="py-2 text-center text-emerald-400 bg-emerald-950/40 border border-emerald-800/40 rounded-xl text-xs flex items-center justify-center space-x-1.5 font-medium">
+                        <i data-lucide="check-circle" class="w-4 h-4"></i>
+                        <span>Now Playing Full Movie</span>
+                    </div>
+                `;
+                lucide.createIcons();
             }
-
-            if (tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
         }
     </script>
 </body>
