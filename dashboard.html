@@ -565,7 +565,7 @@
 
             <!-- Main Start Action Button -->
             <button class="btn-main-action" id="startMiningBtn" onclick="handleMineActionClick()">
-                Start 12h Mining
+                Start Mining
             </button>
         </div>
 
@@ -779,7 +779,7 @@
                 if (userData.miningStartedAt > 0 && elapsed >= CYCLE_MS) {
                     startBtn.innerText = "Claim & Start";
                 } else {
-                    startBtn.innerText = "Start 12h Mining";
+                    startBtn.innerText = "Start Mining";
                 }
             }
         }, 1000);
