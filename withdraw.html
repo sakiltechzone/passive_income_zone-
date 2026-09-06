@@ -28,8 +28,10 @@
             margin: 0;
             padding: 0;
             user-select: none;
+            -webkit-user-select: none;
             font-family: 'Plus Jakarta Sans', sans-serif;
             -webkit-tap-highlight-color: transparent;
+            -webkit-touch-callout: none !important;
         }
 
         body {
@@ -79,6 +81,7 @@
             font-size: 14px;
             cursor: pointer;
             text-decoration: none;
+            -webkit-touch-callout: none !important;
         }
 
         .brand-text {
@@ -155,6 +158,8 @@
             font-weight: 600;
             outline: none;
             transition: border-color 0.2s;
+            user-select: text !important;
+            -webkit-user-select: text !important;
         }
 
         .styled-select:focus, .styled-input:focus {
@@ -183,6 +188,7 @@
             padding: 6px 10px;
             border-radius: 10px;
             cursor: pointer;
+            -webkit-touch-callout: none !important;
         }
 
         .fee-info-row {
@@ -226,6 +232,7 @@
             gap: 8px;
             margin-top: 6px;
             transition: transform 0.1s;
+            -webkit-touch-callout: none !important;
         }
 
         .btn-submit-withdraw:active {
@@ -351,7 +358,9 @@
             flex: 1;
             height: 100%;
             text-decoration: none;
-            -webkit-user-select: none;
+            -webkit-touch-callout: none !important;
+            -webkit-user-select: none !important;
+            user-select: none !important;
         }
 
         .nav-item.active {
@@ -373,9 +382,9 @@
     <div class="container">
         <!-- Top App Bar -->
         <div class="top-nav">
-            <a href="./index.html" class="back-pill-btn">
+            <div onclick="location.href='./index.html'" class="back-pill-btn">
                 <i class="fas fa-chevron-left"></i>
-            </a>
+            </div>
             <span class="brand-text">Wallet & Payout</span>
             <div style="width: 36px;"></div>
         </div>
@@ -430,28 +439,28 @@
         </div>
     </div>
 
-    <!-- 5-Button Bottom Nav -->
+    <!-- 5-Button Bottom Nav (Protected against context menu) -->
     <nav class="bottom-nav">
-        <a href="./index.html" class="nav-item">
+        <div class="nav-item" onclick="location.href='./index.html'">
             <i class="fas fa-magic"></i>
             <span>Prompts</span>
-        </a>
-        <a href="./dashboard.html" class="nav-item">
+        </div>
+        <div class="nav-item" onclick="location.href='./dashboard.html'">
             <i class="fas fa-hammer"></i>
             <span>Mining</span>
-        </a>
-        <a href="./spin.html" class="nav-item">
+        </div>
+        <div class="nav-item" onclick="location.href='./spin.html'">
             <i class="fas fa-dharmachakra"></i>
             <span>Spin</span>
-        </a>
-        <a href="./refer.html" class="nav-item">
+        </div>
+        <div class="nav-item" onclick="location.href='./refer.html'">
             <i class="fas fa-user-friends"></i>
             <span>Referral</span>
-        </a>
-        <a href="./withdraw.html" class="nav-item active">
+        </div>
+        <div class="nav-item active" onclick="location.href='./withdraw.html'">
             <i class="fas fa-wallet"></i>
             <span>Wallet</span>
-        </a>
+        </div>
     </nav>
 
     <!-- Firebase SDKs -->
@@ -459,6 +468,11 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
     <script>
+        // লং প্রেস ও ব্রাউজার ডিফল্ট কনটেক্সট মেনু সম্পূর্ণ বন্ধ করা
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+        });
+
         let tg = null;
         try {
             if (window.Telegram && window.Telegram.WebApp) {
