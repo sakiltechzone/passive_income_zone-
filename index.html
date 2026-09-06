@@ -423,7 +423,7 @@
         <!-- Banner -->
         <div class="hero-banner">
             <h3><i class="fas fa-fire" style="color: #ef4444;"></i> Trending AI Video Prompts</h3>
-            <p>Watch an ad to generate video and copy viral generation prompts.</p>
+            <p>Watch a short ad to unlock and copy viral video generation prompts.</p>
         </div>
 
         <!-- Category Scroll Filters -->
@@ -480,8 +480,6 @@
 
         const ADSGRAM_BLOCK_ID = "26734";
         const STZ_TO_USDT = 0.001;
-        // Google Flow বা আপনার AI জেনারেটর পেজের লিংক
-        const AI_GENERATOR_URL = "https://labs.google/fx/tools/flow";
 
         const firebaseConfig = {
             apiKey: "AIzaSyAl0eRqOs5QNUg_J1Pj-4PlEqRDxAXr-oA",
@@ -588,7 +586,7 @@
                             </div>
 
                             <button class="btn-unlock-copy ${isUnlocked ? 'unlocked' : ''}" id="btn-${item.id}" onclick="handlePromptAction('${item.id}')">
-                                ${isUnlocked ? '<i class="fas fa-wand-magic-sparkles"></i> Open & Generate Video' : '<i class="fas fa-play"></i> Watch Ad to Generate Video'}
+                                ${isUnlocked ? '<i class="fas fa-copy"></i> Copy Prompt' : '<i class="fas fa-play"></i> Watch Ad & Copy Prompt'}
                             </button>
                         </div>
                     </div>
@@ -617,7 +615,7 @@
             if (!targetPrompt) return;
 
             if (unlockedPrompts.has(promptId)) {
-                copyAndRedirect(targetPrompt.promptText);
+                performSafeCopy(targetPrompt.promptText);
                 return;
             }
 
@@ -633,24 +631,24 @@
             if (adsController) {
                 adsController.show().then(() => {
                     unlockCardUI(promptId);
-                    copyAndRedirect(targetPrompt.promptText);
+                    performSafeCopy(targetPrompt.promptText);
                 }).catch((err) => {
                     console.log("Ad error or skipped:", err);
                     if (btn) {
-                        btn.innerHTML = '<i class="fas fa-play"></i> Watch Ad to Generate Video';
+                        btn.innerHTML = '<i class="fas fa-play"></i> Watch Ad & Copy Prompt';
                     }
                     if (tg && tg.showConfirm) {
-                        tg.showConfirm("বিজ্ঞাপনটি লোড হতে সমস্যা হয়েছে। সরাসরি ভিডিও জেনারেটরে যেতে চান?", (ok) => {
+                        tg.showConfirm("বিজ্ঞাপনটি লোড হতে সমস্যা হয়েছে। আপনি কি আনলক করতে চান?", (ok) => {
                             if (ok) {
                                 unlockCardUI(promptId);
-                                copyAndRedirect(targetPrompt.promptText);
+                                performSafeCopy(targetPrompt.promptText);
                             }
                         });
                     }
                 });
             } else {
                 unlockCardUI(promptId);
-                copyAndRedirect(targetPrompt.promptText);
+                performSafeCopy(targetPrompt.promptText);
             }
         }
 
@@ -663,46 +661,19 @@
             const btn = document.getElementById(`btn-${promptId}`);
             if (btn) {
                 btn.className = "btn-unlock-copy unlocked";
-                btn.innerHTML = '<i class="fas fa-wand-magic-sparkles"></i> Open & Generate Video';
+                btn.innerHTML = '<i class="fas fa-copy"></i> Copy Prompt';
             }
         }
 
-        // প্রম্পট কপি করে সরাসরি সাইট ওপেন করার লজিক
-        function copyAndRedirect(promptText) {
-            performSafeCopy(promptText, () => {
-                const message = "✅ প্রম্পট কপি করা হয়েছে!\nওয়েবসাইটে গিয়ে বক্সে পেস্ট (Paste) করে ভিডিও জেনারেট করুন।";
-                
-                if (tg && tg.showAlert) {
-                    tg.showAlert(message, () => {
-                        openExternalSite(AI_GENERATOR_URL);
-                    });
-                } else {
-                    alert(message);
-                    openExternalSite(AI_GENERATOR_URL);
-                }
-            });
-        }
-
-        function openExternalSite(url) {
-            if (tg && tg.openLink) {
-                tg.openLink(url);
-            } else {
-                window.open(url, '_blank');
-            }
-        }
-
-        function performSafeCopy(text, callback) {
+        function performSafeCopy(text) {
             if (navigator.clipboard && window.isSecureContext) {
                 navigator.clipboard.writeText(text).then(() => {
                     triggerSuccessVibe();
-                    if (callback) callback();
                 }).catch(() => {
                     fallbackCopySilently(text);
-                    if (callback) callback();
                 });
             } else {
                 fallbackCopySilently(text);
-                if (callback) callback();
             }
         }
 
@@ -727,6 +698,11 @@
         function triggerSuccessVibe() {
             if (tg && tg.HapticFeedback) {
                 tg.HapticFeedback.notificationOccurred('success');
+            }
+            if (tg && tg.showAlert) {
+                tg.showAlert("✅ প্রম্পট সফলভাবে কপি হয়েছে!");
+            } else {
+                alert("✅ প্রম্পট সফলভাবে কপি হয়েছে!");
             }
         }
     </script>
