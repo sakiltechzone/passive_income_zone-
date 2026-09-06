@@ -27,8 +27,10 @@
             margin: 0;
             padding: 0;
             user-select: none;
+            -webkit-user-select: none;
             font-family: 'Plus Jakarta Sans', sans-serif;
             -webkit-tap-highlight-color: transparent;
+            -webkit-touch-callout: none !important;
         }
 
         body {
@@ -45,15 +47,15 @@
         }
 
         .container {
-    width: 100%;
-    max-width: 440px;
-    padding: calc(env(safe-area-inset-top, 0px) + 55px) 18px 110px 18px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    position: relative;
-    z-index: 1;
-}
+            width: 100%;
+            max-width: 440px;
+            padding: calc(env(safe-area-inset-top, 0px) + 55px) 18px 110px 18px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }
 
         /* Top Header */
         .top-nav {
@@ -77,6 +79,8 @@
             text-decoration: none;
             backdrop-filter: blur(8px);
             font-size: 14px;
+            cursor: pointer;
+            -webkit-touch-callout: none !important;
         }
 
         .brand-text {
@@ -183,6 +187,8 @@
             align-items: center;
             gap: 6px;
             box-shadow: 0 4px 12px rgba(28, 100, 242, 0.3);
+            cursor: pointer;
+            -webkit-touch-callout: none !important;
         }
 
         /* Settings & Info Section */
@@ -214,6 +220,7 @@
             cursor: pointer;
             text-decoration: none;
             color: inherit;
+            -webkit-touch-callout: none !important;
         }
 
         .menu-left {
@@ -289,6 +296,9 @@
             flex: 1;
             height: 100%;
             text-decoration: none;
+            -webkit-touch-callout: none !important;
+            -webkit-user-select: none !important;
+            user-select: none !important;
         }
 
         .nav-item.active {
@@ -310,9 +320,9 @@
     <div class="container">
         <!-- Top App Bar -->
         <div class="top-nav">
-            <a href="./index.html" class="back-pill-btn">
+            <div onclick="location.href='./index.html'" class="back-pill-btn">
                 <i class="fas fa-chevron-left"></i>
-            </a>
+            </div>
             <span class="brand-text">Profile</span>
             <div style="width: 36px;"></div>
         </div>
@@ -333,9 +343,9 @@
                 <div class="snap-val"><span id="profileBalanceText">0.00</span> STZ</div>
                 <div class="snap-usdt">≈ $<span id="profileUsdtText">0.00</span> USDT</div>
             </div>
-            <a href="./withdraw.html" class="btn-withdraw-link">
+            <div onclick="location.href='./withdraw.html'" class="btn-withdraw-link">
                 <i class="fas fa-wallet"></i> Withdraw
-            </a>
+            </div>
         </div>
 
         <!-- Account Section -->
@@ -367,7 +377,7 @@
         <!-- Network & Support -->
         <div class="section-label">Community & Network</div>
         <div class="menu-group">
-            <a href="./refer.html" class="menu-tile">
+            <div onclick="location.href='./refer.html'" class="menu-tile">
                 <div class="menu-left">
                     <div class="tile-icon"><i class="fas fa-users"></i></div>
                     <div class="tile-text-block">
@@ -376,7 +386,7 @@
                     </div>
                 </div>
                 <i class="fas fa-chevron-right" style="color: #cbd5e1; font-size: 13px;"></i>
-            </a>
+            </div>
 
             <div class="menu-tile" onclick="openOfficialChannel()">
                 <div class="menu-left">
@@ -391,28 +401,28 @@
         </div>
     </div>
 
-    <!-- 5-Button Bottom Nav -->
+    <!-- 5-Button Bottom Nav (Protected against context menu) -->
     <nav class="bottom-nav">
-        <a href="./index.html" class="nav-item">
+        <div class="nav-item" onclick="location.href='./index.html'">
             <i class="fas fa-magic"></i>
             <span>Prompts</span>
-        </a>
-        <a href="./dashboard.html" class="nav-item">
+        </div>
+        <div class="nav-item" onclick="location.href='./dashboard.html'">
             <i class="fas fa-hammer"></i>
             <span>Mining</span>
-        </a>
-        <a href="./spin.html" class="nav-item">
+        </div>
+        <div class="nav-item" onclick="location.href='./spin.html'">
             <i class="fas fa-dharmachakra"></i>
             <span>Spin</span>
-        </a>
-        <a href="./refer.html" class="nav-item">
+        </div>
+        <div class="nav-item" onclick="location.href='./refer.html'">
             <i class="fas fa-user-friends"></i>
             <span>Referral</span>
-        </a>
-        <a href="./withdraw.html" class="nav-item">
+        </div>
+        <div class="nav-item" onclick="location.href='./withdraw.html'">
             <i class="fas fa-wallet"></i>
             <span>Wallet</span>
-        </a>
+        </div>
     </nav>
 
     <!-- Firebase SDKs -->
@@ -420,6 +430,11 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
     <script>
+        // লং প্রেস ও ব্রাউজার ডিফল্ট কনটেক্সট মেনু সম্পূর্ণ বন্ধ করা
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+        });
+
         let tg = null;
         try {
             if (window.Telegram && window.Telegram.WebApp) {
