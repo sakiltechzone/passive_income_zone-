@@ -32,6 +32,7 @@
             -webkit-user-select: none;
             font-family: 'Plus Jakarta Sans', sans-serif;
             -webkit-tap-highlight-color: transparent;
+            -webkit-touch-callout: none !important;
         }
 
         body {
@@ -105,6 +106,7 @@
             box-shadow: 0 4px 12px rgba(0,0,0,0.06);
             cursor: pointer;
             text-decoration: none;
+            -webkit-touch-callout: none !important;
         }
 
         /* Hero Banner */
@@ -165,6 +167,7 @@
             align-items: center;
             gap: 6px;
             transition: all 0.2s;
+            -webkit-touch-callout: none !important;
         }
 
         .cat-btn.active {
@@ -204,6 +207,7 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
+            pointer-events: none;
         }
 
         .media-tag {
@@ -337,6 +341,7 @@
             box-shadow: 0 4px 15px rgba(24, 86, 243, 0.3);
             margin-top: 4px;
             transition: background 0.2s, transform 0.1s;
+            -webkit-touch-callout: none !important;
         }
 
         .btn-unlock-copy.unlocked {
@@ -388,6 +393,9 @@
             flex: 1;
             height: 100%;
             text-decoration: none;
+            -webkit-touch-callout: none !important;
+            -webkit-user-select: none !important;
+            user-select: none !important;
         }
 
         .nav-item.active {
@@ -414,10 +422,10 @@
                 <span class="brand-text">Viral Prompts</span>
             </div>
             
-            <a href="./withdraw.html" class="wallet-pill">
+            <div onclick="location.href='./withdraw.html'" class="wallet-pill">
                 <i class="fas fa-wallet" style="color: var(--primary-blue);"></i>
                 $<span id="topBalance">0.000</span>
-            </a>
+            </div>
         </div>
 
         <!-- Banner -->
@@ -441,28 +449,28 @@
         </div>
     </div>
 
-    <!-- 5-Button Bottom Nav -->
+    <!-- 5-Button Bottom Nav (Protected against context menu) -->
     <nav class="bottom-nav">
-        <a href="./index.html" class="nav-item active">
+        <div class="nav-item active" onclick="location.href='./index.html'">
             <i class="fas fa-magic"></i>
             <span>Prompts</span>
-        </a>
-        <a href="./dashboard.html" class="nav-item">
+        </div>
+        <div class="nav-item" onclick="location.href='./dashboard.html'">
             <i class="fas fa-hammer"></i>
             <span>Mining</span>
-        </a>
-        <a href="./spin.html" class="nav-item">
+        </div>
+        <div class="nav-item" onclick="location.href='./spin.html'">
             <i class="fas fa-dharmachakra"></i>
             <span>Spin</span>
-        </a>
-        <a href="./refer.html" class="nav-item">
+        </div>
+        <div class="nav-item" onclick="location.href='./refer.html'">
             <i class="fas fa-user-friends"></i>
             <span>Referral</span>
-        </a>
-        <a href="./withdraw.html" class="nav-item">
+        </div>
+        <div class="nav-item" onclick="location.href='./withdraw.html'">
             <i class="fas fa-wallet"></i>
             <span>Wallet</span>
-        </a>
+        </div>
     </nav>
 
     <!-- Firebase SDKs -->
@@ -470,6 +478,11 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
     <script>
+        // লং প্রেস ও রাইট-ক্লিক মেনু গ্লোবালি বন্ধ
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+        });
+
         let tg = null;
         try {
             if (window.Telegram && window.Telegram.WebApp) {
