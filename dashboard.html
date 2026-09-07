@@ -378,7 +378,7 @@
         <!-- Banner -->
         <div class="hero-banner">
             <h3><i class="fas fa-film" style="color: #ef4444;"></i> Watch Movies & Viral Clipes</h3>
-            <p>Watch a short ad to unlock full videos, seek freely and enjoy full-screen playback.</p>
+            <p>Watch short ads to unlock full videos, seek freely and enjoy full-screen playback.</p>
         </div>
 
         <!-- Category Scroll Filters -->
@@ -459,7 +459,10 @@
         let adsController = null;
         let allMedia = [];
         let currentFilter = "all";
+        let globalDefaultAds = 2;
+
         const unlockedMedia = new Set();
+        const watchedAdsCount = {}; // কোন ভিডিওর কয়টি অ্যাড দেখা হয়েছে
 
         function initAdsgram() {
             try {
@@ -484,6 +487,15 @@
             if (val) {
                 const totalUsdt = (val.balance || 0) * STZ_TO_USDT;
                 document.getElementById('topBalance').innerText = totalUsdt.toFixed(3);
+            }
+        });
+
+        // গ্লোবাল ডিফল্ট অ্যাড কাউন্ট লোড
+        db.ref('system_settings/defaultMovieAds').on('value', snap => {
+            const val = snap.val();
+            if (val) {
+                globalDefaultAds = parseInt(val) || 2;
+                renderMediaFeed();
             }
         });
 
@@ -549,20 +561,35 @@
             let html = '';
             filtered.forEach(item => {
                 const isUnlocked = unlockedMedia.has(item.id);
+                const totalReq = (item.requiredAds !== undefined && item.requiredAds !== null && item.requiredAds !== '') 
+                    ? parseInt(item.requiredAds) 
+                    : globalDefaultAds;
+                const watched = watchedAdsCount[item.id] || 0;
 
                 let mediaHTML = '';
                 if (isUnlocked) {
-                    // আনলকড অবস্থা: আইফ্রেম অথবা এমপি৪ প্লেয়ার
                     const targetUrl = item.fullVideoUrl || item.previewUrl;
                     mediaHTML = generatePlayerHTML(item.id, targetUrl);
                 } else {
-                    // লকড অবস্থা: প্রিভিউ ভিডিও (লুপ ও মিউট) + সাউন্ড টগল
                     mediaHTML = `
                         <video id="vid-${item.id}" src="${item.previewUrl}" autoplay loop muted playsinline preload="metadata"></video>
                         <div class="sound-toggle-btn" onclick="toggleSound('${item.id}', this)">
                             <i class="fas fa-volume-mute"></i>
                         </div>
                     `;
+                }
+
+                let btnLabel = '';
+                if (isUnlocked) {
+                    btnLabel = isWebPlayerUrl(item.fullVideoUrl) 
+                        ? '<i class="fas fa-check-circle"></i> Playing Full Video' 
+                        : '<i class="fas fa-expand"></i> Full Screen';
+                } else if (watched > 0) {
+                    btnLabel = `<i class="fas fa-film"></i> Watch Ad (${watched + 1}/${totalReq})`;
+                } else {
+                    btnLabel = totalReq > 1 
+                        ? `<i class="fas fa-film"></i> Watch Full Video (${totalReq} Ads)` 
+                        : `<i class="fas fa-film"></i> Watch Full Video (Watch Ad)`;
                 }
 
                 html += `
@@ -576,7 +603,7 @@
                             <div class="card-desc">${item.description || 'Watch the full video without cuts.'}</div>
 
                             <button class="btn-watch-full ${isUnlocked ? 'unlocked' : ''}" id="btn-${item.id}" onclick="handleUnlockAction('${item.id}')">
-                                ${isUnlocked ? '<i class="fas fa-play"></i> Playing Full Video' : '<i class="fas fa-film"></i> Watch Full Video (Watch Ad)'}
+                                ${btnLabel}
                             </button>
                         </div>
                     </div>
@@ -607,7 +634,7 @@
         function handleUnlockAction(id) {
             if (unlockedMedia.has(id)) {
                 const vid = document.getElementById(`player-${id}`);
-                if (vid) {
+                if (vid && vid.tagName === "VIDEO") {
                     if (vid.requestFullscreen) vid.requestFullscreen();
                     else if (vid.webkitRequestFullscreen) vid.webkitRequestFullscreen();
                 }
@@ -621,20 +648,51 @@
 
             if (adsController) {
                 adsController.show().then(() => {
-                    unlockVideo(id);
+                    processWatchedAd(id);
                 }).catch((err) => {
                     console.log("Ad skipped or error:", err);
-                    if (btn) btn.innerHTML = '<i class="fas fa-film"></i> Watch Full Video (Watch Ad)';
+                    updateButtonUI(id);
                     if (tg && tg.showConfirm) {
-                        tg.showConfirm("বিজ্ঞাপন লোড হতে সমস্যা হয়েছে। সরাসরি ভিডিও দেখতে চান?", (ok) => {
+                        tg.showConfirm("বিজ্ঞাপন লোড হতে সমস্যা হয়েছে। সরাসরি ভিডিও আনলক করতে চান?", (ok) => {
                             if (ok) unlockVideo(id);
                         });
                     } else {
-                        unlockVideo(id);
+                        processWatchedAd(id);
                     }
                 });
             } else {
+                processWatchedAd(id);
+            }
+        }
+
+        function processWatchedAd(id) {
+            const target = allMedia.find(m => m.id === id);
+            const totalReq = (target && target.requiredAds !== undefined && target.requiredAds !== null && target.requiredAds !== '') 
+                ? parseInt(target.requiredAds) 
+                : globalDefaultAds;
+
+            watchedAdsCount[id] = (watchedAdsCount[id] || 0) + 1;
+
+            if (watchedAdsCount[id] >= totalReq) {
                 unlockVideo(id);
+            } else {
+                updateButtonUI(id);
+                if (tg && tg.showAlert) {
+                    tg.showAlert(`১টি বিজ্ঞাপন সম্পন্ন হয়েছে! আর ${totalReq - watchedAdsCount[id]}টি বিজ্ঞাপন বাকি রয়েছে।`);
+                }
+            }
+        }
+
+        function updateButtonUI(id) {
+            const btn = document.getElementById(`btn-${id}`);
+            const target = allMedia.find(m => m.id === id);
+            const totalReq = (target && target.requiredAds !== undefined && target.requiredAds !== null && target.requiredAds !== '') 
+                ? parseInt(target.requiredAds) 
+                : globalDefaultAds;
+            const watched = watchedAdsCount[id] || 0;
+
+            if (btn && !unlockedMedia.has(id)) {
+                btn.innerHTML = `<i class="fas fa-film"></i> Watch Ad (${watched + 1}/${totalReq})`;
             }
         }
 
