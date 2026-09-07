@@ -354,7 +354,7 @@
             <button class="tab-btn" onclick="switchSection('withdrawTab', this)"><i class="fas fa-wallet"></i> Payout Queue</button>
         </div>
 
-        <!-- 1. Movies & Viral Videos Tab (Dashboard Screen Content) -->
+        <!-- 1. Movies & Viral Videos Tab -->
         <div id="moviesTab" class="content-tab">
             <div class="section-card">
                 <h3 id="movieFormTitle"><i class="fas fa-film" style="color: var(--primary);"></i> Add New Movie / Video</h3>
@@ -382,8 +382,12 @@
                         <input type="url" id="moviePreviewUrl" class="styled-input" placeholder="https://example.com/teaser.mp4">
                     </div>
                     <div class="form-group">
-                        <label>Full Video Link (MP4 / Stream)</label>
+                        <label>Full Video Link (MP4 / Bunny Stream)</label>
                         <input type="url" id="movieFullUrl" class="styled-input" placeholder="https://example.com/full_video.mp4">
+                    </div>
+                    <div class="form-group">
+                        <label>Ads Required to Unlock (১, ২ বা ৩)</label>
+                        <input type="number" id="movieRequiredAds" class="styled-input" min="1" max="10" placeholder="Default (e.g. 2)">
                     </div>
                 </div>
                 <button class="btn-action" id="btnUploadMovie" onclick="uploadMoviePost()">
@@ -444,8 +448,12 @@
         <!-- 3. System Settings Tab -->
         <div id="settingsTab" class="content-tab" style="display: none;">
             <div class="section-card">
-                <h3><i class="fas fa-coins" style="color: var(--warning);"></i> System Economy Variables</h3>
+                <h3><i class="fas fa-coins" style="color: var(--warning);"></i> System Economy & Ads Config</h3>
                 <div class="form-grid">
+                    <div class="form-group">
+                        <label>Default Movie Ads Count</label>
+                        <input type="number" min="1" max="10" id="configDefaultMovieAds" class="styled-input" placeholder="2">
+                    </div>
                     <div class="form-group">
                         <label>Referral Bonus (USDT per user)</label>
                         <input type="number" step="0.01" id="configReferBonus" class="styled-input" placeholder="0.10">
@@ -458,7 +466,7 @@
                         <label>Daily Spin Limit (Times)</label>
                         <input type="number" id="configSpinLimit" class="styled-input" placeholder="5">
                     </div>
-                    <div class="form-group">
+                    <div class="form-group" style="grid-column: 1 / -1;">
                         <label>Spin Pool Amounts (Comma separated USDT)</label>
                         <input type="text" id="configSpinPool" class="styled-input" placeholder="0.001, 0.0002, 0.002, 0.0005, 0.005, 0.001">
                     </div>
@@ -516,8 +524,8 @@
 
         let editingMovieKey = null;
         let cachedMoviesData = {};
+        let globalDefaultAds = 2;
 
-        // অথেন্টিকেশন গার্ড
         auth.onAuthStateChanged((user) => {
             if (!user) {
                 window.location.href = "admin-login.html";
@@ -541,7 +549,7 @@
         }
 
         function loadDashboardData() {
-            // ১. মুভি ও ভিডিও ডেটা লোড
+            // মুভি ও ভিডিও ডেটা লোড
             db.ref('movie_posts').on('value', snap => {
                 const container = document.getElementById('moviesListContainer');
                 const data = snap.val();
@@ -555,10 +563,16 @@
                 let html = '';
                 Object.keys(data).reverse().forEach(key => {
                     const item = data[key];
+                    const reqAds = item.requiredAds || globalDefaultAds;
                     html += `
                         <div class="feed-item">
                             <div class="feed-info">
-                                <span class="badge-cat">${(item.category || 'movie').replace('_', ' ')}</span>
+                                <div style="display: flex; gap: 6px; align-items: center; margin-bottom: 4px;">
+                                    <span class="badge-cat">${(item.category || 'movie').replace('_', ' ')}</span>
+                                    <span style="font-size: 10px; font-weight: 700; color: #f59e0b; background: rgba(245, 158, 11, 0.15); padding: 2px 6px; border-radius: 5px;">
+                                        <i class="fas fa-rectangle-ad"></i> ${reqAds} Ads Required
+                                    </span>
+                                </div>
                                 <h4>${item.title}</h4>
                                 <p>${(item.description || '').substring(0, 80)}...</p>
                                 <div style="display: flex; gap: 10px; margin-top: 4px;">
@@ -576,7 +590,7 @@
                 container.innerHTML = html;
             });
 
-            // ২. প্রম্পট লাইব্রেরি লোড
+            // প্রম্পট লাইব্রেরি লোড
             db.ref('ai_prompts').on('value', snap => {
                 const container = document.getElementById('promptsListContainer');
                 const data = snap.val();
@@ -608,16 +622,18 @@
                 container.innerHTML = html;
             });
 
-            // ৩. সিস্টেম সেটিংস লোড
+            // সিস্টেম সেটিংস লোড
             db.ref('system_settings').on('value', snap => {
                 const conf = snap.val() || {};
+                globalDefaultAds = parseInt(conf.defaultMovieAds) || 2;
+                document.getElementById('configDefaultMovieAds').value = globalDefaultAds;
                 document.getElementById('configReferBonus').value = conf.referBonus || 0.10;
                 document.getElementById('configMinWithdraw').value = conf.minWithdraw || 1.00;
                 document.getElementById('configSpinLimit').value = conf.spinLimit || 5;
                 document.getElementById('configSpinPool').value = conf.spinPool || "0.001, 0.0002, 0.002, 0.0005, 0.005, 0.001";
             });
 
-            // ৪. উইথড্র পেন্ডিং কিউ লোড
+            // উইথড্র পেন্ডিং কিউ লোড
             db.ref('admin_withdraw_queue').on('value', snap => {
                 const tbody = document.getElementById('withdrawTableBody');
                 const data = snap.val();
@@ -655,6 +671,7 @@
             const desc = document.getElementById('movieDescription').value.trim();
             const previewUrl = document.getElementById('moviePreviewUrl').value.trim();
             const fullUrl = document.getElementById('movieFullUrl').value.trim();
+            const reqAds = parseInt(document.getElementById('movieRequiredAds').value) || globalDefaultAds;
 
             if (!title || !previewUrl || !fullUrl) {
                 alert("টাইটেল, প্রিভিউ ভিডিও লিঙ্ক এবং ফুল ভিডিও লিঙ্ক দেওয়া আবশ্যক!");
@@ -667,6 +684,7 @@
                 description: desc || "",
                 previewUrl: previewUrl,
                 fullVideoUrl: fullUrl,
+                requiredAds: reqAds,
                 updatedAt: Date.now()
             };
 
@@ -695,6 +713,7 @@
             document.getElementById('movieDescription').value = item.description || '';
             document.getElementById('moviePreviewUrl').value = item.previewUrl || '';
             document.getElementById('movieFullUrl').value = item.fullVideoUrl || '';
+            document.getElementById('movieRequiredAds').value = item.requiredAds || globalDefaultAds;
 
             document.getElementById('movieFormTitle').innerHTML = '<i class="fas fa-pen-to-square" style="color: var(--warning);"></i> Edit Movie / Video';
             document.getElementById('btnMovieUploadText').innerText = 'Update Video Post';
@@ -709,6 +728,7 @@
             document.getElementById('movieDescription').value = "";
             document.getElementById('moviePreviewUrl').value = "";
             document.getElementById('movieFullUrl').value = "";
+            document.getElementById('movieRequiredAds').value = "";
 
             document.getElementById('movieFormTitle').innerHTML = '<i class="fas fa-film" style="color: var(--primary);"></i> Add New Movie / Video';
             document.getElementById('btnMovieUploadText').innerText = 'Publish Video';
@@ -801,6 +821,7 @@
         // ================== SETTINGS & PAYOUT ==================
         function saveSystemSettings() {
             const settings = {
+                defaultMovieAds: parseInt(document.getElementById('configDefaultMovieAds').value) || 2,
                 referBonus: parseFloat(document.getElementById('configReferBonus').value) || 0.10,
                 minWithdraw: parseFloat(document.getElementById('configMinWithdraw').value) || 1.00,
                 spinLimit: parseInt(document.getElementById('configSpinLimit').value) || 5,
