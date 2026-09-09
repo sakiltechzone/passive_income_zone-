@@ -189,7 +189,7 @@
 
         .player-frame-box {
             width: 100%;
-            height: 220px;
+            height: 240px;
             background: #000000;
             position: relative;
             display: flex;
@@ -222,27 +222,34 @@
             z-index: 2;
         }
 
-        .sound-toggle-btn {
+        /* Video Controls Overlay */
+        .player-controls-cluster {
             position: absolute;
             bottom: 10px;
             right: 10px;
-            background: rgba(15, 23, 42, 0.75);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            z-index: 5;
+        }
+
+        .ctrl-btn {
+            background: rgba(15, 23, 42, 0.8);
             backdrop-filter: blur(8px);
             color: #ffffff;
-            width: 34px;
-            height: 34px;
+            width: 36px;
+            height: 36px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            font-size: 13px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            z-index: 3;
+            font-size: 14px;
+            border: 1px solid rgba(255, 255, 255, 0.25);
             transition: transform 0.15s ease;
         }
 
-        .sound-toggle-btn:active {
+        .ctrl-btn:active {
             transform: scale(0.9);
         }
 
@@ -359,7 +366,7 @@
                 <span class="brand-text">Movies Hub</span>
             </div>
             
-            <div onclick="window.location.href='withdraw.html'" class="wallet-pill">
+            <div onclick="window.location.href='./withdraw.html'" class="wallet-pill">
                 <i class="fas fa-wallet" style="color: var(--primary-blue);"></i>
                 $<span id="topBalance">0.000</span>
             </div>
@@ -368,7 +375,7 @@
         <!-- Banner -->
         <div class="hero-banner">
             <h3><i class="fas fa-clapperboard" style="color: #ef4444;"></i> Watch Full Movies</h3>
-            <p>Watch short ads to unlock full movies, seek freely and enjoy full-screen playback.</p>
+            <p>Watch short sponsored clips to unlock full HD movies directly inside the player.</p>
         </div>
 
         <!-- Category Scroll Filters -->
@@ -388,23 +395,23 @@
 
     <!-- 5-Button Bottom Nav -->
     <nav class="bottom-nav">
-        <div class="nav-item" onclick="window.location.href='index.html'">
+        <div class="nav-item" onclick="window.location.href='./index.html'">
             <i class="fas fa-play-circle"></i>
             <span>Viral Video</span>
         </div>
-        <div class="nav-item active" onclick="window.location.href='movies.html'">
+        <div class="nav-item active" onclick="window.location.href='./movies.html'">
             <i class="fas fa-film"></i>
             <span>Movie</span>
         </div>
-        <div class="nav-item" onclick="window.location.href='earn.html'">
+        <div class="nav-item" onclick="window.location.href='./earn.html'">
             <i class="fas fa-circle-play"></i>
             <span>Earn</span>
         </div>
-        <div class="nav-item" onclick="window.location.href='refer.html'">
+        <div class="nav-item" onclick="window.location.href='./refer.html'">
             <i class="fas fa-user-friends"></i>
             <span>Referral</span>
         </div>
-        <div class="nav-item" onclick="window.location.href='withdraw.html'">
+        <div class="nav-item" onclick="window.location.href='./withdraw.html'">
             <i class="fas fa-wallet"></i>
             <span>Wallet</span>
         </div>
@@ -486,7 +493,6 @@
             }
         });
 
-        // শুধুমাত্র মুভি পোস্ট লোড
         db.ref('movie_posts').on('value', snap => {
             const data = snap.val();
             const container = document.getElementById('mediaFeedContainer');
@@ -554,6 +560,7 @@
                     ? parseInt(item.requiredAds) 
                     : globalDefaultAds;
                 const watched = watchedAdsCount[item.id] || 0;
+                const remainingAds = Math.max(0, totalReq - watched);
 
                 let mediaHTML = '';
                 if (isUnlocked) {
@@ -562,8 +569,16 @@
                 } else {
                     mediaHTML = `
                         <video id="vid-${item.id}" src="${item.previewUrl}" autoplay loop muted playsinline preload="metadata"></video>
-                        <div class="sound-toggle-btn" onclick="toggleSound('${item.id}', this)">
-                            <i class="fas fa-volume-mute"></i>
+                        <div class="player-controls-cluster">
+                            <div class="ctrl-btn" title="Play/Pause" onclick="togglePlayPause('${item.id}', this)">
+                                <i class="fas fa-pause"></i>
+                            </div>
+                            <div class="ctrl-btn" title="Sound Toggle" onclick="toggleSound('${item.id}', this)">
+                                <i class="fas fa-volume-mute"></i>
+                            </div>
+                            <div class="ctrl-btn" title="Fullscreen" onclick="toggleFullscreen('${item.id}')">
+                                <i class="fas fa-expand"></i>
+                            </div>
                         </div>
                     `;
                 }
@@ -574,11 +589,9 @@
                         ? '<i class="fas fa-check-circle"></i> Playing Full Movie' 
                         : '<i class="fas fa-expand"></i> Full Screen';
                 } else if (watched > 0) {
-                    btnLabel = `<i class="fas fa-film"></i> Watch Ad (${watched + 1}/${totalReq})`;
+                    btnLabel = `<i class="fas fa-play"></i> Watch 1 More Ad to Unlock (${remainingAds} Left)`;
                 } else {
-                    btnLabel = totalReq > 1 
-                        ? `<i class="fas fa-film"></i> Watch Full Movie (${totalReq} Ads)` 
-                        : `<i class="fas fa-film"></i> Watch Full Movie (Watch Ad)`;
+                    btnLabel = `<i class="fas fa-film"></i> Watch Full Movie (${totalReq} Ads)`;
                 }
 
                 html += `
@@ -589,7 +602,7 @@
                         </div>
                         <div class="card-content">
                             <div class="card-title">${item.title}</div>
-                            <div class="card-desc">${item.description || 'Watch the full movie without cuts.'}</div>
+                            <div class="card-desc">${item.description || 'Watch short ads to unlock full movie.'}</div>
 
                             <button class="btn-watch-full ${isUnlocked ? 'unlocked' : ''}" id="btn-${item.id}" onclick="handleUnlockAction('${item.id}')">
                                 ${btnLabel}
@@ -607,6 +620,19 @@
             return cat.replace('_', ' ').toUpperCase();
         }
 
+        function togglePlayPause(id, btn) {
+            const video = document.getElementById(`vid-${id}`);
+            if (!video) return;
+
+            if (video.paused) {
+                video.play();
+                btn.innerHTML = '<i class="fas fa-pause"></i>';
+            } else {
+                video.pause();
+                btn.innerHTML = '<i class="fas fa-play"></i>';
+            }
+        }
+
         function toggleSound(id, btn) {
             const video = document.getElementById(`vid-${id}`);
             if (!video) return;
@@ -620,13 +646,22 @@
             }
         }
 
+        function toggleFullscreen(id) {
+            const video = document.getElementById(`vid-${id}`) || document.getElementById(`player-${id}`);
+            if (!video) return;
+
+            if (video.requestFullscreen) {
+                video.requestFullscreen();
+            } else if (video.webkitRequestFullscreen) {
+                video.webkitRequestFullscreen();
+            } else if (video.msRequestFullscreen) {
+                video.msRequestFullscreen();
+            }
+        }
+
         function handleUnlockAction(id) {
             if (unlockedMedia.has(id)) {
-                const vid = document.getElementById(`player-${id}`);
-                if (vid && vid.tagName === "VIDEO") {
-                    if (vid.requestFullscreen) vid.requestFullscreen();
-                    else if (vid.webkitRequestFullscreen) vid.webkitRequestFullscreen();
-                }
+                toggleFullscreen(id);
                 return;
             }
 
@@ -666,8 +701,11 @@
                 unlockVideo(id);
             } else {
                 updateButtonUI(id);
+                const remaining = totalReq - watchedAdsCount[id];
                 if (tg && tg.showAlert) {
-                    tg.showAlert(`১টি সম্পন্ন হয়েছে! আর ${totalReq - watchedAdsCount[id]}টি বাকি রয়েছে।`);
+                    tg.showAlert(`১টি বিজ্ঞাপন সম্পন্ন! আর মাত্র ${remaining}টি বাকি রয়েছে।`);
+                } else {
+                    alert(`১টি বিজ্ঞাপন সম্পন্ন! আর মাত্র ${remaining}টি বাকি রয়েছে।`);
                 }
             }
         }
@@ -679,9 +717,10 @@
                 ? parseInt(target.requiredAds) 
                 : globalDefaultAds;
             const watched = watchedAdsCount[id] || 0;
+            const remaining = Math.max(0, totalReq - watched);
 
             if (btn && !unlockedMedia.has(id)) {
-                btn.innerHTML = `<i class="fas fa-film"></i> Watch Ad (${watched + 1}/${totalReq})`;
+                btn.innerHTML = `<i class="fas fa-play"></i> Watch 1 More Ad to Unlock (${remaining} Left)`;
             }
         }
 
