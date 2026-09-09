@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Passive Income Zone - Earn Hub</title>
+
+    <!-- Telegram & Adsgram SDK -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
+
+    <!-- Google Fonts & FontAwesome -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --primary-blue: #1c64f2;
+            --light-blue: #3f83f8;
+            --text-dark: #0f172a;
+            --text-muted: #64748b;
+            --card-glass: rgba(255, 255, 255, 0.95);
+            --card-white: #ffffff;
+            --success: #10b981;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+            -webkit-user-select: none;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-touch-callout: none !important;
+        }
+
+        html, body {
+            min-height: 100%;
+            overflow-x: hidden;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        body {
+            background-color: #3b82f6;
+            background-image: 
+                radial-gradient(circle at 50% 20%, rgba(255, 255, 255, 0.25) 0%, transparent 60%),
+                radial-gradient(rgba(255, 255, 255, 0.18) 1.5px, transparent 1.5px),
+                linear-gradient(180deg, #1d6bf3 0%, #60a5fa 35%, #bfdbfe 70%, #f0f6ff 100%);
+            background-size: 100% 100%, 16px 16px, 100% 100%;
+            color: var(--text-dark);
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 440px;
+            min-height: 100vh;
+            padding: calc(env(safe-area-inset-top, 0px) + 14px) 16px 110px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .top-nav {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 42px;
+            flex-shrink: 0;
+        }
+
+        .brand-badge {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logo-box {
+            width: 34px;
+            height: 34px;
+            background: #0f4bd8;
+            border-radius: 10px;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 15px;
+            box-shadow: 0 4px 10px rgba(15, 75, 216, 0.3);
+        }
+
+        .brand-text {
+            font-size: 19px;
+            font-weight: 800;
+            color: #ffffff;
+        }
+
+        .wallet-pill {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 6px 14px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            font-weight: 800;
+            color: var(--text-dark);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .spin-card {
+            width: 100%;
+            background: var(--card-glass);
+            border: 1px solid rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(14px);
+            border-radius: 22px;
+            padding: 16px;
+            box-shadow: 0 8px 24px rgba(15, 75, 216, 0.08);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .video-card {
+            width: 100%;
+            background: var(--card-glass);
+            border: 1px solid rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(14px);
+            border-radius: 22px;
+            padding: 16px;
+            box-shadow: 0 8px 24px rgba(15, 75, 216, 0.08);
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .card-header-bar {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-title-group {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+        }
+
+        .card-title-group h3 {
+            font-size: 15px;
+            font-weight: 800;
+            color: var(--text-dark);
+        }
+
+        .limit-pill {
+            background: #eff6ff;
+            color: var(--primary-blue);
+            font-size: 11px;
+            font-weight: 800;
+            padding: 3px 10px;
+            border-radius: 12px;
+            border: 1px solid #bfdbfe;
+        }
+
+        .wheel-container {
+            position: relative;
+            width: 235px;
+            height: 235px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 4px 0;
+        }
+
+        .wheel-pointer {
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 11px solid transparent;
+            border-right: 11px solid transparent;
+            border-top: 20px solid #ef4444;
+            z-index: 10;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+        }
+
+        #wheelCanvas {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            box-shadow: 0 8px 22px rgba(15, 75, 216, 0.22);
+            background: #ffffff;
+            transition: transform 4s cubic-bezier(0.15, 0.9, 0.2, 1);
+        }
+
+        .wheel-center-cap {
+            position: absolute;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: #ffffff;
+            border: 2.5px solid var(--primary-blue);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-blue);
+            font-size: 15px;
+            z-index: 5;
+            pointer-events: none;
+        }
+
+        .btn-action-primary {
+            width: 100%;
+            padding: 14px;
+            border-radius: 15px;
+            background: linear-gradient(135deg, #3b76f6, #1856f3);
+            border: none;
+            color: #fff;
+            font-size: 14px;
+            font-weight: 800;
+            box-shadow: 0 6px 18px rgba(24, 86, 243, 0.3);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            transition: transform 0.1s ease;
+        }
+
+        .btn-action-primary:active {
+            transform: scale(0.98);
+        }
+
+        .btn-action-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        .ad-task-box {
+            width: 100%;
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 14px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+        }
+
+        .task-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .task-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            background: #eff6ff;
+            color: var(--primary-blue);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 17px;
+        }
+
+        .task-text h4 {
+            font-size: 14px;
+            font-weight: 800;
+            color: var(--text-dark);
+            margin: 0;
+        }
+
+        .task-reward-tag {
+            background: #dcfce7;
+            color: #15803d;
+            font-size: 12px;
+            font-weight: 800;
+            padding: 5px 10px;
+            border-radius: 10px;
+            white-space: nowrap;
+            display: inline-flex;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 66px;
+            background: #ffffff;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.08);
+            z-index: 99999 !important;
+            padding: 0 4px;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 3px;
+            color: #94a3b8;
+            font-size: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            flex: 1;
+            height: 100%;
+            text-decoration: none;
+        }
+
+        .nav-item.active {
+            color: var(--primary-blue);
+        }
+
+        .nav-item i {
+            font-size: 17px;
+            pointer-events: none;
+        }
+
+        .nav-item span {
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="top-nav">
+            <div class="brand-badge">
+                <div class="logo-box"><i class="fas fa-coins"></i></div>
+                <span class="brand-text">Earn Hub</span>
+            </div>
+            
+            <div onclick="window.location.href='withdraw.html'" class="wallet-pill">
+                <i class="fas fa-wallet" style="color: var(--primary-blue);"></i>
+                $<span id="topBalance">0.000</span>
+            </div>
+        </div>
+
+        <!-- 1. LUCKY SPIN -->
+        <div class="spin-card">
+            <div class="card-header-bar">
+                <div class="card-title-group">
+                    <i class="fas fa-dharmachakra" style="color: #f59e0b; font-size: 17px;"></i>
+                    <h3>Daily Lucky Spin</h3>
+                </div>
+                <span class="limit-pill" id="spinRemainingText">5/5 Left</span>
+            </div>
+
+            <div class="wheel-container">
+                <div class="wheel-pointer"></div>
+                <canvas id="wheelCanvas" width="470" height="470"></canvas>
+                <div class="wheel-center-cap">
+                    <i class="fas fa-bolt"></i>
+                </div>
+            </div>
+
+            <button class="btn-action-primary" id="spinActionBtn" onclick="handleSpinClick()">
+                <i class="fas fa-play"></i> Watch Video & Spin
+            </button>
+        </div>
+
+        <!-- 2. WATCH & EARN -->
+        <div class="video-card">
+            <div class="card-header-bar">
+                <div class="card-title-group">
+                    <i class="fas fa-circle-play" style="color: #ef4444; font-size: 17px;"></i>
+                    <h3>Watch & Earn Tasks</h3>
+                </div>
+                <span class="limit-pill" id="adsRemainingText">10/10 Left</span>
+            </div>
+
+            <div class="ad-task-box">
+                <div class="task-left">
+                    <div class="task-icon"><i class="fas fa-video"></i></div>
+                    <div class="task-text">
+                        <h4>Shorts Video</h4>
+                    </div>
+                </div>
+                <span class="task-reward-tag">+<span id="badgeAdReward">0.001</span>&nbsp;USDT</span>
+            </div>
+
+            <button class="btn-action-primary" id="earnActionBtn" onclick="handleWatchAdClick()">
+                <i class="fas fa-circle-play"></i> Watch Video & Earn (<span id="btnAdReward">0.001</span>$)
+            </button>
+        </div>
+    </div>
+
+    <!-- Bottom Nav -->
+    <nav class="bottom-nav">
+        <div class="nav-item" onclick="window.location.href='index.html'">
+            <i class="fas fa-play-circle"></i>
+            <span>Viral Video</span>
+        </div>
+        <div class="nav-item" onclick="window.location.href='movies.html'">
+            <i class="fas fa-film"></i>
+            <span>Movie</span>
+        </div>
+        <div class="nav-item active" onclick="window.location.href='earn.html'">
+            <i class="fas fa-circle-play"></i>
+            <span>Earn</span>
+        </div>
+        <div class="nav-item" onclick="window.location.href='refer.html'">
+            <i class="fas fa-user-friends"></i>
+            <span>Referral</span>
+        </div>
+        <div class="nav-item" onclick="window.location.href='withdraw.html'">
+            <i class="fas fa-wallet"></i>
+            <span>Wallet</span>
+        </div>
+    </nav>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+
+    <script>
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+        });
+
+        let tg = null;
+        try {
+            if (window.Telegram && window.Telegram.WebApp) {
+                tg = window.Telegram.WebApp;
+                tg.expand();
+            }
+        } catch(e) {}
+
+        const ADSGRAM_BLOCK_ID = "26734";
+        const ONE_DAY_MS = 24 * 60 * 60 * 1000;
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAl0eRqOs5QNUg_J1Pj-4PlEqRDxAXr-oA",
+            authDomain: "viral-zone-bd.firebaseapp.com",
+            projectId: "viral-zone-bd",
+            storageBucket: "viral-zone-bd.firebasestorage.app",
+            messagingSenderId: "794737483555",
+            appId: "1:794737483555:web:a275cd96aafff0e640f696",
+            databaseURL: "https://viral-zone-bd-default-rtdb.firebaseio.com"
+        };
+
+        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
+        let userId = "sakil24";
+        let userBalance = 0.000;
+        let adsController = null;
+
+        let spinLimit = 5;
+        let spinHistory = { count: 0, lastReset: Date.now() };
+        let spinRewards = [0.002, 0.001, 0.003, 0.002, 0.001, 0.001]; 
+        let isSpinning = false;
+        let currentRotation = 0;
+
+        let dailyAdLimit = 10;
+        let perAdReward = 0.001;
+        let earnHistory = { count: 0, lastReset: Date.now() };
+        let isProcessingAd = false;
+
+        function initAdsgram() {
+            try {
+                if (window.Adsgram) {
+                    adsController = window.Adsgram.init({ blockId: ADSGRAM_BLOCK_ID });
+                }
+            } catch(e) {
+                console.error("Adsgram init error:", e);
+            }
+        }
+        initAdsgram();
+
+        if (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) {
+            const u = tg.initDataUnsafe.user;
+            userId = u.id ? u.id.toString() : (u.username || "sakil24");
+        }
+
+        const userRef = db.ref('users/' + userId);
+        userRef.on('value', snap => {
+            const val = snap.val();
+            if (val && typeof val.balance !== 'undefined') {
+                userBalance = parseFloat(val.balance);
+                document.getElementById('topBalance').innerText = userBalance.toFixed(3);
+            } else {
+                userBalance = 0.000;
+                document.getElementById('topBalance').innerText = "0.000";
+            }
+        });
+
+        db.ref('system_settings').on('value', snap => {
+            const val = snap.val();
+            if (val) {
+                if (val.spinLimit) spinLimit = parseInt(val.spinLimit);
+                if (val.dailyAdLimit) dailyAdLimit = parseInt(val.dailyAdLimit);
+                if (val.perAdReward) {
+                    perAdReward = parseFloat(val.perAdReward);
+                    document.getElementById('badgeAdReward').innerText = perAdReward;
+                    document.getElementById('btnAdReward').innerText = perAdReward;
+                }
+            }
+            updateSpinUI();
+            updateAdUI();
+        });
+
+        const spinRef = db.ref('spin_records/' + userId);
+        spinRef.on('value', snap => {
+            const val = snap.val();
+            const now = Date.now();
+            if (val) {
+                if (now - (val.lastReset || 0) > ONE_DAY_MS) {
+                    spinHistory = { count: 0, lastReset: now };
+                    spinRef.set(spinHistory);
+                } else {
+                    spinHistory = val;
+                }
+            } else {
+                spinHistory = { count: 0, lastReset: now };
+                spinRef.set(spinHistory);
+            }
+            updateSpinUI();
+        });
+
+        const earnRef = db.ref('earn_records/' + userId);
+        earnRef.on('value', snap => {
+            const val = snap.val();
+            const now = Date.now();
+            if (val) {
+                if (now - (val.lastReset || 0) > ONE_DAY_MS) {
+                    earnHistory = { count: 0, lastReset: now };
+                    earnRef.set(earnHistory);
+                } else {
+                    earnHistory = val;
+                }
+            } else {
+                earnHistory = { count: 0, lastReset: now };
+                earnRef.set(earnHistory);
+            }
+            updateAdUI();
+        });
+
+        function drawWheel() {
+            const canvas = document.getElementById('wheelCanvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            const numSlices = spinRewards.length;
+            const arc = 2 * Math.PI / numSlices;
+            const radius = canvas.width / 2;
+
+            const sliceColors = ['#1c64f2', '#3b82f6', '#60a5fa', '#93c5fd', '#2563eb', '#1d4ed8'];
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            for (let i = 0; i < numSlices; i++) {
+                const angle = i * arc;
+                ctx.beginPath();
+                ctx.fillStyle = sliceColors[i % sliceColors.length];
+                ctx.moveTo(radius, radius);
+                ctx.arc(radius, radius, radius, angle, angle + arc);
+                ctx.lineTo(radius, radius);
+                ctx.fill();
+
+                ctx.save();
+                ctx.fillStyle = '#ffffff';
+                ctx.font = 'bold 22px Plus Jakarta Sans';
+                ctx.translate(radius, radius);
+                ctx.rotate(angle + arc / 2);
+                ctx.textAlign = 'right';
+                ctx.fillText(`$${spinRewards[i]}`, radius - 30, 8);
+                ctx.restore();
+            }
+        }
+        drawWheel();
+
+        function updateSpinUI() {
+            const rem = Math.max(0, spinLimit - (spinHistory.count || 0));
+            document.getElementById('spinRemainingText').innerText = `${rem}/${spinLimit} Left`;
+
+            const btn = document.getElementById('spinActionBtn');
+            if (rem <= 0) {
+                btn.disabled = true;
+                btn.innerText = "Daily Limit Reached";
+            } else if (!isSpinning) {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-play"></i> Watch Video & Spin';
+            }
+        }
+
+        function handleSpinClick() {
+            const rem = spinLimit - (spinHistory.count || 0);
+            if (rem <= 0 || isSpinning) return;
+
+            if (!adsController) initAdsgram();
+
+            const btn = document.getElementById('spinActionBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading Video...';
+
+            if (adsController) {
+                adsController.show().then(() => {
+                    executeWheelSpin();
+                }).catch((err) => {
+                    console.log("Video skipped/fallback:", err);
+                    if (tg && tg.showConfirm) {
+                        tg.showConfirm("ভিডিও লোড হতে সমস্যা হয়েছে। সরাসরি স্পিন করতে চান?", (ok) => {
+                            if (ok) executeWheelSpin();
+                            else updateSpinUI();
+                        });
+                    } else {
+                        executeWheelSpin();
+                    }
+                });
+            } else {
+                executeWheelSpin();
+            }
+        }
+
+        function executeWheelSpin() {
+            isSpinning = true;
+            const btn = document.getElementById('spinActionBtn');
+            btn.disabled = true;
+            btn.innerText = "Spinning Wheel...";
+
+            const numSlices = spinRewards.length;
+            const arcDeg = 360 / numSlices;
+            const winningIndex = Math.floor(Math.random() * numSlices);
+            const wonAmount = spinRewards[winningIndex];
+
+            const targetDeg = 360 - (winningIndex * arcDeg) - (arcDeg / 2) - 90;
+            const extraRounds = 360 * 5;
+            currentRotation += extraRounds + (targetDeg - (currentRotation % 360) + 360) % 360;
+
+            const canvas = document.getElementById('wheelCanvas');
+            canvas.style.transform = `rotate(${currentRotation}deg)`;
+
+            setTimeout(() => {
+                isSpinning = false;
+                const newTotalBalance = userBalance + wonAmount;
+                const newCount = (spinHistory.count || 0) + 1;
+
+                const updates = {};
+                updates['/users/' + userId + '/balance'] = parseFloat(newTotalBalance.toFixed(4));
+                updates['/spin_records/' + userId + '/count'] = newCount;
+                updates['/spin_records/' + userId + '/lastReset'] = spinHistory.lastReset || Date.now();
+
+                db.ref().update(updates).then(() => {
+                    if (tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+                    if (tg && tg.showAlert) {
+                        tg.showAlert(`🎉 অভিনন্দন! স্পিন করে জিতেছেন $${wonAmount} USDT!`);
+                    } else {
+                        alert(`🎉 অভিনন্দন! স্পিন করে জিতেছেন $${wonAmount} USDT!`);
+                    }
+                    updateSpinUI();
+                });
+            }, 4200);
+        }
+
+        function updateAdUI() {
+            const remaining = Math.max(0, dailyAdLimit - (earnHistory.count || 0));
+            document.getElementById('adsRemainingText').innerText = `${remaining}/${dailyAdLimit} Left`;
+
+            const btn = document.getElementById('earnActionBtn');
+            if (remaining <= 0) {
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fas fa-lock"></i> Daily Limit Reached';
+            } else if (!isProcessingAd) {
+                btn.disabled = false;
+                btn.innerHTML = `<i class="fas fa-circle-play"></i> Watch Video & Earn (${perAdReward}$)`;
+            }
+        }
+
+        function handleWatchAdClick() {
+            const remaining = dailyAdLimit - (earnHistory.count || 0);
+            if (remaining <= 0 || isProcessingAd) return;
+
+            if (!adsController) initAdsgram();
+
+            const btn = document.getElementById('earnActionBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading Video...';
+
+            if (adsController) {
+                adsController.show().then(() => {
+                    rewardAdUser();
+                }).catch((err) => {
+                    console.log("Video skipped/failed:", err);
+                    updateAdUI();
+
+                    if (tg && tg.showConfirm) {
+                        tg.showConfirm("ভিডিওটি লোড হতে সমস্যা হয়েছে। সরাসরি রিওয়ার্ড ক্রেডিট করতে চান?", (ok) => {
+                            if (ok) rewardAdUser();
+                        });
+                    }
+                });
+            } else {
+                rewardAdUser();
+            }
+        }
+
+        function rewardAdUser() {
+            isProcessingAd = true;
+            const newTotalBalance = userBalance + perAdReward;
+            const newCount = (earnHistory.count || 0) + 1;
+
+            const updates = {};
+            updates['/users/' + userId + '/balance'] = parseFloat(newTotalBalance.toFixed(4));
+            updates['/earn_records/' + userId + '/count'] = newCount;
+            updates['/earn_records/' + userId + '/lastReset'] = earnHistory.lastReset || Date.now();
+
+            db.ref().update(updates).then(() => {
+                isProcessingAd = false;
+                if (tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+                if (tg && tg.showAlert) {
+                    tg.showAlert(`🎉 অভিনন্দন! আপনি $${perAdReward} USDT আর্ন করেছেন!`);
+                } else {
+                    alert(`🎉 অভিনন্দন! আপনি $${perAdReward} USDT আর্ন করেছেন!`);
+                }
+                updateAdUI();
+            }).catch(err => {
+                isProcessingAd = false;
+                console.error("Reward error:", err);
+                updateAdUI();
+            });
+        }
+    </script>
+</body>
+</html>

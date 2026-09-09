@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Passive Income Zone - Viral Videos</title>
+    <title>Passive Income Zone - Movies</title>
 
     <!-- Telegram & Adsgram SDK -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -355,8 +355,8 @@
         <!-- Top App Bar -->
         <div class="top-nav">
             <div class="brand-badge">
-                <div class="logo-box"><i class="fas fa-play-circle"></i></div>
-                <span class="brand-text">Viral Videos</span>
+                <div class="logo-box"><i class="fas fa-film"></i></div>
+                <span class="brand-text">Movies Hub</span>
             </div>
             
             <div onclick="window.location.href='withdraw.html'" class="wallet-pill">
@@ -367,32 +367,32 @@
 
         <!-- Banner -->
         <div class="hero-banner">
-            <h3><i class="fas fa-fire" style="color: #ef4444;"></i> Watch Trending Videos</h3>
-            <p>Watch short sponsored clips to unlock full viral content and enjoy high speed playback.</p>
+            <h3><i class="fas fa-clapperboard" style="color: #ef4444;"></i> Watch Full Movies</h3>
+            <p>Watch short ads to unlock full movies, seek freely and enjoy full-screen playback.</p>
         </div>
 
         <!-- Category Scroll Filters -->
         <div class="cat-scroll-track">
-            <button class="cat-btn active" onclick="filterCategory('all', this)"><i class="fas fa-globe"></i> All</button>
-            <button class="cat-btn" onclick="filterCategory('viral_video', this)"><i class="fas fa-fire"></i> Viral Video</button>
-            <button class="cat-btn" onclick="filterCategory('facebook', this)"><i class="fab fa-facebook"></i> Facebook Viral</button>
-            <button class="cat-btn" onclick="filterCategory('instagram', this)"><i class="fab fa-instagram"></i> Instagram Viral</button>
-            <button class="cat-btn" onclick="filterCategory('tiktok', this)"><i class="fab fa-tiktok"></i> TikTok Viral</button>
+            <button class="cat-btn active" onclick="filterCategory('all', this)"><i class="fas fa-globe"></i> All Movies</button>
+            <button class="cat-btn" onclick="filterCategory('new_movie', this)"><i class="fas fa-film"></i> New Movies</button>
+            <button class="cat-btn" onclick="filterCategory('action', this)"><i class="fas fa-fire"></i> Action</button>
+            <button class="cat-btn" onclick="filterCategory('hindi', this)"><i class="fas fa-video"></i> Hindi Dubbed</button>
+            <button class="cat-btn" onclick="filterCategory('hollywood', this)"><i class="fas fa-star"></i> Hollywood</button>
         </div>
 
         <!-- Media Feed -->
         <div class="media-feed-grid" id="mediaFeedContainer">
-            <div class="empty-state">Loading latest videos...</div>
+            <div class="empty-state">Loading latest movies...</div>
         </div>
     </div>
 
     <!-- 5-Button Bottom Nav -->
     <nav class="bottom-nav">
-        <div class="nav-item active" onclick="window.location.href='index.html'">
+        <div class="nav-item" onclick="window.location.href='index.html'">
             <i class="fas fa-play-circle"></i>
             <span>Viral Video</span>
         </div>
-        <div class="nav-item" onclick="window.location.href='movies.html'">
+        <div class="nav-item active" onclick="window.location.href='movies.html'">
             <i class="fas fa-film"></i>
             <span>Movie</span>
         </div>
@@ -448,7 +448,7 @@
         let currentFilter = "all";
         let globalDefaultAds = 2;
 
-        const allowedViralCategories = ['viral_video', 'facebook', 'instagram', 'tiktok'];
+        const allowedMovieCategories = ['new_movie', 'action', 'hindi', 'hollywood'];
         const unlockedMedia = new Set();
         const watchedAdsCount = {};
 
@@ -468,7 +468,6 @@
             userId = u.id ? u.id.toString() : (u.username || "sakil24");
         }
 
-        // রিয়েলটাইম ব্যালেন্স
         const userRef = db.ref('users/' + userId);
         userRef.on('value', snap => {
             const val = snap.val();
@@ -487,19 +486,19 @@
             }
         });
 
-        // শুধুমাত্র ভাইরাল ভিডিও লোড
+        // শুধুমাত্র মুভি পোস্ট লোড
         db.ref('movie_posts').on('value', snap => {
             const data = snap.val();
             const container = document.getElementById('mediaFeedContainer');
 
             if (!data) {
-                container.innerHTML = '<div class="empty-state">No viral videos available right now!</div>';
+                container.innerHTML = '<div class="empty-state">No movies available right now!</div>';
                 return;
             }
 
             allMedia = Object.keys(data)
                 .map(k => ({ id: k, ...data[k] }))
-                .filter(item => allowedViralCategories.includes(item.category))
+                .filter(item => allowedMovieCategories.includes(item.category))
                 .reverse();
 
             renderMediaFeed();
@@ -544,7 +543,7 @@
             const filtered = currentFilter === "all" ? allMedia : allMedia.filter(m => m.category === currentFilter);
 
             if (filtered.length === 0) {
-                container.innerHTML = `<div class="empty-state">No viral videos found in this category.</div>`;
+                container.innerHTML = `<div class="empty-state">No movies found in this category.</div>`;
                 return;
             }
 
@@ -572,25 +571,25 @@
                 let btnLabel = '';
                 if (isUnlocked) {
                     btnLabel = isWebPlayerUrl(item.fullVideoUrl) 
-                        ? '<i class="fas fa-check-circle"></i> Playing Full Video' 
+                        ? '<i class="fas fa-check-circle"></i> Playing Full Movie' 
                         : '<i class="fas fa-expand"></i> Full Screen';
                 } else if (watched > 0) {
                     btnLabel = `<i class="fas fa-film"></i> Watch Ad (${watched + 1}/${totalReq})`;
                 } else {
                     btnLabel = totalReq > 1 
-                        ? `<i class="fas fa-film"></i> Watch Full Video (${totalReq} Ads)` 
-                        : `<i class="fas fa-film"></i> Watch Full Video (Watch Ad)`;
+                        ? `<i class="fas fa-film"></i> Watch Full Movie (${totalReq} Ads)` 
+                        : `<i class="fas fa-film"></i> Watch Full Movie (Watch Ad)`;
                 }
 
                 html += `
                     <div class="media-card">
                         <div class="player-frame-box" id="frame-${item.id}">
                             ${mediaHTML}
-                            <span class="media-tag"><i class="fas fa-tag"></i> ${formatCategoryName(item.category)}</span>
+                            <span class="media-tag"><i class="fas fa-film"></i> ${formatCategoryName(item.category)}</span>
                         </div>
                         <div class="card-content">
                             <div class="card-title">${item.title}</div>
-                            <div class="card-desc">${item.description || 'Watch the full viral clip without cuts.'}</div>
+                            <div class="card-desc">${item.description || 'Watch the full movie without cuts.'}</div>
 
                             <button class="btn-watch-full ${isUnlocked ? 'unlocked' : ''}" id="btn-${item.id}" onclick="handleUnlockAction('${item.id}')">
                                 ${btnLabel}
@@ -604,7 +603,7 @@
         }
 
         function formatCategoryName(cat) {
-            if (!cat) return 'Video';
+            if (!cat) return 'Movie';
             return cat.replace('_', ' ').toUpperCase();
         }
 
@@ -643,7 +642,7 @@
                     console.log("Ad fallback:", err);
                     updateButtonUI(id);
                     if (tg && tg.showConfirm) {
-                        tg.showConfirm("বিজ্ঞাপন লোড হতে সমস্যা হয়েছে। সরাসরি আনলক করতে চান?", (ok) => {
+                        tg.showConfirm("বিজ্ঞাপন লোড হতে সমস্যা হয়েছে। সরাসরি মুভি আনলক করতে চান?", (ok) => {
                             if (ok) unlockVideo(id);
                         });
                     } else {
@@ -696,7 +695,7 @@
             if (frame) {
                 frame.innerHTML = `
                     ${generatePlayerHTML(id, targetUrl)}
-                    <span class="media-tag"><i class="fas fa-tag"></i> ${formatCategoryName(target.category)}</span>
+                    <span class="media-tag"><i class="fas fa-film"></i> ${formatCategoryName(target.category)}</span>
                 `;
             }
 
@@ -704,7 +703,7 @@
             if (btn) {
                 btn.className = "btn-watch-full unlocked";
                 btn.innerHTML = isWebPlayerUrl(targetUrl) 
-                    ? '<i class="fas fa-check-circle"></i> Playing Full Video' 
+                    ? '<i class="fas fa-check-circle"></i> Playing Full Movie' 
                     : '<i class="fas fa-expand"></i> Full Screen';
             }
 

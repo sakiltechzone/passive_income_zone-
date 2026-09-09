@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>STZ Network - Admin Dashboard</title>
+    <title>Passive Income Zone - Master Admin Portal</title>
 
     <!-- Google Fonts & FontAwesome -->
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -48,7 +48,6 @@
             padding: 20px 16px 80px 16px;
         }
 
-        /* Top Bar */
         .admin-header {
             display: flex;
             justify-content: space-between;
@@ -95,7 +94,6 @@
             gap: 6px;
         }
 
-        /* Navigation Tabs */
         .tab-nav {
             display: flex;
             gap: 8px;
@@ -128,7 +126,6 @@
             box-shadow: 0 4px 14px var(--primary-glow);
         }
 
-        /* Section Container */
         .section-card {
             background: var(--card-bg);
             border: 1px solid var(--border);
@@ -147,7 +144,6 @@
             gap: 8px;
         }
 
-        /* Forms */
         .form-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -186,7 +182,7 @@
 
         .styled-textarea {
             resize: vertical;
-            min-height: 90px;
+            min-height: 80px;
         }
 
         .btn-action {
@@ -204,10 +200,6 @@
             box-shadow: 0 4px 14px var(--primary-glow);
         }
 
-        .btn-action:hover {
-            opacity: 0.9;
-        }
-
         .btn-cancel-edit {
             background: #1f2937;
             color: var(--text-muted);
@@ -223,7 +215,6 @@
             margin-left: 8px;
         }
 
-        /* Items Feed */
         .feed-item {
             background: #030712;
             border: 1px solid var(--border);
@@ -245,7 +236,6 @@
             font-size: 12px;
             color: var(--text-muted);
             margin-bottom: 6px;
-            font-family: monospace;
         }
 
         .badge-cat {
@@ -285,7 +275,6 @@
             cursor: pointer;
         }
 
-        /* Table */
         .table-responsive {
             overflow-x: auto;
         }
@@ -334,35 +323,32 @@
 <body>
 
     <div class="admin-wrapper">
-        <!-- Header -->
         <div class="admin-header">
             <div class="brand">
                 <div class="brand-icon"><i class="fas fa-sliders"></i></div>
                 <div>
-                    <h2>STZ Control Hub</h2>
+                    <h2>Passive Income Control Hub</h2>
                     <span style="font-size: 11px; color: var(--text-muted);" id="currentAdminEmail">admin@domain.com</span>
                 </div>
             </div>
             <button class="btn-logout" onclick="handleLogout()"><i class="fas fa-arrow-right-from-bracket"></i> Sign Out</button>
         </div>
 
-        <!-- Navigation Tabs -->
         <div class="tab-nav">
-            <button class="tab-btn active" onclick="switchSection('moviesTab', this)"><i class="fas fa-play-circle"></i> Movies & Videos</button>
-            <button class="tab-btn" onclick="switchSection('promptsTab', this)"><i class="fas fa-magic"></i> AI Prompts</button>
+            <button class="tab-btn active" onclick="switchSection('viralVideosTab', this)"><i class="fas fa-fire"></i> Viral Videos</button>
+            <button class="tab-btn" onclick="switchSection('moviesTab', this)"><i class="fas fa-film"></i> Movies Hub</button>
             <button class="tab-btn" onclick="switchSection('settingsTab', this)"><i class="fas fa-gear"></i> System Config</button>
             <button class="tab-btn" onclick="switchSection('withdrawTab', this)"><i class="fas fa-wallet"></i> Payout Queue</button>
         </div>
 
-        <!-- 1. Movies & Viral Videos Tab -->
-        <div id="moviesTab" class="content-tab">
+        <!-- 1. VIRAL VIDEOS TAB -->
+        <div id="viralVideosTab" class="content-tab">
             <div class="section-card">
-                <h3 id="movieFormTitle"><i class="fas fa-film" style="color: var(--primary);"></i> Add New Movie / Video</h3>
+                <h3 id="viralFormTitle"><i class="fas fa-fire" style="color: #ef4444;"></i> Add New Viral Video</h3>
                 <div class="form-grid">
                     <div class="form-group">
                         <label>Category</label>
-                        <select id="movieCategory" class="styled-select">
-                            <option value="new_movie">New Movie</option>
+                        <select id="viralCategory" class="styled-select">
                             <option value="viral_video">Viral Video</option>
                             <option value="facebook">Facebook Viral</option>
                             <option value="instagram">Instagram Viral</option>
@@ -371,27 +357,78 @@
                     </div>
                     <div class="form-group">
                         <label>Video Title</label>
-                        <input type="text" id="movieTitle" class="styled-input" placeholder="e.g. Action Movie 2026 Trailer">
+                        <input type="text" id="viralTitle" class="styled-input" placeholder="e.g. Amazing Reels Video">
                     </div>
                     <div class="form-group" style="grid-column: 1 / -1;">
                         <label>Short Description</label>
-                        <textarea id="movieDescription" class="styled-textarea" placeholder="Short overview of the video..."></textarea>
+                        <textarea id="viralDescription" class="styled-textarea" placeholder="Short description..."></textarea>
                     </div>
                     <div class="form-group">
-                        <label>Preview Video Link (10s MP4)</label>
-                        <input type="url" id="moviePreviewUrl" class="styled-input" placeholder="https://example.com/teaser.mp4">
+                        <label>Preview Video Link (Direct MP4)</label>
+                        <input type="url" id="viralPreviewUrl" class="styled-input" placeholder="https://example.com/teaser.mp4">
                     </div>
                     <div class="form-group">
-                        <label>Full Video Link (MP4 / Bunny Stream)</label>
-                        <input type="url" id="movieFullUrl" class="styled-input" placeholder="https://example.com/full_video.mp4">
+                        <label>Full Video Link (MP4 / Web Player)</label>
+                        <input type="url" id="viralFullUrl" class="styled-input" placeholder="https://example.com/full_video.mp4">
                     </div>
                     <div class="form-group">
-                        <label>Ads Required to Unlock (১, ২ বা ৩)</label>
+                        <label>Ads Required to Unlock (e.g. 1 or 2)</label>
+                        <input type="number" id="viralRequiredAds" class="styled-input" min="1" max="10" placeholder="Default (e.g. 2)">
+                    </div>
+                </div>
+                <button class="btn-action" id="btnUploadViral" onclick="uploadViralPost()">
+                    <i class="fas fa-cloud-arrow-up"></i> <span id="btnViralUploadText">Publish Viral Video</span>
+                </button>
+                <button class="btn-cancel-edit" id="btnCancelViralEdit" onclick="cancelEditViral()">
+                    <i class="fas fa-xmark"></i> Cancel Edit
+                </button>
+            </div>
+
+            <div class="section-card">
+                <h3><i class="fas fa-list-check"></i> Active Viral Videos Library</h3>
+                <div id="viralListContainer">
+                    <p style="color: var(--text-muted); font-size: 13px;">Loading viral videos...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. MOVIES TAB -->
+        <div id="moviesTab" class="content-tab" style="display: none;">
+            <div class="section-card">
+                <h3 id="movieFormTitle"><i class="fas fa-clapperboard" style="color: var(--primary);"></i> Add New Movie</h3>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Category</label>
+                        <select id="movieCategory" class="styled-select">
+                            <option value="new_movie">New Movie</option>
+                            <option value="action">Action</option>
+                            <option value="hindi">Hindi Dubbed</option>
+                            <option value="hollywood">Hollywood</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Movie Title</label>
+                        <input type="text" id="movieTitle" class="styled-input" placeholder="e.g. Blockbuster Movie 2026">
+                    </div>
+                    <div class="form-group" style="grid-column: 1 / -1;">
+                        <label>Movie Plot / Description</label>
+                        <textarea id="movieDescription" class="styled-textarea" placeholder="Overview..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Trailer / Teaser Link (MP4)</label>
+                        <input type="url" id="moviePreviewUrl" class="styled-input" placeholder="https://example.com/trailer.mp4">
+                    </div>
+                    <div class="form-group">
+                        <label>Full Movie Stream Link</label>
+                        <input type="url" id="movieFullUrl" class="styled-input" placeholder="https://example.com/movie_stream">
+                    </div>
+                    <div class="form-group">
+                        <label>Ads Required to Unlock (e.g. 2 or 3)</label>
                         <input type="number" id="movieRequiredAds" class="styled-input" min="1" max="10" placeholder="Default (e.g. 2)">
                     </div>
                 </div>
                 <button class="btn-action" id="btnUploadMovie" onclick="uploadMoviePost()">
-                    <i class="fas fa-cloud-arrow-up"></i> <span id="btnMovieUploadText">Publish Video</span>
+                    <i class="fas fa-cloud-arrow-up"></i> <span id="btnMovieUploadText">Publish Movie</span>
                 </button>
                 <button class="btn-cancel-edit" id="btnCancelMovieEdit" onclick="cancelEditMovie()">
                     <i class="fas fa-xmark"></i> Cancel Edit
@@ -399,83 +436,48 @@
             </div>
 
             <div class="section-card">
-                <h3><i class="fas fa-video"></i> Active Movies & Videos Library</h3>
+                <h3><i class="fas fa-video"></i> Active Movies Library</h3>
                 <div id="moviesListContainer">
-                    <p style="color: var(--text-muted); font-size: 13px;">Loading uploaded videos...</p>
+                    <p style="color: var(--text-muted); font-size: 13px;">Loading movies...</p>
                 </div>
             </div>
         </div>
 
-        <!-- 2. AI Prompts Manager Tab -->
-        <div id="promptsTab" class="content-tab" style="display: none;">
-            <div class="section-card">
-                <h3 id="promptFormTitle"><i class="fas fa-plus-circle" style="color: var(--primary);"></i> Publish Viral AI Prompt</h3>
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label>Category / Platform</label>
-                        <select id="promptCategory" class="styled-select">
-                            <option value="facebook">Facebook Viral</option>
-                            <option value="instagram">Instagram Reels</option>
-                            <option value="tiktok">TikTok Trend</option>
-                            <option value="dola_ai">Dola AI</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Prompt Title</label>
-                        <input type="text" id="promptTitle" class="styled-input" placeholder="e.g. 3D Cartoon Old Man Emotion">
-                    </div>
-                    <div class="form-group" style="grid-column: 1 / -1;">
-                        <label>Preview Media Link (MP4 Video or Image URL)</label>
-                        <input type="url" id="promptMediaUrl" class="styled-input" placeholder="https://example.com/preview.mp4">
-                    </div>
-                    <div class="form-group" style="grid-column: 1 / -1;">
-                        <label>Prompt Content (Copied by User after Ad)</label>
-                        <textarea id="promptText" class="styled-textarea" placeholder="Paste the exact prompt text here..."></textarea>
-                    </div>
-                </div>
-                <button class="btn-action" id="btnUploadPrompt" onclick="uploadPrompt()"><i class="fas fa-cloud-arrow-up"></i> <span id="btnUploadText">Publish to Feed</span></button>
-                <button class="btn-cancel-edit" id="btnCancelEdit" onclick="cancelEditPrompt()"><i class="fas fa-xmark"></i> Cancel Edit</button>
-            </div>
-
-            <div class="section-card">
-                <h3><i class="fas fa-list"></i> Active Prompts Library</h3>
-                <div id="promptsListContainer">
-                    <p style="color: var(--text-muted); font-size: 13px;">Loading published prompts...</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- 3. System Settings Tab -->
+        <!-- 3. SYSTEM CONFIG TAB -->
         <div id="settingsTab" class="content-tab" style="display: none;">
             <div class="section-card">
-                <h3><i class="fas fa-coins" style="color: var(--warning);"></i> System Economy & Ads Config</h3>
+                <h3><i class="fas fa-coins" style="color: var(--warning);"></i> Global Economy & Ad Config</h3>
                 <div class="form-grid">
                     <div class="form-group">
-                        <label>Default Movie Ads Count</label>
-                        <input type="number" min="1" max="10" id="configDefaultMovieAds" class="styled-input" placeholder="2">
+                        <label>Per Video Ad Reward (USDT)</label>
+                        <input type="number" step="0.0001" id="configPerAdReward" class="styled-input" placeholder="0.001">
                     </div>
                     <div class="form-group">
-                        <label>Referral Bonus (USDT per user)</label>
-                        <input type="number" step="0.01" id="configReferBonus" class="styled-input" placeholder="0.10">
-                    </div>
-                    <div class="form-group">
-                        <label>Minimum Withdrawal (USDT)</label>
-                        <input type="number" step="0.1" id="configMinWithdraw" class="styled-input" placeholder="1.00">
+                        <label>Daily Shorts Video Limit (Times)</label>
+                        <input type="number" id="configDailyAdLimit" class="styled-input" placeholder="10">
                     </div>
                     <div class="form-group">
                         <label>Daily Spin Limit (Times)</label>
                         <input type="number" id="configSpinLimit" class="styled-input" placeholder="5">
                     </div>
-                    <div class="form-group" style="grid-column: 1 / -1;">
-                        <label>Spin Pool Amounts (Comma separated USDT)</label>
-                        <input type="text" id="configSpinPool" class="styled-input" placeholder="0.001, 0.0002, 0.002, 0.0005, 0.005, 0.001">
+                    <div class="form-group">
+                        <label>Referral Bonus (USDT per user)</label>
+                        <input type="number" step="0.01" id="configReferBonus" class="styled-input" placeholder="0.05">
+                    </div>
+                    <div class="form-group">
+                        <label>Default Unlock Ads Count</label>
+                        <input type="number" min="1" max="10" id="configDefaultMovieAds" class="styled-input" placeholder="2">
+                    </div>
+                    <div class="form-group">
+                        <label>Minimum Withdrawal (USDT)</label>
+                        <input type="number" step="0.1" id="configMinWithdraw" class="styled-input" placeholder="1.00">
                     </div>
                 </div>
-                <button class="btn-action" onclick="saveSystemSettings()"><i class="fas fa-floppy-disk"></i> Update Global Variables</button>
+                <button class="btn-action" onclick="saveSystemSettings()"><i class="fas fa-floppy-disk"></i> Save Global Settings</button>
             </div>
         </div>
 
-        <!-- 4. Withdraw Queue Tab -->
+        <!-- 4. WITHDRAW QUEUE TAB -->
         <div id="withdrawTab" class="content-tab" style="display: none;">
             <div class="section-card">
                 <h3><i class="fas fa-clock-rotate-left" style="color: var(--warning);"></i> Pending Payout Requests</h3>
@@ -484,9 +486,9 @@
                         <thead>
                             <tr>
                                 <th>User ID</th>
-                                <th>Method</th>
+                                <th>Network</th>
                                 <th>Address / Pay ID</th>
-                                <th>Payable (USDT)</th>
+                                <th>Amount (USDT)</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
@@ -499,7 +501,7 @@
         </div>
     </div>
 
-    <!-- Firebase App, Auth & Database SDKs (v8) -->
+    <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
@@ -519,11 +521,11 @@
         const auth = firebase.auth();
         const db = firebase.database();
 
-        let editingPromptKey = null;
-        let cachedPromptsData = {};
+        let editingViralKey = null;
+        let cachedViralData = {};
 
         let editingMovieKey = null;
-        let cachedMoviesData = {};
+        let cachedMovieData = {};
         let globalDefaultAds = 2;
 
         auth.onAuthStateChanged((user) => {
@@ -549,91 +551,23 @@
         }
 
         function loadDashboardData() {
-            // মুভি ও ভিডিও ডেটা লোড
             db.ref('movie_posts').on('value', snap => {
-                const container = document.getElementById('moviesListContainer');
-                const data = snap.val();
-                if (!data) {
-                    container.innerHTML = '<p style="color: var(--text-muted); font-size: 13px;">No movies or viral videos uploaded yet.</p>';
-                    cachedMoviesData = {};
-                    return;
-                }
-
-                cachedMoviesData = data;
-                let html = '';
-                Object.keys(data).reverse().forEach(key => {
-                    const item = data[key];
-                    const reqAds = item.requiredAds || globalDefaultAds;
-                    html += `
-                        <div class="feed-item">
-                            <div class="feed-info">
-                                <div style="display: flex; gap: 6px; align-items: center; margin-bottom: 4px;">
-                                    <span class="badge-cat">${(item.category || 'movie').replace('_', ' ')}</span>
-                                    <span style="font-size: 10px; font-weight: 700; color: #f59e0b; background: rgba(245, 158, 11, 0.15); padding: 2px 6px; border-radius: 5px;">
-                                        <i class="fas fa-rectangle-ad"></i> ${reqAds} Ads Required
-                                    </span>
-                                </div>
-                                <h4>${item.title}</h4>
-                                <p>${(item.description || '').substring(0, 80)}...</p>
-                                <div style="display: flex; gap: 10px; margin-top: 4px;">
-                                    ${item.previewUrl ? `<a href="${item.previewUrl}" target="_blank" style="color: #60a5fa; font-size: 11px;">Preview</a>` : ''}
-                                    ${item.fullVideoUrl ? `<a href="${item.fullVideoUrl}" target="_blank" style="color: #10b981; font-size: 11px;">Full Video</a>` : ''}
-                                </div>
-                            </div>
-                            <div class="item-actions">
-                                <button class="btn-edit" onclick="editMovie('${key}')"><i class="fas fa-pen-to-square"></i></button>
-                                <button class="btn-delete" onclick="deleteMovie('${key}')"><i class="fas fa-trash"></i></button>
-                            </div>
-                        </div>
-                    `;
-                });
-                container.innerHTML = html;
+                const data = snap.val() || {};
+                renderViralFeed(data);
+                renderMovieFeed(data);
             });
 
-            // প্রম্পট লাইব্রেরি লোড
-            db.ref('ai_prompts').on('value', snap => {
-                const container = document.getElementById('promptsListContainer');
-                const data = snap.val();
-                if (!data) {
-                    container.innerHTML = '<p style="color: var(--text-muted); font-size: 13px;">No prompts uploaded yet.</p>';
-                    cachedPromptsData = {};
-                    return;
-                }
-
-                cachedPromptsData = data;
-                let html = '';
-                Object.keys(data).reverse().forEach(key => {
-                    const item = data[key];
-                    html += `
-                        <div class="feed-item">
-                            <div class="feed-info">
-                                <span class="badge-cat">${item.category}</span>
-                                <h4>${item.title}</h4>
-                                <p>${(item.promptText || '').substring(0, 80)}...</p>
-                                ${item.mediaUrl ? `<a href="${item.mediaUrl}" target="_blank" style="color: #60a5fa; font-size: 11px;">View Media</a>` : ''}
-                            </div>
-                            <div class="item-actions">
-                                <button class="btn-edit" onclick="editPrompt('${key}')"><i class="fas fa-pen-to-square"></i></button>
-                                <button class="btn-delete" onclick="deletePrompt('${key}')"><i class="fas fa-trash"></i></button>
-                            </div>
-                        </div>
-                    `;
-                });
-                container.innerHTML = html;
-            });
-
-            // সিস্টেম সেটিংস লোড
             db.ref('system_settings').on('value', snap => {
                 const conf = snap.val() || {};
                 globalDefaultAds = parseInt(conf.defaultMovieAds) || 2;
                 document.getElementById('configDefaultMovieAds').value = globalDefaultAds;
-                document.getElementById('configReferBonus').value = conf.referBonus || 0.10;
-                document.getElementById('configMinWithdraw').value = conf.minWithdraw || 1.00;
+                document.getElementById('configPerAdReward').value = conf.perAdReward || 0.001;
+                document.getElementById('configDailyAdLimit').value = conf.dailyAdLimit || 10;
                 document.getElementById('configSpinLimit').value = conf.spinLimit || 5;
-                document.getElementById('configSpinPool').value = conf.spinPool || "0.001, 0.0002, 0.002, 0.0005, 0.005, 0.001";
+                document.getElementById('configReferBonus').value = conf.referBonus || 0.05;
+                document.getElementById('configMinWithdraw').value = conf.minWithdraw || 1.00;
             });
 
-            // উইথড্র পেন্ডিং কিউ লোড
             db.ref('admin_withdraw_queue').on('value', snap => {
                 const tbody = document.getElementById('withdrawTableBody');
                 const data = snap.val();
@@ -651,10 +585,10 @@
                                 <td><b>${req.userId}</b></td>
                                 <td>${req.network}</td>
                                 <td style="font-family: monospace;">${req.address}</td>
-                                <td style="color: var(--success); font-weight: 700;">$${req.finalUsdt.toFixed(3)}</td>
+                                <td style="color: var(--success); font-weight: 700;">$${parseFloat(req.finalUsdt || req.amountUsdt).toFixed(3)}</td>
                                 <td>
                                     <button class="btn-approve" onclick="handleWithdrawStatus('${key}', '${req.userId}', 'Paid')">Approve</button>
-                                    <button class="btn-reject" onclick="handleWithdrawStatus('${key}', '${req.userId}', 'Rejected', ${req.amountStz})">Reject</button>
+                                    <button class="btn-reject" onclick="handleWithdrawStatus('${key}', '${req.userId}', 'Rejected', ${req.amountUsdt})">Reject</button>
                                 </td>
                             </tr>
                         `;
@@ -664,7 +598,146 @@
             });
         }
 
-        // ================== MOVIE FUNCTIONS ==================
+        const viralCategories = ['viral_video', 'facebook', 'instagram', 'tiktok'];
+
+        function renderViralFeed(data) {
+            const container = document.getElementById('viralListContainer');
+            cachedViralData = {};
+            let html = '';
+
+            Object.keys(data).reverse().forEach(key => {
+                const item = data[key];
+                if (viralCategories.includes(item.category)) {
+                    cachedViralData[key] = item;
+                    const reqAds = item.requiredAds || globalDefaultAds;
+                    html += `
+                        <div class="feed-item">
+                            <div class="feed-info">
+                                <div style="display: flex; gap: 6px; align-items: center; margin-bottom: 4px;">
+                                    <span class="badge-cat">${item.category.replace('_', ' ')}</span>
+                                    <span style="font-size: 10px; font-weight: 700; color: #f59e0b; background: rgba(245, 158, 11, 0.15); padding: 2px 6px; border-radius: 5px;">
+                                        <i class="fas fa-play"></i> ${reqAds} Ads
+                                    </span>
+                                </div>
+                                <h4>${item.title}</h4>
+                                <p>${(item.description || '').substring(0, 75)}...</p>
+                            </div>
+                            <div class="item-actions">
+                                <button class="btn-edit" onclick="editViral('${key}')"><i class="fas fa-pen-to-square"></i></button>
+                                <button class="btn-delete" onclick="deleteVideo('${key}')"><i class="fas fa-trash"></i></button>
+                            </div>
+                        </div>
+                    `;
+                }
+            });
+
+            container.innerHTML = html || '<p style="color: var(--text-muted); font-size: 13px;">No viral videos found.</p>';
+        }
+
+        function uploadViralPost() {
+            const cat = document.getElementById('viralCategory').value;
+            const title = document.getElementById('viralTitle').value.trim();
+            const desc = document.getElementById('viralDescription').value.trim();
+            const previewUrl = document.getElementById('viralPreviewUrl').value.trim();
+            const fullUrl = document.getElementById('viralFullUrl').value.trim();
+            const reqAds = parseInt(document.getElementById('viralRequiredAds').value) || globalDefaultAds;
+
+            if (!title || !previewUrl || !fullUrl) {
+                alert("ভিডিও টাইটেল, প্রিভিউ লিংক এবং ফুল ভিডিও লিংক দেওয়া বাধ্যতামূলক!");
+                return;
+            }
+
+            const payload = {
+                category: cat,
+                title: title,
+                description: desc,
+                previewUrl: previewUrl,
+                fullVideoUrl: fullUrl,
+                requiredAds: reqAds,
+                updatedAt: Date.now()
+            };
+
+            if (editingViralKey) {
+                db.ref('movie_posts/' + editingViralKey).update(payload).then(() => {
+                    cancelEditViral();
+                    alert("ভাইরাল ভিডিও আপডেট হয়েছে!");
+                });
+            } else {
+                payload.createdAt = Date.now();
+                db.ref('movie_posts').push(payload).then(() => {
+                    cancelEditViral();
+                    alert("ভাইরাল ভিডিও সফলভাবে পাবলিশ হয়েছে!");
+                });
+            }
+        }
+
+        function editViral(key) {
+            const item = cachedViralData[key];
+            if (!item) return;
+
+            editingViralKey = key;
+            document.getElementById('viralCategory').value = item.category || 'viral_video';
+            document.getElementById('viralTitle').value = item.title || '';
+            document.getElementById('viralDescription').value = item.description || '';
+            document.getElementById('viralPreviewUrl').value = item.previewUrl || '';
+            document.getElementById('viralFullUrl').value = item.fullVideoUrl || '';
+            document.getElementById('viralRequiredAds').value = item.requiredAds || globalDefaultAds;
+
+            document.getElementById('viralFormTitle').innerHTML = '<i class="fas fa-pen-to-square" style="color: var(--warning);"></i> Edit Viral Video';
+            document.getElementById('btnViralUploadText').innerText = 'Update Video';
+            document.getElementById('btnCancelViralEdit').style.display = 'inline-flex';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function cancelEditViral() {
+            editingViralKey = null;
+            document.getElementById('viralTitle').value = "";
+            document.getElementById('viralDescription').value = "";
+            document.getElementById('viralPreviewUrl').value = "";
+            document.getElementById('viralFullUrl').value = "";
+            document.getElementById('viralRequiredAds').value = "";
+
+            document.getElementById('viralFormTitle').innerHTML = '<i class="fas fa-fire" style="color: #ef4444;"></i> Add New Viral Video';
+            document.getElementById('btnViralUploadText').innerText = 'Publish Viral Video';
+            document.getElementById('btnCancelViralEdit').style.display = 'none';
+        }
+
+        const movieCategories = ['new_movie', 'action', 'hindi', 'hollywood'];
+
+        function renderMovieFeed(data) {
+            const container = document.getElementById('moviesListContainer');
+            cachedMovieData = {};
+            let html = '';
+
+            Object.keys(data).reverse().forEach(key => {
+                const item = data[key];
+                if (movieCategories.includes(item.category)) {
+                    cachedMovieData[key] = item;
+                    const reqAds = item.requiredAds || globalDefaultAds;
+                    html += `
+                        <div class="feed-item">
+                            <div class="feed-info">
+                                <div style="display: flex; gap: 6px; align-items: center; margin-bottom: 4px;">
+                                    <span class="badge-cat">${item.category.replace('_', ' ')}</span>
+                                    <span style="font-size: 10px; font-weight: 700; color: #f59e0b; background: rgba(245, 158, 11, 0.15); padding: 2px 6px; border-radius: 5px;">
+                                        <i class="fas fa-film"></i> ${reqAds} Ads
+                                    </span>
+                                </div>
+                                <h4>${item.title}</h4>
+                                <p>${(item.description || '').substring(0, 75)}...</p>
+                            </div>
+                            <div class="item-actions">
+                                <button class="btn-edit" onclick="editMovie('${key}')"><i class="fas fa-pen-to-square"></i></button>
+                                <button class="btn-delete" onclick="deleteVideo('${key}')"><i class="fas fa-trash"></i></button>
+                            </div>
+                        </div>
+                    `;
+                }
+            });
+
+            container.innerHTML = html || '<p style="color: var(--text-muted); font-size: 13px;">No movies found.</p>';
+        }
+
         function uploadMoviePost() {
             const cat = document.getElementById('movieCategory').value;
             const title = document.getElementById('movieTitle').value.trim();
@@ -674,14 +747,14 @@
             const reqAds = parseInt(document.getElementById('movieRequiredAds').value) || globalDefaultAds;
 
             if (!title || !previewUrl || !fullUrl) {
-                alert("টাইটেল, প্রিভিউ ভিডিও লিঙ্ক এবং ফুল ভিডিও লিঙ্ক দেওয়া আবশ্যক!");
+                alert("মুভি টাইটেল, ট্রেইলার লিংক এবং ফুল মুভি লিংক দেওয়া বাধ্যতামূলক!");
                 return;
             }
 
             const payload = {
                 category: cat,
                 title: title,
-                description: desc || "",
+                description: desc,
                 previewUrl: previewUrl,
                 fullVideoUrl: fullUrl,
                 requiredAds: reqAds,
@@ -691,20 +764,19 @@
             if (editingMovieKey) {
                 db.ref('movie_posts/' + editingMovieKey).update(payload).then(() => {
                     cancelEditMovie();
-                    alert("ভিডিও সফলভাবে আপডেট করা হয়েছে!");
+                    alert("মুভি আপডেট সম্পন্ন হয়েছে!");
                 });
             } else {
                 payload.createdAt = Date.now();
-                const newKey = db.ref('movie_posts').push().key;
-                db.ref('movie_posts/' + newKey).set(payload).then(() => {
+                db.ref('movie_posts').push(payload).then(() => {
                     cancelEditMovie();
-                    alert("নতুন ভিডিও সফলভাবে পাবলিশ হয়েছে!");
+                    alert("নতুন মুভি সফলভাবে পাবলিশ হয়েছে!");
                 });
             }
         }
 
         function editMovie(key) {
-            const item = cachedMoviesData[key];
+            const item = cachedMovieData[key];
             if (!item) return;
 
             editingMovieKey = key;
@@ -715,10 +787,9 @@
             document.getElementById('movieFullUrl').value = item.fullVideoUrl || '';
             document.getElementById('movieRequiredAds').value = item.requiredAds || globalDefaultAds;
 
-            document.getElementById('movieFormTitle').innerHTML = '<i class="fas fa-pen-to-square" style="color: var(--warning);"></i> Edit Movie / Video';
-            document.getElementById('btnMovieUploadText').innerText = 'Update Video Post';
+            document.getElementById('movieFormTitle').innerHTML = '<i class="fas fa-pen-to-square" style="color: var(--warning);"></i> Edit Movie';
+            document.getElementById('btnMovieUploadText').innerText = 'Update Movie';
             document.getElementById('btnCancelMovieEdit').style.display = 'inline-flex';
-
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
@@ -730,120 +801,48 @@
             document.getElementById('movieFullUrl').value = "";
             document.getElementById('movieRequiredAds').value = "";
 
-            document.getElementById('movieFormTitle').innerHTML = '<i class="fas fa-film" style="color: var(--primary);"></i> Add New Movie / Video';
-            document.getElementById('btnMovieUploadText').innerText = 'Publish Video';
+            document.getElementById('movieFormTitle').innerHTML = '<i class="fas fa-clapperboard" style="color: var(--primary);"></i> Add New Movie';
+            document.getElementById('btnMovieUploadText').innerText = 'Publish Movie';
             document.getElementById('btnCancelMovieEdit').style.display = 'none';
         }
 
-        function deleteMovie(key) {
-            if (confirm("আপনি কি নিশ্চিত এই ভিডিও পোস্টটি ডিলিট করতে চান?")) {
+        function deleteVideo(key) {
+            if (confirm("আপনি কি নিশ্চিত এই পোস্টটি ডিলিট করতে চান?")) {
                 db.ref('movie_posts/' + key).remove().then(() => {
+                    if (editingViralKey === key) cancelEditViral();
                     if (editingMovieKey === key) cancelEditMovie();
                 });
             }
         }
 
-        // ================== PROMPT FUNCTIONS ==================
-        function uploadPrompt() {
-            const cat = document.getElementById('promptCategory').value;
-            const title = document.getElementById('promptTitle').value.trim();
-            const media = document.getElementById('promptMediaUrl').value.trim();
-            const prompt = document.getElementById('promptText').value.trim();
-
-            if (!title || !prompt) {
-                alert("শিরোনাম এবং প্রম্পট টেক্সট দেওয়া আবশ্যক!");
-                return;
-            }
-
-            if (editingPromptKey) {
-                db.ref('ai_prompts/' + editingPromptKey).update({
-                    category: cat,
-                    title: title,
-                    mediaUrl: media || "",
-                    promptText: prompt,
-                    updatedAt: Date.now()
-                }).then(() => {
-                    cancelEditPrompt();
-                    alert("প্রম্পট সফলভাবে আপডেট করা হয়েছে!");
-                });
-            } else {
-                const newPromptKey = db.ref('ai_prompts').push().key;
-                db.ref('ai_prompts/' + newPromptKey).set({
-                    id: newPromptKey,
-                    category: cat,
-                    title: title,
-                    mediaUrl: media || "",
-                    promptText: prompt,
-                    createdAt: Date.now()
-                }).then(() => {
-                    cancelEditPrompt();
-                    alert("প্রম্পট সফলভাবে লাইভ করা হয়েছে!");
-                });
-            }
-        }
-
-        function editPrompt(key) {
-            const item = cachedPromptsData[key];
-            if (!item) return;
-
-            editingPromptKey = key;
-            document.getElementById('promptCategory').value = item.category || 'facebook';
-            document.getElementById('promptTitle').value = item.title || '';
-            document.getElementById('promptMediaUrl').value = item.mediaUrl || '';
-            document.getElementById('promptText').value = item.promptText || '';
-
-            document.getElementById('promptFormTitle').innerHTML = '<i class="fas fa-pen-to-square" style="color: var(--warning);"></i> Edit Viral AI Prompt';
-            document.getElementById('btnUploadText').innerText = 'Update Prompt';
-            document.getElementById('btnCancelEdit').style.display = 'inline-flex';
-
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        function cancelEditPrompt() {
-            editingPromptKey = null;
-            document.getElementById('promptTitle').value = "";
-            document.getElementById('promptMediaUrl').value = "";
-            document.getElementById('promptText').value = "";
-
-            document.getElementById('promptFormTitle').innerHTML = '<i class="fas fa-plus-circle" style="color: var(--primary);"></i> Publish Viral AI Prompt';
-            document.getElementById('btnUploadText').innerText = 'Publish to Feed';
-            document.getElementById('btnCancelEdit').style.display = 'none';
-        }
-
-        function deletePrompt(key) {
-            if (confirm("আপনি কি নিশ্চিত এই প্রম্পটটি ডিলিট করতে চান?")) {
-                db.ref('ai_prompts/' + key).remove().then(() => {
-                    if (editingPromptKey === key) cancelEditPrompt();
-                });
-            }
-        }
-
-        // ================== SETTINGS & PAYOUT ==================
         function saveSystemSettings() {
             const settings = {
-                defaultMovieAds: parseInt(document.getElementById('configDefaultMovieAds').value) || 2,
-                referBonus: parseFloat(document.getElementById('configReferBonus').value) || 0.10,
-                minWithdraw: parseFloat(document.getElementById('configMinWithdraw').value) || 1.00,
+                perAdReward: parseFloat(document.getElementById('configPerAdReward').value) || 0.001,
+                dailyAdLimit: parseInt(document.getElementById('configDailyAdLimit').value) || 10,
                 spinLimit: parseInt(document.getElementById('configSpinLimit').value) || 5,
-                spinPool: document.getElementById('configSpinPool').value.trim()
+                referBonus: parseFloat(document.getElementById('configReferBonus').value) || 0.05,
+                defaultMovieAds: parseInt(document.getElementById('configDefaultMovieAds').value) || 2,
+                minWithdraw: parseFloat(document.getElementById('configMinWithdraw').value) || 1.00
             };
 
             db.ref('system_settings').update(settings).then(() => {
-                alert("সিস্টেম সেটিংস সফলভাবে আপডেট হয়েছে!");
+                alert("✅ গ্লোবাল সেটিংস সফলভাবে আপডেট হয়েছে!");
             });
         }
 
-        function handleWithdrawStatus(reqKey, uId, newStatus, refundCoins) {
+        function handleWithdrawStatus(reqKey, uId, newStatus, refundUsdt) {
             const updates = {};
             updates['/admin_withdraw_queue/' + reqKey + '/status'] = newStatus;
             updates['/withdraw_requests/' + uId + '/' + reqKey + '/status'] = newStatus;
 
-            if (newStatus === "Rejected" && refundCoins) {
-                db.ref('stz_miners/' + uId + '/balance').transaction(current => (current || 0) + refundCoins);
+            if (newStatus === "Rejected" && refundUsdt) {
+                db.ref('users/' + uId + '/balance').transaction(current => {
+                    return parseFloat(((current || 0) + parseFloat(refundUsdt)).toFixed(4));
+                });
             }
 
             db.ref().update(updates).then(() => {
-                alert(`রিকোয়েস্টটি ${newStatus} হয়েছে!`);
+                alert(`উইথড্র রিকোয়েস্টটি ${newStatus} করা হয়েছে!`);
             });
         }
     </script>

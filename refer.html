@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>STZ Network - Referral Team</title>
+    <title>Passive Income Zone - Referral Team</title>
 
     <!-- Telegram SDK -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -58,7 +58,6 @@
             z-index: 1;
         }
 
-        /* Top Bar */
         .top-nav {
             width: 100%;
             display: flex;
@@ -80,7 +79,6 @@
             font-size: 14px;
             cursor: pointer;
             text-decoration: none;
-            -webkit-touch-callout: none !important;
         }
 
         .brand-text {
@@ -102,10 +100,8 @@
             box-shadow: 0 4px 12px rgba(0,0,0,0.06);
             cursor: pointer;
             text-decoration: none;
-            -webkit-touch-callout: none !important;
         }
 
-        /* Hero Card */
         .refer-hero-card {
             width: 100%;
             background: var(--card-glass);
@@ -149,7 +145,6 @@
             border-radius: 12px;
         }
 
-        /* Stats Grid */
         .stats-grid {
             width: 100%;
             display: grid;
@@ -187,7 +182,6 @@
             color: var(--primary-blue);
         }
 
-        /* Link Box Card */
         .link-share-card {
             width: 100%;
             background: #ffffff;
@@ -238,7 +232,6 @@
             gap: 6px;
             border: none;
             transition: transform 0.1s;
-            -webkit-touch-callout: none !important;
         }
 
         .btn-copy-link {
@@ -256,7 +249,6 @@
             transform: scale(0.97);
         }
 
-        /* Single Level Card */
         .team-levels-section {
             width: 100%;
         }
@@ -318,7 +310,6 @@
             color: var(--primary-blue);
         }
 
-        /* 5-Button Modern Bottom Nav Bar */
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -347,9 +338,6 @@
             flex: 1;
             height: 100%;
             text-decoration: none;
-            -webkit-touch-callout: none !important;
-            -webkit-user-select: none !important;
-            user-select: none !important;
         }
 
         .nav-item.active {
@@ -369,43 +357,39 @@
 <body>
 
     <div class="container">
-        <!-- Top App Bar -->
         <div class="top-nav">
-            <div onclick="location.href='./index.html'" class="back-pill-btn">
+            <div onclick="window.location.href='index.html'" class="back-pill-btn">
                 <i class="fas fa-chevron-left"></i>
             </div>
             <span class="brand-text">Referrals</span>
-            <div onclick="location.href='./withdraw.html'" class="wallet-pill">
+            <div onclick="window.location.href='withdraw.html'" class="wallet-pill">
                 <i class="fas fa-wallet" style="color: var(--primary-blue);"></i>
                 $<span id="topBalance">0.000</span>
             </div>
         </div>
 
-        <!-- Hero Card -->
         <div class="refer-hero-card">
             <i class="fas fa-users-rays gift-icon"></i>
             <h3>Invite Friends, Earn USDT</h3>
-            <p>Build your viral creator network & multiply your daily revenue.</p>
+            <p>Share Passive Income Zone and earn instant USDT bonuses.</p>
             <div class="bonus-highlight-pill">
-                Instant Bonus: +$<span id="referBonusRateText">0.10</span> USDT / Friend
+                Direct Bonus: +$<span id="referBonusRateText">0.05</span> USDT / Friend
             </div>
         </div>
 
-        <!-- Stats Grid -->
         <div class="stats-grid">
             <div class="stat-card">
                 <span class="stat-label">Direct Referrals</span>
                 <span class="stat-val" id="totalRefCount">0</span>
-                <span class="stat-sub">Active members</span>
+                <span class="stat-sub">Joined Users</span>
             </div>
             <div class="stat-card">
                 <span class="stat-label">Referral Profits</span>
                 <span class="stat-val">$<span id="referTotalEarnedUsdt">0.00</span></span>
-                <span class="stat-sub">Earned USDT</span>
+                <span class="stat-sub">Direct USDT</span>
             </div>
         </div>
 
-        <!-- Link Share Box -->
         <div class="link-share-card">
             <label>Your Unique Invite Link</label>
             <input type="text" id="referralLinkInput" class="invite-link-input" readonly value="Loading link...">
@@ -420,16 +404,15 @@
             </div>
         </div>
 
-        <!-- Single Level Section -->
         <div class="team-levels-section">
-            <h4>Referral Speed Boost</h4>
+            <h4>Tier Overview</h4>
             
             <div class="level-row-card">
                 <div class="level-left-col">
                     <div class="lvl-badge"><i class="fas fa-user-plus"></i></div>
                     <div class="lvl-info">
-                        <div class="title">Direct Friends (Level 1)</div>
-                        <div class="speed-sub">+10% Mining Speed each friend</div>
+                        <div class="title">Direct Friends</div>
+                        <div class="speed-sub">Get direct USDT for every active invite</div>
                     </div>
                 </div>
                 <div class="level-members-count" id="f1CountDisplay">0</div>
@@ -437,36 +420,35 @@
         </div>
     </div>
 
-    <!-- 5-Button Bottom Nav (Protected against context menu) -->
+    <!-- 5-Button Bottom Nav -->
     <nav class="bottom-nav">
-    <div class="nav-item" onclick="location.href='./index.html'">
-        <i class="fas fa-magic"></i>
-        <span>Prompts</span>
-    </div>
-    <div class="nav-item" onclick="location.href='./dashboard.html'">
-        <i class="fas fa-play-circle"></i>
-        <span>Movies</span>
-    </div>
-    <div class="nav-item" onclick="location.href='./spin.html'">
-        <i class="fas fa-dharmachakra"></i>
-        <span>Spin</span>
-    </div>
-    <div class="nav-item active" onclick="location.href='./refer.html'">
-        <i class="fas fa-user-friends"></i>
-        <span>Referral</span>
-    </div>
-    <div class="nav-item" onclick="location.href='./withdraw.html'">
-        <i class="fas fa-wallet"></i>
-        <span>Wallet</span>
-    </div>
-</nav>
+        <div class="nav-item" onclick="window.location.href='index.html'">
+            <i class="fas fa-play-circle"></i>
+            <span>Viral Video</span>
+        </div>
+        <div class="nav-item" onclick="window.location.href='movies.html'">
+            <i class="fas fa-film"></i>
+            <span>Movie</span>
+        </div>
+        <div class="nav-item" onclick="window.location.href='earn.html'">
+            <i class="fas fa-circle-play"></i>
+            <span>Earn</span>
+        </div>
+        <div class="nav-item active" onclick="window.location.href='refer.html'">
+            <i class="fas fa-user-friends"></i>
+            <span>Referral</span>
+        </div>
+        <div class="nav-item" onclick="window.location.href='withdraw.html'">
+            <i class="fas fa-wallet"></i>
+            <span>Wallet</span>
+        </div>
+    </nav>
 
     <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
     <script>
-        // লং প্রেস ও ব্রাউজার ডিফল্ট কনটেক্সট মেনু সম্পূর্ণ বন্ধ করা
         document.addEventListener('contextmenu', function(e) {
             e.preventDefault();
         });
@@ -479,7 +461,6 @@
             }
         } catch(e) {}
 
-        const STZ_TO_USDT = 0.001;
         const BOT_USERNAME = "passive_income_zone_bot";
 
         const firebaseConfig = {
@@ -496,7 +477,7 @@
         const db = firebase.database();
 
         let userId = "sakil24";
-        let referBonusRate = 0.10;
+        let referBonusRate = 0.05;
 
         if (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) {
             const u = tg.initDataUnsafe.user;
@@ -508,32 +489,39 @@
 
         db.ref('system_settings').on('value', snap => {
             const val = snap.val();
-            if (val && val.referBonus) {
-                referBonusRate = parseFloat(val.referBonus);
+            if (val && typeof val.referBonus !== 'undefined') {
+                referBonusRate = parseFloat(val.referBonus) || 0.05;
                 document.getElementById('referBonusRateText').innerText = referBonusRate.toFixed(2);
+                updateReferEarnings();
             }
         });
 
-        const userRef = db.ref('stz_miners/' + userId);
+        const userRef = db.ref('users/' + userId);
         userRef.on('value', snap => {
             const val = snap.val();
-            if (val) {
-                const totalUsdt = (val.balance || 0) * STZ_TO_USDT;
-                document.getElementById('topBalance').innerText = totalUsdt.toFixed(3);
+            if (val && typeof val.balance !== 'undefined') {
+                document.getElementById('topBalance').innerText = parseFloat(val.balance).toFixed(3);
+            } else {
+                document.getElementById('topBalance').innerText = "0.000";
             }
         });
 
-        const refRef = db.ref('stz_referrals/' + userId);
+        let directRefCount = 0;
+
+        const refRef = db.ref('referrals/' + userId);
         refRef.on('value', snap => {
             const val = snap.val() || {};
-            const f1Count = val.f1 ? Object.keys(val.f1).length : (typeof val.directCount === 'number' ? val.directCount : 0);
+            directRefCount = val.list ? Object.keys(val.list).length : (typeof val.count === 'number' ? val.count : 0);
 
-            document.getElementById('f1CountDisplay').innerText = f1Count;
-            document.getElementById('totalRefCount').innerText = f1Count;
-
-            const earnedUsdt = f1Count * referBonusRate;
-            document.getElementById('referTotalEarnedUsdt').innerText = earnedUsdt.toFixed(2);
+            document.getElementById('f1CountDisplay').innerText = directRefCount;
+            document.getElementById('totalRefCount').innerText = directRefCount;
+            updateReferEarnings();
         });
+
+        function updateReferEarnings() {
+            const earnedUsdt = directRefCount * referBonusRate;
+            document.getElementById('referTotalEarnedUsdt').innerText = earnedUsdt.toFixed(2);
+        }
 
         function copyReferralLink() {
             const linkInput = document.getElementById('referralLinkInput');
@@ -542,8 +530,8 @@
 
             const copied = () => {
                 if (tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
-                if (tg && tg.showAlert) tg.showAlert("✅ রেফারেল লিংক ক্লিপবোর্ডে কপি হয়েছে!");
-                else alert("✅ রেফারেল লিংক ক্লিপবোর্ডে কপি হয়েছে!");
+                if (tg && tg.showAlert) tg.showAlert("✅ Invite link copied to clipboard!");
+                else alert("✅ Invite link copied to clipboard!");
             };
 
             if (navigator.clipboard && navigator.clipboard.writeText) {
@@ -555,7 +543,7 @@
         }
 
         function shareOnTelegram() {
-            const shareText = encodeURIComponent(`🔥 Join STZ Network! Unlock viral AI video prompts, mine crypto & earn daily USDT prizes free!\n\n👇 Start now:`);
+            const shareText = encodeURIComponent(`🔥 Join Passive Income Zone! Watch trending viral videos, movies, and earn free USDT rewards every day!\n\n👇 Start earning now:`);
             const shareUrl = `https://t.me/share/url?url=${encodeURIComponent(inviteLink)}&text=${shareText}`;
             
             if (tg && tg.openTelegramLink) {
