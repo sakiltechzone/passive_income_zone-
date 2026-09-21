@@ -197,7 +197,7 @@
             justify-content: center;
         }
 
-        .player-frame-box video, .player-frame-box iframe {
+        .player-frame-box video {
             width: 100%;
             height: 100%;
             border: none;
@@ -292,11 +292,6 @@
             transition: background 0.2s, transform 0.1s;
         }
 
-        .btn-watch-full.unlocked {
-            background: linear-gradient(135deg, #10b981, #059669);
-            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
-        }
-
         .btn-watch-full:active {
             transform: scale(0.98);
         }
@@ -375,7 +370,7 @@
         <!-- Banner -->
         <div class="hero-banner">
             <h3><i class="fas fa-fire" style="color: #ef4444;"></i> Watch Trending Videos</h3>
-            <p>Watch short sponsored clips to unlock full viral videos directly inside the player.</p>
+            <p>Click below to stream high quality trending viral videos instantly.</p>
         </div>
 
         <!-- Category Scroll Filters -->
@@ -453,11 +448,9 @@
         let adsController = null;
         let allMedia = [];
         let currentFilter = "all";
-        let globalDefaultAds = 2;
+        let isAdShowing = false;
 
         const allowedViralCategories = ['viral_video', 'facebook', 'instagram', 'tiktok'];
-        const unlockedMedia = new Set();
-        const watchedAdsCount = {};
 
         function initAdsgram() {
             try {
@@ -469,6 +462,26 @@
             }
         }
         initAdsgram();
+
+        // ইউজার পেজে থাকাকালীন প্রতি ৮-১০ সেকেন্ডে স্বয়ংক্রিয় অ্যাড চালানোর লুপ
+        function startAutoAdLoop() {
+            if (!adsController || isAdShowing) return;
+
+            isAdShowing = true;
+            adsController.show()
+                .then(() => {
+                    isAdShowing = false;
+                    setTimeout(startAutoAdLoop, 8000);
+                })
+                .catch((err) => {
+                    console.warn("Ad cooldown or fill issue:", err);
+                    isAdShowing = false;
+                    setTimeout(startAutoAdLoop, 8000);
+                });
+        }
+
+        // পেজ লোড হওয়ার ৪ সেকেন্ড পর অটো অ্যাড শুরু হবে
+        setTimeout(startAutoAdLoop, 4000);
 
         if (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) {
             const u = tg.initDataUnsafe.user;
@@ -482,14 +495,6 @@
                 document.getElementById('topBalance').innerText = parseFloat(val.balance).toFixed(3);
             } else {
                 document.getElementById('topBalance').innerText = "0.000";
-            }
-        });
-
-        db.ref('system_settings/defaultMovieAds').on('value', snap => {
-            const val = snap.val();
-            if (val) {
-                globalDefaultAds = parseInt(val) || 2;
-                renderMediaFeed();
             }
         });
 
@@ -517,33 +522,6 @@
             renderMediaFeed();
         }
 
-        function isWebPlayerUrl(url) {
-            if (!url) return false;
-            return url.includes('mediadelivery.net') || 
-                   url.includes('streamwish') || 
-                   url.includes('dood') || 
-                   url.includes('streamhg') ||
-                   !url.match(/\.(mp4|webm|mkv|mov)(\?.*)?$/i);
-        }
-
-        function generatePlayerHTML(id, url) {
-            if (isWebPlayerUrl(url)) {
-                return `
-                    <iframe 
-                        id="player-${id}" 
-                        src="${url}" 
-                        loading="lazy" 
-                        allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture; fullscreen" 
-                        allowfullscreen="true">
-                    </iframe>
-                `;
-            } else {
-                return `
-                    <video id="player-${id}" src="${url}" controls autoplay playsinline controlsList="nodownload"></video>
-                `;
-            }
-        }
-
         function renderMediaFeed() {
             const container = document.getElementById('mediaFeedContainer');
             const filtered = currentFilter === "all" ? allMedia : allMedia.filter(m => m.category === currentFilter);
@@ -555,57 +533,30 @@
 
             let html = '';
             filtered.forEach(item => {
-                const isUnlocked = unlockedMedia.has(item.id);
-                const totalReq = (item.requiredAds !== undefined && item.requiredAds !== null && item.requiredAds !== '') 
-                    ? parseInt(item.requiredAds) 
-                    : globalDefaultAds;
-                const watched = watchedAdsCount[item.id] || 0;
-                const remainingAds = Math.max(0, totalReq - watched);
-
-                let mediaHTML = '';
-                if (isUnlocked) {
-                    const targetUrl = item.fullVideoUrl || item.previewUrl;
-                    mediaHTML = generatePlayerHTML(item.id, targetUrl);
-                } else {
-                    mediaHTML = `
-                        <video id="vid-${item.id}" src="${item.previewUrl}" autoplay loop muted playsinline preload="metadata"></video>
-                        <div class="player-controls-cluster">
-                            <div class="ctrl-btn" title="Play/Pause" onclick="togglePlayPause('${item.id}', this)">
-                                <i class="fas fa-pause"></i>
-                            </div>
-                            <div class="ctrl-btn" title="Sound Toggle" onclick="toggleSound('${item.id}', this)">
-                                <i class="fas fa-volume-mute"></i>
-                            </div>
-                            <div class="ctrl-btn" title="Fullscreen" onclick="toggleFullscreen('${item.id}')">
-                                <i class="fas fa-expand"></i>
-                            </div>
-                        </div>
-                    `;
-                }
-
-                let btnLabel = '';
-                if (isUnlocked) {
-                    btnLabel = isWebPlayerUrl(item.fullVideoUrl) 
-                        ? '<i class="fas fa-check-circle"></i> Playing Full Video' 
-                        : '<i class="fas fa-expand"></i> Full Screen';
-                } else if (watched > 0) {
-                    btnLabel = `<i class="fas fa-play"></i> Watch 1 More Ad to Unlock (${remainingAds} Left)`;
-                } else {
-                    btnLabel = `<i class="fas fa-film"></i> Watch Full Video (${totalReq} Ads)`;
-                }
-
                 html += `
                     <div class="media-card">
                         <div class="player-frame-box" id="frame-${item.id}">
-                            ${mediaHTML}
+                            <video id="vid-${item.id}" src="${item.previewUrl}" autoplay loop muted playsinline preload="metadata"></video>
+                            <div class="player-controls-cluster">
+                                <div class="ctrl-btn" title="Play/Pause" onclick="togglePlayPause('${item.id}', this)">
+                                    <i class="fas fa-pause"></i>
+                                </div>
+                                <div class="ctrl-btn" title="Sound Toggle" onclick="toggleSound('${item.id}', this)">
+                                    <i class="fas fa-volume-mute"></i>
+                                </div>
+                                <div class="ctrl-btn" title="Fullscreen" onclick="toggleFullscreen('${item.id}')">
+                                    <i class="fas fa-expand"></i>
+                                </div>
+                            </div>
                             <span class="media-tag"><i class="fas fa-tag"></i> ${formatCategoryName(item.category)}</span>
                         </div>
                         <div class="card-content">
                             <div class="card-title">${item.title}</div>
-                            <div class="card-desc">${item.description || 'Watch short ads to unlock full viral clip.'}</div>
+                            <div class="card-desc">${item.description || 'Watch trending clips online.'}</div>
 
-                            <button class="btn-watch-full ${isUnlocked ? 'unlocked' : ''}" id="btn-${item.id}" onclick="handleUnlockAction('${item.id}')">
-                                ${btnLabel}
+                            <!-- বাটন টেক্সট সম্পূর্ণ পরিবর্তন: কোনো Ads উল্লেখ নেই -->
+                            <button class="btn-watch-full" id="btn-${item.id}" onclick="handleWatchClick('${item.id}')">
+                                <i class="fas fa-film"></i> Watch Full Video
                             </button>
                         </div>
                     </div>
@@ -647,7 +598,7 @@
         }
 
         function toggleFullscreen(id) {
-            const video = document.getElementById(`vid-${id}`) || document.getElementById(`player-${id}`);
+            const video = document.getElementById(`vid-${id}`);
             if (!video) return;
 
             if (video.requestFullscreen) {
@@ -659,94 +610,33 @@
             }
         }
 
-        function handleUnlockAction(id) {
-            if (unlockedMedia.has(id)) {
-                toggleFullscreen(id);
-                return;
-            }
-
+        // ইউজার যতবার বাটনে ক্লিক করবে ততবার শুধু অ্যাড প্লে হবে (ফুল ভিডিও কখনোই আনলক হবে না)
+        function handleWatchClick(id) {
             if (!adsController) initAdsgram();
 
             const btn = document.getElementById(`btn-${id}`);
-            if (btn) btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading Ad...';
+            if (btn) btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading...';
 
             if (adsController) {
+                isAdShowing = true;
                 adsController.show().then(() => {
-                    processWatchedAd(id);
+                    isAdShowing = false;
+                    resetButton(id);
                 }).catch((err) => {
-                    console.log("Ad fallback:", err);
-                    updateButtonUI(id);
-                    if (tg && tg.showConfirm) {
-                        tg.showConfirm("বিজ্ঞাপন লোড হতে সমস্যা হয়েছে। সরাসরি ভিডিও আনলক করতে চান?", (ok) => {
-                            if (ok) unlockVideo(id);
-                        });
-                    } else {
-                        processWatchedAd(id);
-                    }
+                    console.log("Ad cooldown or error:", err);
+                    isAdShowing = false;
+                    resetButton(id);
                 });
             } else {
-                processWatchedAd(id);
+                resetButton(id);
             }
         }
 
-        function processWatchedAd(id) {
-            const target = allMedia.find(m => m.id === id);
-            const totalReq = (target && target.requiredAds !== undefined && target.requiredAds !== null && target.requiredAds !== '') 
-                ? parseInt(target.requiredAds) 
-                : globalDefaultAds;
-
-            watchedAdsCount[id] = (watchedAdsCount[id] || 0) + 1;
-
-            if (watchedAdsCount[id] >= totalReq) {
-                unlockVideo(id);
-            } else {
-                updateButtonUI(id);
-                const remaining = totalReq - watchedAdsCount[id];
-                if (tg && tg.showAlert) {
-                    tg.showAlert(`১টি বিজ্ঞাপন সম্পন্ন! আর মাত্র ${remaining}টি বাকি রয়েছে।`);
-                } else {
-                    alert(`১টি বিজ্ঞাপন সম্পন্ন! আর মাত্র ${remaining}টি বাকি রয়েছে।`);
-                }
-            }
-        }
-
-        function updateButtonUI(id) {
-            const btn = document.getElementById(`btn-${id}`);
-            const target = allMedia.find(m => m.id === id);
-            const totalReq = (target && target.requiredAds !== undefined && target.requiredAds !== null && target.requiredAds !== '') 
-                ? parseInt(target.requiredAds) 
-                : globalDefaultAds;
-            const watched = watchedAdsCount[id] || 0;
-            const remaining = Math.max(0, totalReq - watched);
-
-            if (btn && !unlockedMedia.has(id)) {
-                btn.innerHTML = `<i class="fas fa-play"></i> Watch 1 More Ad to Unlock (${remaining} Left)`;
-            }
-        }
-
-        function unlockVideo(id) {
-            unlockedMedia.add(id);
-            const target = allMedia.find(m => m.id === id);
-            if (!target) return;
-
-            const targetUrl = target.fullVideoUrl || target.previewUrl;
-            const frame = document.getElementById(`frame-${id}`);
-            if (frame) {
-                frame.innerHTML = `
-                    ${generatePlayerHTML(id, targetUrl)}
-                    <span class="media-tag"><i class="fas fa-tag"></i> ${formatCategoryName(target.category)}</span>
-                `;
-            }
-
+        function resetButton(id) {
             const btn = document.getElementById(`btn-${id}`);
             if (btn) {
-                btn.className = "btn-watch-full unlocked";
-                btn.innerHTML = isWebPlayerUrl(targetUrl) 
-                    ? '<i class="fas fa-check-circle"></i> Playing Full Video' 
-                    : '<i class="fas fa-expand"></i> Full Screen';
+                btn.innerHTML = '<i class="fas fa-film"></i> Watch Full Video';
             }
-
-            if (tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
         }
     </script>
 </body>
