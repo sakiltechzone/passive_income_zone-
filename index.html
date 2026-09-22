@@ -610,12 +610,12 @@
         }
 
         // ইউজার ক্লিকের হ্যান্ডলার (কোনো কাউন্ট দেখাবে না)
-                function handleWatchClick(id) {
+                        function handleWatchClick(id) {
             const post = allMedia.find(m => m.id === id);
             if (!post) return;
 
-            // এডমিন থেকে যেকোনো নামে সেভ হলেও যেন লিঙ্কটি পেয়ে যায়
-            const fullUrl = post.fullUrl || post.fullMovieUrl || post.streamUrl || post.videoUrl || post.streamLink || post.movieUrl || post.downloadUrl || post.link;
+            // অ্যাডমিন প্যানেলের fullVideoUrl ফিল্ডটিকে সবার প্রথমে যুক্ত করা হলো
+            const fullUrl = post.fullVideoUrl || post.fullUrl || post.fullMovieUrl || post.streamUrl;
             
             const targetAds = parseInt(post.requiredAds) || 1;
             if (!userAdProgress[id]) userAdProgress[id] = 0;
@@ -634,15 +634,16 @@
                     if (userAdProgress[id] >= targetAds) {
                         userAdProgress[id] = 0;
 
-                        if (fullUrl && fullUrl.trim() !== "") {
+                        // যদি অ্যাডমিন থেকে ফুল লিঙ্ক দেওয়া থাকে এবং তা প্রিভিউ লিঙ্কের সমান না হয়
+                        if (fullUrl && fullUrl.trim() !== "" && fullUrl !== post.previewUrl) {
                             if (btn) btn.innerHTML = '<i class="fas fa-check-circle"></i> আনলক সফল! ওপেন হচ্ছে...';
                             
                             setTimeout(() => {
-                                // টেলিগ্রাম ব্রাউজারে ফুল ভিডিও লিঙ্ক ওপেন করার নিরাপদ নিয়ম
+                                // টেলিগ্রাম ব্রাউজারে ফুল ভিডিও লিঙ্ক ওপেন করার মেথড
                                 if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.openLink) {
                                     window.Telegram.WebApp.openLink(fullUrl);
                                 } else {
-                                    window.open(fullUrl, '_blank');
+                                    window.location.href = fullUrl;
                                 }
                                 resetButton(id);
                             }, 500);
@@ -664,12 +665,6 @@
             }
         }
 
-        function resetButton(id) {
-            const btn = document.getElementById(`btn-${id}`);
-            if (btn) {
-                btn.innerHTML = '🔓 ভিডিও আনলক করুন';
-            }
-        }
     </script>
 </body>
 </html>
