@@ -224,7 +224,6 @@
             z-index: 2;
         }
 
-        /* 2 Smart Control Buttons */
         .player-controls-cluster {
             position: absolute;
             bottom: 10px;
@@ -356,7 +355,6 @@
 <body>
 
     <div class="container">
-        <!-- Top App Bar -->
         <div class="top-nav">
             <div class="brand-badge">
                 <div class="logo-box"><i class="fas fa-play-circle"></i></div>
@@ -369,13 +367,11 @@
             </div>
         </div>
 
-        <!-- Banner -->
         <div class="hero-banner">
             <h3><i class="fas fa-fire" style="color: #ef4444;"></i> Watch Trending Videos</h3>
             <p>Click below to stream high quality trending viral videos instantly.</p>
         </div>
 
-        <!-- Category Scroll Filters -->
         <div class="cat-scroll-track">
             <button class="cat-btn active" onclick="filterCategory('all', this)"><i class="fas fa-globe"></i> All</button>
             <button class="cat-btn" onclick="filterCategory('viral_video', this)"><i class="fas fa-fire"></i> Viral Video</button>
@@ -384,13 +380,11 @@
             <button class="cat-btn" onclick="filterCategory('tiktok', this)"><i class="fab fa-tiktok"></i> TikTok Viral</button>
         </div>
 
-        <!-- Media Feed -->
         <div class="media-feed-grid" id="mediaFeedContainer">
             <div class="empty-state">Loading latest videos...</div>
         </div>
     </div>
 
-    <!-- 5-Button Bottom Nav -->
     <nav class="bottom-nav">
         <div class="nav-item active" onclick="window.location.href='./index.html'">
             <i class="fas fa-play-circle"></i>
@@ -431,7 +425,7 @@
             }
         } catch(e) {}
 
-        const ADSGRAM_BLOCK_ID = "26734"; // Rewarded Video Ad Block
+        const ADSGRAM_BLOCK_ID = "26734";
 
         const firebaseConfig = {
             apiKey: "AIzaSyAl0eRqOs5QNUg_J1Pj-4PlEqRDxAXr-oA",
@@ -451,8 +445,6 @@
         let allMedia = [];
         let currentFilter = "all";
         let isAdShowing = false;
-
-        // প্রতিটি পোস্টের জন্য ব্যাকগ্রাউন্ডে অ্যাড দেখার প্রগ্রেস ট্র্যাকার
         let userAdProgress = {};
 
         const allowedViralCategories = ['viral_video', 'facebook', 'instagram', 'tiktok'];
@@ -473,7 +465,6 @@
         }
         initAdsgram();
 
-        // বটে ঢোকার পর প্রতি সেশনে মাত্র একবার অটোমেটিক অ্যাড ট্রিগার
         function triggerSingleAutoAd() {
             const hasShownAutoAd = sessionStorage.getItem('auto_ad_shown');
             if (!hasShownAutoAd && adsController && !isAdShowing) {
@@ -542,7 +533,6 @@
             filtered.forEach(item => {
                 const isImg = isImageUrl(item.previewUrl);
 
-                // ছবি হলে কোনো আইকন থাকবে না; ভিডিও হলে শুধুমাত্র Play/Pause এবং Sound বাটন থাকবে
                 const mediaElement = isImg 
                     ? `<img src="${item.previewUrl}" alt="${item.title}" loading="lazy">` 
                     : `
@@ -609,14 +599,37 @@
             }
         }
 
-        // ইউজার ক্লিকের হ্যান্ডলার (কোনো কাউন্ট দেখাবে না)
-                        function handleWatchClick(id) {
+        // টেলিগ্রাম ব্রাউজারে ফুল ভিডিও লিংক ওপেন করার পাওয়ারফুল মেথড
+        function openExternalUrl(url) {
+            if (!url) return;
+            try {
+                if (window.Telegram && window.Telegram.WebApp && typeof window.Telegram.WebApp.openLink === 'function') {
+                    window.Telegram.WebApp.openLink(url, { try_instant_view: false });
+                    return;
+                }
+            } catch(e) {
+                console.error("TG openLink error:", e);
+            }
+
+            try {
+                const a = document.createElement('a');
+                a.href = url;
+                a.target = '_blank';
+                a.rel = 'noopener noreferrer';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+            } catch (err) {
+                window.location.href = url;
+            }
+        }
+
+        function handleWatchClick(id) {
             const post = allMedia.find(m => m.id === id);
             if (!post) return;
 
-            // অ্যাডমিন প্যানেলের fullVideoUrl ফিল্ডটিকে সবার প্রথমে যুক্ত করা হলো
-            const fullUrl = post.fullVideoUrl || post.fullUrl || post.fullMovieUrl || post.streamUrl;
-            
+            // এডমিন থেকে সেভ হওয়া সব কয়টি সম্ভাব্য ফিল্ড চেক
+            const fullUrl = post.fullVideoUrl || post.fullUrl || post.fullMovieUrl || post.streamUrl || post.videoUrl;
             const targetAds = parseInt(post.requiredAds) || 1;
             if (!userAdProgress[id]) userAdProgress[id] = 0;
 
@@ -634,19 +647,22 @@
                     if (userAdProgress[id] >= targetAds) {
                         userAdProgress[id] = 0;
 
-                        // যদি অ্যাডমিন থেকে ফুল লিঙ্ক দেওয়া থাকে এবং তা প্রিভিউ লিঙ্কের সমান না হয়
+                        // ফুল লিংক থাকলে
                         if (fullUrl && fullUrl.trim() !== "" && fullUrl !== post.previewUrl) {
-                            if (btn) btn.innerHTML = '<i class="fas fa-check-circle"></i> আনলক সফল! ওপেন হচ্ছে...';
+                            if (btn) {
+                                btn.innerHTML = '<i class="fas fa-external-link-alt"></i> ভিডিও ওপেন করতে ক্লিক করুন';
+                                btn.onclick = function() {
+                                    openExternalUrl(fullUrl);
+                                };
+                            }
                             
+                            // সরাসরি ওপেন করার চেষ্টা
+                            openExternalUrl(fullUrl);
+
+                            // ৩ সেকেন্ড পর বাটন রিস্টোর
                             setTimeout(() => {
-                                // টেলিগ্রাম ব্রাউজারে ফুল ভিডিও লিঙ্ক ওপেন করার মেথড
-                                if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.openLink) {
-                                    window.Telegram.WebApp.openLink(fullUrl);
-                                } else {
-                                    window.location.href = fullUrl;
-                                }
                                 resetButton(id);
-                            }, 500);
+                            }, 4000);
                         } else {
                             resetButton(id);
                             alert("🎬 Full Video Coming Soon!");
@@ -665,6 +681,15 @@
             }
         }
 
+        function resetButton(id) {
+            const btn = document.getElementById(`btn-${id}`);
+            if (btn) {
+                btn.innerHTML = '🔓 ভিডিও আনলক করুন';
+                btn.onclick = function() {
+                    handleWatchClick(id);
+                };
+            }
+        }
     </script>
 </body>
 </html>
