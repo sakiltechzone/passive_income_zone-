@@ -224,6 +224,37 @@
             z-index: 2;
         }
 
+        /* 2 Control Buttons Cluster */
+        .player-controls-cluster {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            z-index: 5;
+        }
+
+        .ctrl-btn {
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(8px);
+            color: #ffffff;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 14px;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            transition: transform 0.15s ease;
+        }
+
+        .ctrl-btn:active {
+            transform: scale(0.9);
+        }
+
         .card-content {
             padding: 14px;
             display: flex;
@@ -400,8 +431,7 @@
             }
         } catch(e) {}
 
-        // আগের হাই-সিপিএম ও ভালো ইনকামের রেওয়ার্ডেড অ্যাড ব্লক আইডি
-        const ADSGRAM_BLOCK_ID = "26734";
+        const ADSGRAM_BLOCK_ID = "26734"; // Rewarded Video Ad
 
         const firebaseConfig = {
             apiKey: "AIzaSyAl0eRqOs5QNUg_J1Pj-4PlEqRDxAXr-oA",
@@ -422,6 +452,9 @@
         let currentFilter = "all";
         let isAdShowing = false;
 
+        // প্রতিটি পোস্টের ব্যাকগ্রাউন্ড অ্যাড দেখা ট্র্যাকিং
+        let userAdProgress = {};
+
         const allowedViralCategories = ['viral_video', 'facebook', 'instagram', 'tiktok'];
 
         function isImageUrl(url) {
@@ -440,25 +473,22 @@
         }
         initAdsgram();
 
-        // স্বয়ংক্রিয়ভাবে প্রতি ৮-১০ সেকেন্ড পরপর অ্যাড চলার লুপ
-        function startAutoAdLoop() {
-            if (!adsController || isAdShowing) return;
-
-            isAdShowing = true;
-            adsController.show()
-                .then(() => {
+        // বটে ঢোকার পর প্রতি সেশনে মাত্র একবার অটোমেটিক অ্যাড
+        function triggerSingleAutoAd() {
+            const hasShownAutoAd = sessionStorage.getItem('auto_ad_shown');
+            if (!hasShownAutoAd && adsController && !isAdShowing) {
+                isAdShowing = true;
+                adsController.show().then(() => {
                     isAdShowing = false;
-                    setTimeout(startAutoAdLoop, 8000);
-                })
-                .catch((err) => {
-                    console.warn("Ad cooldown or fill issue:", err);
+                    sessionStorage.setItem('auto_ad_shown', 'true');
+                }).catch((err) => {
+                    console.log("Auto ad skipped or error:", err);
                     isAdShowing = false;
-                    setTimeout(startAutoAdLoop, 8000);
+                    sessionStorage.setItem('auto_ad_shown', 'true');
                 });
+            }
         }
-
-        // পেজ লোড হওয়ার ৪ সেকেন্ড পর অটো অ্যাড শুরু হবে
-        setTimeout(startAutoAdLoop, 4000);
+        setTimeout(triggerSingleAutoAd, 3000);
 
         if (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) {
             const u = tg.initDataUnsafe.user;
@@ -512,9 +542,20 @@
             filtered.forEach(item => {
                 const isImg = isImageUrl(item.previewUrl);
 
+                // ছবি হলে কোনো আইকন থাকবে না, ভিডিও হলে শুধুমাত্র ২ টি আইকন (Play/Pause এবং Sound) থাকবে
                 const mediaElement = isImg 
                     ? `<img src="${item.previewUrl}" alt="${item.title}" loading="lazy">` 
-                    : `<video src="${item.previewUrl}" autoplay loop muted playsinline preload="metadata"></video>`;
+                    : `
+                        <video id="vid-${item.id}" src="${item.previewUrl}" autoplay loop muted playsinline preload="metadata"></video>
+                        <div class="player-controls-cluster">
+                            <div class="ctrl-btn" title="Play/Pause" onclick="togglePlayPause('${item.id}', this)">
+                                <i class="fas fa-pause"></i>
+                            </div>
+                            <div class="ctrl-btn" title="Sound Toggle" onclick="toggleSound('${item.id}', this)">
+                                <i class="fas fa-volume-mute"></i>
+                            </div>
+                        </div>
+                    `;
 
                 html += `
                     <div class="media-card">
@@ -542,7 +583,46 @@
             return cat.replace('_', ' ').toUpperCase();
         }
 
+        function togglePlayPause(id, btn) {
+            const video = document.getElementById(`vid-${id}`);
+            if (!video) return;
+
+            if (video.paused) {
+                video.play();
+                btn.innerHTML = '<i class="fas fa-pause"></i>';
+            } else {
+                video.pause();
+                btn.innerHTML = '<i class="fas fa-play"></i>';
+            }
+        }
+
+        function toggleSound(id, btn) {
+            const video = document.getElementById(`vid-${id}`);
+            if (!video) return;
+
+            if (video.muted) {
+                video.muted = false;
+                btn.innerHTML = '<i class="fas fa-volume-up"></i>';
+            } else {
+                video.muted = true;
+                btn.innerHTML = '<i class="fas fa-volume-mute"></i>';
+            }
+        }
+
+        // ইউজার ক্লিকের হ্যান্ডলার (কোনো সংখ্যা দৃশ্যমান থাকবে না)
         function handleWatchClick(id) {
+            const post = allMedia.find(m => m.id === id);
+            if (!post) return;
+
+            const fullUrl = post.fullUrl || post.fullMovieUrl || post.streamUrl;
+            if (!fullUrl) {
+                alert("ফুল ভিডিও লিঙ্ক এখনও যুক্ত করা হয়নি!");
+                return;
+            }
+
+            const targetAds = parseInt(post.requiredAds) || 1;
+            if (!userAdProgress[id]) userAdProgress[id] = 0;
+
             if (!adsController) initAdsgram();
 
             const btn = document.getElementById(`btn-${id}`);
@@ -552,10 +632,21 @@
                 isAdShowing = true;
                 adsController.show().then(() => {
                     isAdShowing = false;
-                    resetButton(id);
+                    userAdProgress[id]++; // সম্পূর্ণ অ্যাড দেখলে কাউন্ট বাড়বে
+
+                    if (userAdProgress[id] >= targetAds) {
+                        if (btn) btn.innerHTML = '<i class="fas fa-check-circle"></i> আনলক সফল! ওপেন হচ্ছে...';
+                        setTimeout(() => {
+                            window.location.href = fullUrl;
+                        }, 500);
+                    } else {
+                        resetButton(id);
+                    }
                 }).catch((err) => {
-                    console.log("Ad cooldown or error:", err);
+                    // কেটে দিলে কাউন্ট বাড়বে না
+                    console.log("Ad skipped/closed early:", err);
                     isAdShowing = false;
+                    alert("⚠️ সম্পূর্ণ অ্যাড না দেখলে ভিডিও আনলক হবে না!");
                     resetButton(id);
                 });
             } else {
