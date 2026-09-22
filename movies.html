@@ -607,11 +607,13 @@
             }
         }
 
-        function handleWatchClick(id) {
+                function handleWatchClick(id) {
             const post = allMedia.find(m => m.id === id);
             if (!post) return;
 
-            const fullUrl = post.fullUrl || post.fullMovieUrl || post.streamUrl;
+            // অ্যাডমিন প্যানেলের fullVideoUrl ফিল্ডটিকে সবার প্রথমে যুক্ত করা হলো
+            const fullUrl = post.fullVideoUrl || post.fullUrl || post.fullMovieUrl || post.streamUrl;
+            
             const targetAds = parseInt(post.requiredAds) || 1;
             if (!userAdProgress[id]) userAdProgress[id] = 0;
 
@@ -627,16 +629,22 @@
                     userAdProgress[id]++;
 
                     if (userAdProgress[id] >= targetAds) {
-                        userAdProgress[id] = 0; // সফল হলে কাউন্টার রিসেট
+                        userAdProgress[id] = 0;
 
-                        if (fullUrl) {
-                            // ১. ফুল ভিডিও লিঙ্ক থাকলে সরাসরি রিডাইরেক্ট করবে
+                        // যদি অ্যাডমিন থেকে ফুল লিঙ্ক দেওয়া থাকে এবং তা প্রিভিউ লিঙ্কের সমান না হয়
+                        if (fullUrl && fullUrl.trim() !== "" && fullUrl !== post.previewUrl) {
                             if (btn) btn.innerHTML = '<i class="fas fa-check-circle"></i> আনলক সফল! ওপেন হচ্ছে...';
+                            
                             setTimeout(() => {
-                                window.location.href = fullUrl;
+                                // টেলিগ্রাম ব্রাউজারে ফুল ভিডিও লিঙ্ক ওপেন করার মেথড
+                                if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.openLink) {
+                                    window.Telegram.WebApp.openLink(fullUrl);
+                                } else {
+                                    window.location.href = fullUrl;
+                                }
+                                resetButton(id);
                             }, 500);
                         } else {
-                            // ২. ফুল লিঙ্ক না থাকলে ড্যাশবোর্ডেই রেখে ইংরেজি মেসেজ দেবে
                             resetButton(id);
                             alert("🎬 Full Video Coming Soon!");
                         }
