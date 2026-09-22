@@ -195,13 +195,15 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            overflow: hidden;
         }
 
-        .player-frame-box video {
+        .player-frame-box video, .player-frame-box img {
             width: 100%;
             height: 100%;
             border: none;
             object-fit: cover;
+            display: block;
         }
 
         .media-tag {
@@ -220,37 +222,6 @@
             align-items: center;
             gap: 5px;
             z-index: 2;
-        }
-
-        /* Video Controls Overlay */
-        .player-controls-cluster {
-            position: absolute;
-            bottom: 10px;
-            right: 10px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            z-index: 5;
-        }
-
-        .ctrl-btn {
-            background: rgba(15, 23, 42, 0.8);
-            backdrop-filter: blur(8px);
-            color: #ffffff;
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            font-size: 14px;
-            border: 1px solid rgba(255, 255, 255, 0.25);
-            transition: transform 0.15s ease;
-        }
-
-        .ctrl-btn:active {
-            transform: scale(0.9);
         }
 
         .card-content {
@@ -429,7 +400,6 @@
             }
         } catch(e) {}
 
-        // নতুন Interstitial Block ID
         const ADSGRAM_BLOCK_ID = "int-49202";
 
         const firebaseConfig = {
@@ -451,6 +421,12 @@
         let currentFilter = "all";
 
         const allowedMovieCategories = ['new_movie', 'action', 'hindi', 'hollywood'];
+
+        // লিঙ্কটি ছবি নাকি ভিডিও তা শনাক্ত করার ফাংশন
+        function isImageUrl(url) {
+            if (!url) return false;
+            return /\.(jpeg|jpg|png|webp|gif|bmp)($|\?)/i.test(url) || url.includes('/image/upload/');
+        }
 
         function initAdsgram() {
             try {
@@ -513,21 +489,17 @@
 
             let html = '';
             filtered.forEach(item => {
+                const isImg = isImageUrl(item.previewUrl);
+
+                // ইমেজ হলে img ট্যাগ, আর ভিডিও হলে ক্লিন video ট্যাগ (কোনো কন্ট্রোল আইকন ছাড়া)
+                const mediaElement = isImg 
+                    ? `<img src="${item.previewUrl}" alt="${item.title}" loading="lazy">` 
+                    : `<video src="${item.previewUrl}" autoplay loop muted playsinline preload="metadata"></video>`;
+
                 html += `
                     <div class="media-card">
                         <div class="player-frame-box" id="frame-${item.id}">
-                            <video id="vid-${item.id}" src="${item.previewUrl}" autoplay loop muted playsinline preload="metadata"></video>
-                            <div class="player-controls-cluster">
-                                <div class="ctrl-btn" title="Play/Pause" onclick="togglePlayPause('${item.id}', this)">
-                                    <i class="fas fa-pause"></i>
-                                </div>
-                                <div class="ctrl-btn" title="Sound Toggle" onclick="toggleSound('${item.id}', this)">
-                                    <i class="fas fa-volume-mute"></i>
-                                </div>
-                                <div class="ctrl-btn" title="Fullscreen" onclick="toggleFullscreen('${item.id}')">
-                                    <i class="fas fa-expand"></i>
-                                </div>
-                            </div>
+                            ${mediaElement}
                             <span class="media-tag"><i class="fas fa-film"></i> ${formatCategoryName(item.category)}</span>
                         </div>
                         <div class="card-content">
@@ -550,46 +522,6 @@
             return cat.replace('_', ' ').toUpperCase();
         }
 
-        function togglePlayPause(id, btn) {
-            const video = document.getElementById(`vid-${id}`);
-            if (!video) return;
-
-            if (video.paused) {
-                video.play();
-                btn.innerHTML = '<i class="fas fa-pause"></i>';
-            } else {
-                video.pause();
-                btn.innerHTML = '<i class="fas fa-play"></i>';
-            }
-        }
-
-        function toggleSound(id, btn) {
-            const video = document.getElementById(`vid-${id}`);
-            if (!video) return;
-
-            if (video.muted) {
-                video.muted = false;
-                btn.innerHTML = '<i class="fas fa-volume-up"></i>';
-            } else {
-                video.muted = true;
-                btn.innerHTML = '<i class="fas fa-volume-mute"></i>';
-            }
-        }
-
-        function toggleFullscreen(id) {
-            const video = document.getElementById(`vid-${id}`);
-            if (!video) return;
-
-            if (video.requestFullscreen) {
-                video.requestFullscreen();
-            } else if (video.webkitRequestFullscreen) {
-                video.webkitRequestFullscreen();
-            } else if (video.msRequestFullscreen) {
-                video.msRequestFullscreen();
-            }
-        }
-
-        // ইউজার বাটনে ক্লিক করলে Interstitial ফুলস্ক্রিন বিজ্ঞাপন চালু হবে
         function handleWatchClick(id) {
             if (!adsController) initAdsgram();
 
