@@ -429,7 +429,8 @@
             }
         } catch(e) {}
 
-        const ADSGRAM_BLOCK_ID = "26734";
+        // নতুন Interstitial Block ID
+        const ADSGRAM_BLOCK_ID = "int-49202";
 
         const firebaseConfig = {
             apiKey: "AIzaSyAl0eRqOs5QNUg_J1Pj-4PlEqRDxAXr-oA",
@@ -448,7 +449,6 @@
         let adsController = null;
         let allMedia = [];
         let currentFilter = "all";
-        let isAdShowing = false;
 
         const allowedMovieCategories = ['new_movie', 'action', 'hindi', 'hollywood'];
 
@@ -462,26 +462,6 @@
             }
         }
         initAdsgram();
-
-        // ইউজার পেজে থাকাকালীন প্রতি ৮-১০ সেকেন্ডে স্বয়ংক্রিয় অ্যাড চালানোর লুপ
-        function startAutoAdLoop() {
-            if (!adsController || isAdShowing) return;
-
-            isAdShowing = true;
-            adsController.show()
-                .then(() => {
-                    isAdShowing = false;
-                    setTimeout(startAutoAdLoop, 8000);
-                })
-                .catch((err) => {
-                    console.warn("Ad cooldown or fill issue:", err);
-                    isAdShowing = false;
-                    setTimeout(startAutoAdLoop, 8000);
-                });
-        }
-
-        // পেজ লোড হওয়ার ৪ সেকেন্ড পর অটো অ্যাড চালু হবে
-        setTimeout(startAutoAdLoop, 4000);
 
         if (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) {
             const u = tg.initDataUnsafe.user;
@@ -554,7 +534,6 @@
                             <div class="card-title">${item.title}</div>
                             <div class="card-desc">${item.description || 'Watch trending full movie online.'}</div>
 
-                            <!-- বাটন টেক্সট সম্পূর্ণ ক্লিন: কোনো অ্যাড গোনার কথা নেই -->
                             <button class="btn-watch-full" id="btn-${item.id}" onclick="handleWatchClick('${item.id}')">
                                 <i class="fas fa-film"></i> Watch Full Movie
                             </button>
@@ -610,7 +589,7 @@
             }
         }
 
-        // বাটনে ক্লিক করলে শুধু অ্যাড প্লে হবে (ফুল মুভি কখনোই আনলক হবে না)
+        // ইউজার বাটনে ক্লিক করলে Interstitial ফুলস্ক্রিন বিজ্ঞাপন চালু হবে
         function handleWatchClick(id) {
             if (!adsController) initAdsgram();
 
@@ -618,13 +597,10 @@
             if (btn) btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading...';
 
             if (adsController) {
-                isAdShowing = true;
                 adsController.show().then(() => {
-                    isAdShowing = false;
                     resetButton(id);
                 }).catch((err) => {
                     console.log("Ad cooldown or error:", err);
-                    isAdShowing = false;
                     resetButton(id);
                 });
             } else {
