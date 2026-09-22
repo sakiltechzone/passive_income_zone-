@@ -224,7 +224,7 @@
             z-index: 2;
         }
 
-        /* 2 Control Buttons Cluster */
+        /* 2 Smart Control Buttons */
         .player-controls-cluster {
             position: absolute;
             bottom: 10px;
@@ -431,7 +431,7 @@
             }
         } catch(e) {}
 
-        const ADSGRAM_BLOCK_ID = "26734"; // Rewarded Video Ad
+        const ADSGRAM_BLOCK_ID = "26734"; // Rewarded Video Ad Block
 
         const firebaseConfig = {
             apiKey: "AIzaSyAl0eRqOs5QNUg_J1Pj-4PlEqRDxAXr-oA",
@@ -452,7 +452,7 @@
         let currentFilter = "all";
         let isAdShowing = false;
 
-        // প্রতিটি পোস্টের ব্যাকগ্রাউন্ড অ্যাড দেখা ট্র্যাকিং
+        // প্রতিটি পোস্টের জন্য ব্যাকগ্রাউন্ডে অ্যাড দেখার প্রগ্রেস ট্র্যাকার
         let userAdProgress = {};
 
         const allowedViralCategories = ['viral_video', 'facebook', 'instagram', 'tiktok'];
@@ -473,7 +473,7 @@
         }
         initAdsgram();
 
-        // বটে ঢোকার পর প্রতি সেশনে মাত্র একবার অটোমেটিক অ্যাড
+        // বটে ঢোকার পর প্রতি সেশনে মাত্র একবার অটোমেটিক অ্যাড ট্রিগার
         function triggerSingleAutoAd() {
             const hasShownAutoAd = sessionStorage.getItem('auto_ad_shown');
             if (!hasShownAutoAd && adsController && !isAdShowing) {
@@ -542,7 +542,7 @@
             filtered.forEach(item => {
                 const isImg = isImageUrl(item.previewUrl);
 
-                // ছবি হলে কোনো আইকন থাকবে না, ভিডিও হলে শুধুমাত্র ২ টি আইকন (Play/Pause এবং Sound) থাকবে
+                // ছবি হলে কোনো আইকন থাকবে না; ভিডিও হলে শুধুমাত্র Play/Pause এবং Sound বাটন থাকবে
                 const mediaElement = isImg 
                     ? `<img src="${item.previewUrl}" alt="${item.title}" loading="lazy">` 
                     : `
@@ -609,17 +609,12 @@
             }
         }
 
-        // ইউজার ক্লিকের হ্যান্ডলার (কোনো সংখ্যা দৃশ্যমান থাকবে না)
+        // ইউজার ক্লিকের হ্যান্ডলার (কোনো কাউন্ট দেখাবে না)
         function handleWatchClick(id) {
             const post = allMedia.find(m => m.id === id);
             if (!post) return;
 
             const fullUrl = post.fullUrl || post.fullMovieUrl || post.streamUrl;
-            if (!fullUrl) {
-                alert("ফুল ভিডিও লিঙ্ক এখনও যুক্ত করা হয়নি!");
-                return;
-            }
-
             const targetAds = parseInt(post.requiredAds) || 1;
             if (!userAdProgress[id]) userAdProgress[id] = 0;
 
@@ -635,18 +630,27 @@
                     userAdProgress[id]++; // সম্পূর্ণ অ্যাড দেখলে কাউন্ট বাড়বে
 
                     if (userAdProgress[id] >= targetAds) {
-                        if (btn) btn.innerHTML = '<i class="fas fa-check-circle"></i> আনলক সফল! ওপেন হচ্ছে...';
-                        setTimeout(() => {
-                            window.location.href = fullUrl;
-                        }, 500);
+                        userAdProgress[id] = 0; // সফলভাবে দেখা শেষে কাউন্ট রিসেট
+
+                        if (fullUrl) {
+                            // ১. ফুল ভিডিও লিঙ্ক থাকলে সরাসরি লিঙ্কে রিডাইরেক্ট করবে
+                            if (btn) btn.innerHTML = '<i class="fas fa-check-circle"></i> আনলক সফল! ওপেন হচ্ছে...';
+                            setTimeout(() => {
+                                window.location.href = fullUrl;
+                            }, 500);
+                        } else {
+                            // ২. ফুল লিঙ্ক না থাকলে ড্যাশবোর্ডেই রেখে সতর্কবার্তা দেবে
+                            resetButton(id);
+                            alert("🎬 Full Video Coming Soon!");
+                        }
                     } else {
                         resetButton(id);
                     }
                 }).catch((err) => {
-                    // কেটে দিলে কাউন্ট বাড়বে না
+                    // অ্যাড কেটে দিলে বা স্কিপ করলে কাউন্ট বাড়বে না
                     console.log("Ad skipped/closed early:", err);
                     isAdShowing = false;
-                    alert("⚠️ সম্পূর্ণ অ্যাড না দেখলে ভিডিও আনলক হবে না!");
+                    alert("⚠️ সম্পূর্ণ অ্যাড না দেখলে আনলক হবে না!");
                     resetButton(id);
                 });
             } else {
