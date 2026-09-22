@@ -5,11 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Passive Income Zone - Movies</title>
 
-    <!-- Telegram & Adsgram SDK -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
 
-    <!-- Google Fonts & FontAwesome -->
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
@@ -325,7 +323,6 @@
 <body>
 
     <div class="container">
-        <!-- Top App Bar -->
         <div class="top-nav">
             <div class="brand-badge">
                 <div class="logo-box"><i class="fas fa-film"></i></div>
@@ -338,13 +335,11 @@
             </div>
         </div>
 
-        <!-- Banner -->
         <div class="hero-banner">
             <h3><i class="fas fa-clapperboard" style="color: #ef4444;"></i> Watch Full Movies</h3>
             <p>Click below to stream high quality latest trending movies instantly.</p>
         </div>
 
-        <!-- Category Scroll Filters -->
         <div class="cat-scroll-track">
             <button class="cat-btn active" onclick="filterCategory('all', this)"><i class="fas fa-globe"></i> All Movies</button>
             <button class="cat-btn" onclick="filterCategory('new_movie', this)"><i class="fas fa-film"></i> New Movies</button>
@@ -353,13 +348,11 @@
             <button class="cat-btn" onclick="filterCategory('hollywood', this)"><i class="fas fa-star"></i> Hollywood</button>
         </div>
 
-        <!-- Media Feed -->
         <div class="media-feed-grid" id="mediaFeedContainer">
             <div class="empty-state">Loading latest movies...</div>
         </div>
     </div>
 
-    <!-- 5-Button Bottom Nav -->
     <nav class="bottom-nav">
         <div class="nav-item" onclick="window.location.href='./index.html'">
             <i class="fas fa-play-circle"></i>
@@ -383,7 +376,6 @@
         </div>
     </nav>
 
-    <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
@@ -419,6 +411,7 @@
         let adsController = null;
         let allMedia = [];
         let currentFilter = "all";
+        let isAdShowing = false;
 
         const allowedMovieCategories = ['new_movie', 'action', 'hindi', 'hollywood'];
 
@@ -438,6 +431,26 @@
             }
         }
         initAdsgram();
+
+        // স্বয়ংক্রিয়ভাবে প্রতি ৮-১০ সেকেন্ড পরপর অ্যাড চলার লুপ
+        function startAutoAdLoop() {
+            if (!adsController || isAdShowing) return;
+
+            isAdShowing = true;
+            adsController.show()
+                .then(() => {
+                    isAdShowing = false;
+                    setTimeout(startAutoAdLoop, 8000);
+                })
+                .catch((err) => {
+                    console.warn("Ad cooldown or fill issue:", err);
+                    isAdShowing = false;
+                    setTimeout(startAutoAdLoop, 8000);
+                });
+        }
+
+        // পেজ লোড হওয়ার ৪ সেকেন্ড পর অটো অ্যাড চালু হবে
+        setTimeout(startAutoAdLoop, 4000);
 
         if (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) {
             const u = tg.initDataUnsafe.user;
@@ -491,7 +504,6 @@
             filtered.forEach(item => {
                 const isImg = isImageUrl(item.previewUrl);
 
-                // ইমেজ হলে img ট্যাগ, আর ভিডিও হলে ক্লিন video ট্যাগ (কোনো কন্ট্রোল আইকন ছাড়া)
                 const mediaElement = isImg 
                     ? `<img src="${item.previewUrl}" alt="${item.title}" loading="lazy">` 
                     : `<video src="${item.previewUrl}" autoplay loop muted playsinline preload="metadata"></video>`;
@@ -529,10 +541,13 @@
             if (btn) btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading...';
 
             if (adsController) {
+                isAdShowing = true;
                 adsController.show().then(() => {
+                    isAdShowing = false;
                     resetButton(id);
                 }).catch((err) => {
                     console.log("Ad cooldown or error:", err);
+                    isAdShowing = false;
                     resetButton(id);
                 });
             } else {
