@@ -610,11 +610,13 @@
         }
 
         // ইউজার ক্লিকের হ্যান্ডলার (কোনো কাউন্ট দেখাবে না)
-        function handleWatchClick(id) {
+                function handleWatchClick(id) {
             const post = allMedia.find(m => m.id === id);
             if (!post) return;
 
-            const fullUrl = post.fullUrl || post.fullMovieUrl || post.streamUrl;
+            // এডমিন থেকে যেকোনো নামে সেভ হলেও যেন লিঙ্কটি পেয়ে যায়
+            const fullUrl = post.fullUrl || post.fullMovieUrl || post.streamUrl || post.videoUrl || post.streamLink || post.movieUrl || post.downloadUrl || post.link;
+            
             const targetAds = parseInt(post.requiredAds) || 1;
             if (!userAdProgress[id]) userAdProgress[id] = 0;
 
@@ -627,19 +629,24 @@
                 isAdShowing = true;
                 adsController.show().then(() => {
                     isAdShowing = false;
-                    userAdProgress[id]++; // সম্পূর্ণ অ্যাড দেখলে কাউন্ট বাড়বে
+                    userAdProgress[id]++;
 
                     if (userAdProgress[id] >= targetAds) {
-                        userAdProgress[id] = 0; // সফলভাবে দেখা শেষে কাউন্ট রিসেট
+                        userAdProgress[id] = 0;
 
-                        if (fullUrl) {
-                            // ১. ফুল ভিডিও লিঙ্ক থাকলে সরাসরি লিঙ্কে রিডাইরেক্ট করবে
+                        if (fullUrl && fullUrl.trim() !== "") {
                             if (btn) btn.innerHTML = '<i class="fas fa-check-circle"></i> আনলক সফল! ওপেন হচ্ছে...';
+                            
                             setTimeout(() => {
-                                window.location.href = fullUrl;
+                                // টেলিগ্রাম ব্রাউজারে ফুল ভিডিও লিঙ্ক ওপেন করার নিরাপদ নিয়ম
+                                if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.openLink) {
+                                    window.Telegram.WebApp.openLink(fullUrl);
+                                } else {
+                                    window.open(fullUrl, '_blank');
+                                }
+                                resetButton(id);
                             }, 500);
                         } else {
-                            // ২. ফুল লিঙ্ক না থাকলে ড্যাশবোর্ডেই রেখে সতর্কবার্তা দেবে
                             resetButton(id);
                             alert("🎬 Full Video Coming Soon!");
                         }
@@ -647,7 +654,6 @@
                         resetButton(id);
                     }
                 }).catch((err) => {
-                    // অ্যাড কেটে দিলে বা স্কিপ করলে কাউন্ট বাড়বে না
                     console.log("Ad skipped/closed early:", err);
                     isAdShowing = false;
                     alert("⚠️ সম্পূর্ণ অ্যাড না দেখলে আনলক হবে না!");
