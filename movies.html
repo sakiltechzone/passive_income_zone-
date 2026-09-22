@@ -5,9 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Passive Income Zone - Movies</title>
 
+    <!-- Telegram & Adsgram SDK -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
 
+    <!-- Google Fonts & FontAwesome -->
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
@@ -249,7 +251,7 @@
             background: linear-gradient(135deg, #3b76f6, #1856f3);
             border: none;
             color: #fff;
-            font-size: 14px;
+            font-size: 15px;
             font-weight: 800;
             cursor: pointer;
             display: flex;
@@ -323,6 +325,7 @@
 <body>
 
     <div class="container">
+        <!-- Top App Bar -->
         <div class="top-nav">
             <div class="brand-badge">
                 <div class="logo-box"><i class="fas fa-film"></i></div>
@@ -335,11 +338,13 @@
             </div>
         </div>
 
+        <!-- Banner -->
         <div class="hero-banner">
             <h3><i class="fas fa-clapperboard" style="color: #ef4444;"></i> Watch Full Movies</h3>
             <p>Click below to stream high quality latest trending movies instantly.</p>
         </div>
 
+        <!-- Category Scroll Filters -->
         <div class="cat-scroll-track">
             <button class="cat-btn active" onclick="filterCategory('all', this)"><i class="fas fa-globe"></i> All Movies</button>
             <button class="cat-btn" onclick="filterCategory('new_movie', this)"><i class="fas fa-film"></i> New Movies</button>
@@ -348,11 +353,13 @@
             <button class="cat-btn" onclick="filterCategory('hollywood', this)"><i class="fas fa-star"></i> Hollywood</button>
         </div>
 
+        <!-- Media Feed -->
         <div class="media-feed-grid" id="mediaFeedContainer">
             <div class="empty-state">Loading latest movies...</div>
         </div>
     </div>
 
+    <!-- 5-Button Bottom Nav -->
     <nav class="bottom-nav">
         <div class="nav-item" onclick="window.location.href='./index.html'">
             <i class="fas fa-play-circle"></i>
@@ -376,6 +383,7 @@
         </div>
     </nav>
 
+    <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
@@ -392,7 +400,8 @@
             }
         } catch(e) {}
 
-        const ADSGRAM_BLOCK_ID = "int-49202";
+        // আগের হাই-সিপিএম ও ভালো ইনকামের রেওয়ার্ডেড অ্যাড ব্লক আইডি
+        const ADSGRAM_BLOCK_ID = "26734";
 
         const firebaseConfig = {
             apiKey: "AIzaSyAl0eRqOs5QNUg_J1Pj-4PlEqRDxAXr-oA",
@@ -415,7 +424,6 @@
 
         const allowedMovieCategories = ['new_movie', 'action', 'hindi', 'hollywood'];
 
-        // লিঙ্কটি ছবি নাকি ভিডিও তা শনাক্ত করার ফাংশন
         function isImageUrl(url) {
             if (!url) return false;
             return /\.(jpeg|jpg|png|webp|gif|bmp)($|\?)/i.test(url) || url.includes('/image/upload/');
@@ -519,7 +527,7 @@
                             <div class="card-desc">${item.description || 'Watch trending full movie online.'}</div>
 
                             <button class="btn-watch-full" id="btn-${item.id}" onclick="handleWatchClick('${item.id}')">
-                                <i class="fas fa-film"></i> Watch Full Movie
+                                🔓 ভিডিও আনলক করুন
                             </button>
                         </div>
                     </div>
@@ -538,7 +546,7 @@
             if (!adsController) initAdsgram();
 
             const btn = document.getElementById(`btn-${id}`);
-            if (btn) btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading...';
+            if (btn) btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> লোডিং...';
 
             if (adsController) {
                 isAdShowing = true;
@@ -558,7 +566,7 @@
         function resetButton(id) {
             const btn = document.getElementById(`btn-${id}`);
             if (btn) {
-                btn.innerHTML = '<i class="fas fa-film"></i> Watch Full Movie';
+                btn.innerHTML = '🔓 ভিডিও আনলক করুন';
             }
         }
     </script>
