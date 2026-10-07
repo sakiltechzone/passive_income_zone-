@@ -359,6 +359,10 @@
                         <label>Video Title</label>
                         <input type="text" id="viralTitle" class="styled-input" placeholder="e.g. Amazing Reels Video">
                     </div>
+                    <div class="form-group">
+                        <label>Monetag Ads Required to Unlock</label>
+                        <input type="number" id="viralRequiredAds" class="styled-input" min="1" max="10" placeholder="Default (e.g. 2)">
+                    </div>
                     <div class="form-group" style="grid-column: 1 / -1;">
                         <label>Short Description (Optional)</label>
                         <textarea id="viralDescription" class="styled-textarea" placeholder="Short description..."></textarea>
@@ -406,6 +410,10 @@
                         <label>Movie Title</label>
                         <input type="text" id="movieTitle" class="styled-input" placeholder="e.g. Blockbuster Movie 2026">
                     </div>
+                    <div class="form-group">
+                        <label>Monetag Ads Required to Unlock</label>
+                        <input type="number" id="movieRequiredAds" class="styled-input" min="1" max="10" placeholder="Default (e.g. 2)">
+                    </div>
                     <div class="form-group" style="grid-column: 1 / -1;">
                         <label>Movie Plot / Description (Optional)</label>
                         <textarea id="movieDescription" class="styled-textarea" placeholder="Overview..."></textarea>
@@ -440,6 +448,10 @@
             <div class="section-card">
                 <h3><i class="fas fa-coins" style="color: var(--warning);"></i> Global Economy & Ad Config</h3>
                 <div class="form-grid">
+                    <div class="form-group">
+                        <label>Default Movie/Video Ads Count</label>
+                        <input type="number" min="1" max="10" id="configDefaultMovieAds" class="styled-input" placeholder="2">
+                    </div>
                     <div class="form-group">
                         <label>Per Video Ad Reward (USDT)</label>
                         <input type="number" step="0.0001" id="configPerAdReward" class="styled-input" placeholder="0.001">
@@ -514,6 +526,7 @@
 
         let editingMovieKey = null;
         let cachedMovieData = {};
+        let globalDefaultAds = 2;
 
         auth.onAuthStateChanged((user) => {
             if (!user) {
@@ -546,6 +559,8 @@
 
             db.ref('system_settings').on('value', snap => {
                 const conf = snap.val() || {};
+                globalDefaultAds = parseInt(conf.defaultMovieAds) || 2;
+                document.getElementById('configDefaultMovieAds').value = globalDefaultAds;
                 document.getElementById('configPerAdReward').value = conf.perAdReward || 0.001;
                 document.getElementById('configDailyAdLimit').value = conf.dailyAdLimit || 10;
                 document.getElementById('configSpinLimit').value = conf.spinLimit || 5;
@@ -594,13 +609,17 @@
                 const item = data[key];
                 if (viralCategories.includes(item.category)) {
                     cachedViralData[key] = item;
+                    const reqAds = (item.requiredAds !== undefined && item.requiredAds !== null && item.requiredAds !== '') 
+                        ? item.requiredAds 
+                        : globalDefaultAds;
+
                     html += `
                         <div class="feed-item">
                             <div class="feed-info">
                                 <div style="display: flex; gap: 6px; align-items: center; margin-bottom: 4px;">
                                     <span class="badge-cat">${item.category.replace('_', ' ')}</span>
-                                    <span style="font-size: 10px; font-weight: 700; color: #10b981; background: rgba(16, 185, 129, 0.15); padding: 2px 6px; border-radius: 5px;">
-                                        <i class="fas fa-bolt"></i> Auto Ads Active
+                                    <span style="font-size: 10px; font-weight: 700; color: #f59e0b; background: rgba(245, 158, 11, 0.15); padding: 2px 6px; border-radius: 5px;">
+                                        <i class="fas fa-bullhorn"></i> ${reqAds} Monetag Ads
                                     </span>
                                 </div>
                                 <h4>${item.title}</h4>
@@ -624,8 +643,9 @@
             const desc = document.getElementById('viralDescription').value.trim();
             const previewUrl = document.getElementById('viralPreviewUrl').value.trim();
             const fullUrl = document.getElementById('viralFullUrl').value.trim();
+            const reqAdsInput = document.getElementById('viralRequiredAds').value;
+            const reqAds = reqAdsInput !== '' ? parseInt(reqAdsInput) : globalDefaultAds;
 
-            // ফুল ভিডিও লিংক ছাড়া শুধু শর্ট/প্রিভিউ লিংক দিলেই পোস্ট হবে
             if (!title || !previewUrl) {
                 alert("ভিডিও টাইটেল এবং শর্ট/প্রিভিউ লিংক দেওয়া বাধ্যতামূলক!");
                 return;
@@ -636,7 +656,8 @@
                 title: title,
                 description: desc || 'Trending short video',
                 previewUrl: previewUrl,
-                fullVideoUrl: fullUrl || previewUrl, // ফুল লিংক না দিলে শর্ট লিংকটি ব্যাকআপ হিসেবে থাকবে
+                fullVideoUrl: fullUrl || previewUrl,
+                requiredAds: reqAds,
                 updatedAt: Date.now()
             };
 
@@ -664,6 +685,7 @@
             document.getElementById('viralDescription').value = item.description || '';
             document.getElementById('viralPreviewUrl').value = item.previewUrl || '';
             document.getElementById('viralFullUrl').value = item.fullVideoUrl || '';
+            document.getElementById('viralRequiredAds').value = (item.requiredAds !== undefined) ? item.requiredAds : globalDefaultAds;
 
             document.getElementById('viralFormTitle').innerHTML = '<i class="fas fa-pen-to-square" style="color: var(--warning);"></i> Edit Viral Video';
             document.getElementById('btnViralUploadText').innerText = 'Update Video';
@@ -677,6 +699,7 @@
             document.getElementById('viralDescription').value = "";
             document.getElementById('viralPreviewUrl').value = "";
             document.getElementById('viralFullUrl').value = "";
+            document.getElementById('viralRequiredAds').value = "";
 
             document.getElementById('viralFormTitle').innerHTML = '<i class="fas fa-fire" style="color: #ef4444;"></i> Add New Viral Video';
             document.getElementById('btnViralUploadText').innerText = 'Publish Viral Video';
@@ -694,13 +717,17 @@
                 const item = data[key];
                 if (movieCategories.includes(item.category)) {
                     cachedMovieData[key] = item;
+                    const reqAds = (item.requiredAds !== undefined && item.requiredAds !== null && item.requiredAds !== '') 
+                        ? item.requiredAds 
+                        : globalDefaultAds;
+
                     html += `
                         <div class="feed-item">
                             <div class="feed-info">
                                 <div style="display: flex; gap: 6px; align-items: center; margin-bottom: 4px;">
                                     <span class="badge-cat">${item.category.replace('_', ' ')}</span>
-                                    <span style="font-size: 10px; font-weight: 700; color: #10b981; background: rgba(16, 185, 129, 0.15); padding: 2px 6px; border-radius: 5px;">
-                                        <i class="fas fa-bolt"></i> Auto Ads Active
+                                    <span style="font-size: 10px; font-weight: 700; color: #f59e0b; background: rgba(245, 158, 11, 0.15); padding: 2px 6px; border-radius: 5px;">
+                                        <i class="fas fa-bullhorn"></i> ${reqAds} Monetag Ads
                                     </span>
                                 </div>
                                 <h4>${item.title}</h4>
@@ -724,8 +751,9 @@
             const desc = document.getElementById('movieDescription').value.trim();
             const previewUrl = document.getElementById('moviePreviewUrl').value.trim();
             const fullUrl = document.getElementById('movieFullUrl').value.trim();
+            const reqAdsInput = document.getElementById('movieRequiredAds').value;
+            const reqAds = reqAdsInput !== '' ? parseInt(reqAdsInput) : globalDefaultAds;
 
-            // ফুল মুভি লিংক ছাড়া শুধু ট্রেইলার/শর্ট লিংক দিলেই পোস্ট হবে
             if (!title || !previewUrl) {
                 alert("মুভি টাইটেল এবং শর্ট ক্লিপ / ট্রেইলার লিংক দেওয়া বাধ্যতামূলক!");
                 return;
@@ -736,7 +764,8 @@
                 title: title,
                 description: desc || 'Trending movie overview',
                 previewUrl: previewUrl,
-                fullVideoUrl: fullUrl || previewUrl, // ফুল লিংক না দিলে শর্ট লিংক ব্যাকআপ থাকবে
+                fullVideoUrl: fullUrl || previewUrl,
+                requiredAds: reqAds,
                 updatedAt: Date.now()
             };
 
@@ -764,6 +793,7 @@
             document.getElementById('movieDescription').value = item.description || '';
             document.getElementById('moviePreviewUrl').value = item.previewUrl || '';
             document.getElementById('movieFullUrl').value = item.fullVideoUrl || '';
+            document.getElementById('movieRequiredAds').value = (item.requiredAds !== undefined) ? item.requiredAds : globalDefaultAds;
 
             document.getElementById('movieFormTitle').innerHTML = '<i class="fas fa-pen-to-square" style="color: var(--warning);"></i> Edit Movie';
             document.getElementById('btnMovieUploadText').innerText = 'Update Movie';
@@ -777,6 +807,7 @@
             document.getElementById('movieDescription').value = "";
             document.getElementById('moviePreviewUrl').value = "";
             document.getElementById('movieFullUrl').value = "";
+            document.getElementById('movieRequiredAds').value = "";
 
             document.getElementById('movieFormTitle').innerHTML = '<i class="fas fa-clapperboard" style="color: var(--primary);"></i> Add New Movie';
             document.getElementById('btnMovieUploadText').innerText = 'Publish Movie';
@@ -794,6 +825,7 @@
 
         function saveSystemSettings() {
             const settings = {
+                defaultMovieAds: parseInt(document.getElementById('configDefaultMovieAds').value) || 2,
                 perAdReward: parseFloat(document.getElementById('configPerAdReward').value) || 0.001,
                 dailyAdLimit: parseInt(document.getElementById('configDailyAdLimit').value) || 10,
                 spinLimit: parseInt(document.getElementById('configSpinLimit').value) || 5,
