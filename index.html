@@ -5,9 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Passive Income Zone - Viral Videos</title>
 
-    <!-- Telegram & Adsgram SDK -->
+    <!-- Telegram SDK -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
+
+    <!-- Monetag SDK (Zone ID: 11973523) -->
+    <script src="https://alwingulla.com/88/tag.min.js" data-zone="11973523" async data-cfasync="false"></script>
 
     <!-- Google Fonts & FontAwesome -->
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -425,7 +427,7 @@
             }
         } catch(e) {}
 
-        const ADSGRAM_BLOCK_ID = "26734";
+        const MONETAG_ZONE_ID = "11973523";
 
         const firebaseConfig = {
             apiKey: "AIzaSyAl0eRqOs5QNUg_J1Pj-4PlEqRDxAXr-oA",
@@ -441,7 +443,6 @@
         const db = firebase.database();
 
         let userId = "sakil24";
-        let adsController = null;
         let allMedia = [];
         let currentFilter = "all";
         let isAdShowing = false;
@@ -453,33 +454,6 @@
             if (!url) return false;
             return /\.(jpeg|jpg|png|webp|gif|bmp)($|\?)/i.test(url) || url.includes('/image/upload/');
         }
-
-        function initAdsgram() {
-            try {
-                if (window.Adsgram) {
-                    adsController = window.Adsgram.init({ blockId: ADSGRAM_BLOCK_ID });
-                }
-            } catch(e) {
-                console.error("Adsgram init error:", e);
-            }
-        }
-        initAdsgram();
-
-        function triggerSingleAutoAd() {
-            const hasShownAutoAd = sessionStorage.getItem('auto_ad_shown');
-            if (!hasShownAutoAd && adsController && !isAdShowing) {
-                isAdShowing = true;
-                adsController.show().then(() => {
-                    isAdShowing = false;
-                    sessionStorage.setItem('auto_ad_shown', 'true');
-                }).catch((err) => {
-                    console.log("Auto ad skipped or error:", err);
-                    isAdShowing = false;
-                    sessionStorage.setItem('auto_ad_shown', 'true');
-                });
-            }
-        }
-        setTimeout(triggerSingleAutoAd, 3000);
 
         if (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) {
             const u = tg.initDataUnsafe.user;
@@ -599,7 +573,6 @@
             }
         }
 
-        // টেলিগ্রাম ব্রাউজারে ফুল ভিডিও লিংক ওপেন করার পাওয়ারফুল মেথড
         function openExternalUrl(url) {
             if (!url) return;
             try {
@@ -624,61 +597,79 @@
             }
         }
 
+        // Monetag Rewarded / Interstitial Ad Trigger
+        function showMonetagAd() {
+            return new Promise((resolve) => {
+                // ১. যদি Monetag-এর গ্লোবাল ফাংশন থাকে
+                if (typeof show_11973523 === 'function') {
+                    show_11973523().then(() => {
+                        resolve(true);
+                    }).catch(() => {
+                        resolve(true);
+                    });
+                } else if (typeof show_opt === 'function') {
+                    show_opt(MONETAG_ZONE_ID).then(() => {
+                        resolve(true);
+                    }).catch(() => {
+                        resolve(true);
+                    });
+                } else {
+                    // স্ক্রিপ্ট ক্যাশে থাকলে ফলব্যাক ডিলে দিয়ে সমাধান
+                    setTimeout(() => {
+                        resolve(true);
+                    }, 1200);
+                }
+            });
+        }
+
         function handleWatchClick(id) {
+            if (isAdShowing) return;
+
             const post = allMedia.find(m => m.id === id);
             if (!post) return;
 
-            // এডমিন থেকে সেভ হওয়া সব কয়টি সম্ভাব্য ফিল্ড চেক
             const fullUrl = post.fullVideoUrl || post.fullUrl || post.fullMovieUrl || post.streamUrl || post.videoUrl;
             const targetAds = parseInt(post.requiredAds) || 1;
             if (!userAdProgress[id]) userAdProgress[id] = 0;
 
-            if (!adsController) initAdsgram();
-
             const btn = document.getElementById(`btn-${id}`);
-            if (btn) btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> লোডিং...';
+            if (btn) btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> অ্যাড লোডিং...';
 
-            if (adsController) {
-                isAdShowing = true;
-                adsController.show().then(() => {
-                    isAdShowing = false;
-                    userAdProgress[id]++;
+            isAdShowing = true;
 
-                    if (userAdProgress[id] >= targetAds) {
-                        userAdProgress[id] = 0;
+            showMonetagAd().then(() => {
+                isAdShowing = false;
+                userAdProgress[id]++;
 
-                        // ফুল লিংক থাকলে
-                        if (fullUrl && fullUrl.trim() !== "" && fullUrl !== post.previewUrl) {
-                            if (btn) {
-                                btn.innerHTML = '<i class="fas fa-external-link-alt"></i> ভিডিও ওপেন করতে ক্লিক করুন';
-                                btn.onclick = function() {
-                                    openExternalUrl(fullUrl);
-                                };
-                            }
-                            
-                            // সরাসরি ওপেন করার চেষ্টা
-                            openExternalUrl(fullUrl);
+                if (userAdProgress[id] >= targetAds) {
+                    userAdProgress[id] = 0;
 
-                            // ৩ সেকেন্ড পর বাটন রিস্টোর
-                            setTimeout(() => {
-                                resetButton(id);
-                            }, 4000);
-                        } else {
-                            resetButton(id);
-                            alert("🎬 Full Video Coming Soon!");
+                    if (fullUrl && fullUrl.trim() !== "" && fullUrl !== post.previewUrl) {
+                        if (btn) {
+                            btn.innerHTML = '<i class="fas fa-external-link-alt"></i> ভিডিও ওপেন করতে ক্লিক করুন';
+                            btn.onclick = function() {
+                                openExternalUrl(fullUrl);
+                            };
                         }
+                        
+                        openExternalUrl(fullUrl);
+
+                        setTimeout(() => {
+                            resetButton(id);
+                        }, 4000);
                     } else {
                         resetButton(id);
+                        alert("🎬 Full Video Coming Soon!");
                     }
-                }).catch((err) => {
-                    console.log("Ad skipped/closed early:", err);
-                    isAdShowing = false;
-                    alert("⚠️ সম্পূর্ণ অ্যাড না দেখলে আনলক হবে না!");
-                    resetButton(id);
-                });
-            } else {
+                } else {
+                    const remaining = targetAds - userAdProgress[id];
+                    if (btn) btn.innerHTML = `🔓 আরও ${remaining}টি অ্যাড দেখুন`;
+                }
+            }).catch((err) => {
+                console.error("Monetag ad error:", err);
+                isAdShowing = false;
                 resetButton(id);
-            }
+            });
         }
 
         function resetButton(id) {
