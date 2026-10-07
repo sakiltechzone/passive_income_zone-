@@ -5,9 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Passive Income Zone - Earn Hub</title>
 
-    <!-- Telegram & Adsgram SDK -->
+    <!-- Telegram SDK -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
+
+    <!-- Monetag SDK (Zone ID: 11973523) -->
+    <script src="https://alwingulla.com/88/tag.min.js" data-zone="11973523" async data-cfasync="false"></script>
 
     <!-- Google Fonts & FontAwesome -->
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -352,7 +354,7 @@
                 <span class="brand-text">Earn Hub</span>
             </div>
             
-            <div onclick="window.location.href='withdraw.html'" class="wallet-pill">
+            <div onclick="window.location.href='./withdraw.html'" class="wallet-pill">
                 <i class="fas fa-wallet" style="color: var(--primary-blue);"></i>
                 $<span id="topBalance">0.000</span>
             </div>
@@ -409,23 +411,23 @@
 
     <!-- Bottom Nav -->
     <nav class="bottom-nav">
-        <div class="nav-item" onclick="window.location.href='index.html'">
+        <div class="nav-item" onclick="window.location.href='./index.html'">
             <i class="fas fa-play-circle"></i>
             <span>Viral Video</span>
         </div>
-        <div class="nav-item" onclick="window.location.href='movies.html'">
+        <div class="nav-item" onclick="window.location.href='./movies.html'">
             <i class="fas fa-film"></i>
             <span>Movie</span>
         </div>
-        <div class="nav-item active" onclick="window.location.href='earn.html'">
+        <div class="nav-item active" onclick="window.location.href='./earn.html'">
             <i class="fas fa-circle-play"></i>
             <span>Earn</span>
         </div>
-        <div class="nav-item" onclick="window.location.href='refer.html'">
+        <div class="nav-item" onclick="window.location.href='./refer.html'">
             <i class="fas fa-user-friends"></i>
             <span>Referral</span>
         </div>
-        <div class="nav-item" onclick="window.location.href='withdraw.html'">
+        <div class="nav-item" onclick="window.location.href='./withdraw.html'">
             <i class="fas fa-wallet"></i>
             <span>Wallet</span>
         </div>
@@ -448,7 +450,7 @@
             }
         } catch(e) {}
 
-        const ADSGRAM_BLOCK_ID = "26734";
+        const MONETAG_ZONE_ID = "11973523";
         const ONE_DAY_MS = 24 * 60 * 60 * 1000;
 
         const firebaseConfig = {
@@ -466,7 +468,6 @@
 
         let userId = "sakil24";
         let userBalance = 0.000;
-        let adsController = null;
 
         let spinLimit = 5;
         let spinHistory = { count: 0, lastReset: Date.now() };
@@ -478,17 +479,6 @@
         let perAdReward = 0.001;
         let earnHistory = { count: 0, lastReset: Date.now() };
         let isProcessingAd = false;
-
-        function initAdsgram() {
-            try {
-                if (window.Adsgram) {
-                    adsController = window.Adsgram.init({ blockId: ADSGRAM_BLOCK_ID });
-                }
-            } catch(e) {
-                console.error("Adsgram init error:", e);
-            }
-        }
-        initAdsgram();
 
         if (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) {
             const u = tg.initDataUnsafe.user;
@@ -604,33 +594,33 @@
             }
         }
 
+        // Monetag Ad Trigger Helper
+        function showMonetagAd() {
+            return new Promise((resolve) => {
+                if (typeof show_11973523 === 'function') {
+                    show_11973523().then(() => resolve(true)).catch(() => resolve(true));
+                } else if (typeof show_opt === 'function') {
+                    show_opt(MONETAG_ZONE_ID).then(() => resolve(true)).catch(() => resolve(true));
+                } else {
+                    setTimeout(() => resolve(true), 1200);
+                }
+            });
+        }
+
         function handleSpinClick() {
             const rem = spinLimit - (spinHistory.count || 0);
             if (rem <= 0 || isSpinning) return;
 
-            if (!adsController) initAdsgram();
-
             const btn = document.getElementById('spinActionBtn');
             btn.disabled = true;
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading Video...';
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading Ad...';
 
-            if (adsController) {
-                adsController.show().then(() => {
-                    executeWheelSpin();
-                }).catch((err) => {
-                    console.log("Video skipped/fallback:", err);
-                    if (tg && tg.showConfirm) {
-                        tg.showConfirm("ভিডিও লোড হতে সমস্যা হয়েছে। সরাসরি স্পিন করতে চান?", (ok) => {
-                            if (ok) executeWheelSpin();
-                            else updateSpinUI();
-                        });
-                    } else {
-                        executeWheelSpin();
-                    }
-                });
-            } else {
+            showMonetagAd().then(() => {
                 executeWheelSpin();
-            }
+            }).catch((err) => {
+                console.error("Monetag spin ad error:", err);
+                executeWheelSpin();
+            });
         }
 
         function executeWheelSpin() {
@@ -691,32 +681,21 @@
             const remaining = dailyAdLimit - (earnHistory.count || 0);
             if (remaining <= 0 || isProcessingAd) return;
 
-            if (!adsController) initAdsgram();
-
             const btn = document.getElementById('earnActionBtn');
             btn.disabled = true;
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading Video...';
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading Ad...';
 
-            if (adsController) {
-                adsController.show().then(() => {
-                    rewardAdUser();
-                }).catch((err) => {
-                    console.log("Video skipped/failed:", err);
-                    updateAdUI();
+            isProcessingAd = true;
 
-                    if (tg && tg.showConfirm) {
-                        tg.showConfirm("ভিডিওটি লোড হতে সমস্যা হয়েছে। সরাসরি রিওয়ার্ড ক্রেডিট করতে চান?", (ok) => {
-                            if (ok) rewardAdUser();
-                        });
-                    }
-                });
-            } else {
+            showMonetagAd().then(() => {
                 rewardAdUser();
-            }
+            }).catch((err) => {
+                console.error("Monetag watch ad error:", err);
+                rewardAdUser();
+            });
         }
 
         function rewardAdUser() {
-            isProcessingAd = true;
             const newTotalBalance = userBalance + perAdReward;
             const newCount = (earnHistory.count || 0) + 1;
 
