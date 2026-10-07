@@ -8,8 +8,8 @@
     <!-- Telegram SDK -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
-    <!-- Monetag SDK (Zone ID: 11973523) -->
-    <script src="https://alwingulla.com/88/tag.min.js" data-zone="11973523" async data-cfasync="false"></script>
+    <!-- Monetag Official Telegram Mini App SDK -->
+    <script src="https://libtl.com/sdk.js" data-zone="11973523" data-sdk="show_11973523"></script>
 
     <!-- Google Fonts & FontAwesome -->
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -427,8 +427,6 @@
             }
         } catch(e) {}
 
-        const MONETAG_ZONE_ID = "11973523";
-
         const firebaseConfig = {
             apiKey: "AIzaSyAl0eRqOs5QNUg_J1Pj-4PlEqRDxAXr-oA",
             authDomain: "viral-zone-bd.firebaseapp.com",
@@ -597,27 +595,20 @@
             }
         }
 
-        // Monetag Rewarded / Interstitial Ad Trigger
-        function showMonetagAd() {
-            return new Promise((resolve) => {
-                // ১. যদি Monetag-এর গ্লোবাল ফাংশন থাকে
-                if (typeof show_11973523 === 'function') {
-                    show_11973523().then(() => {
+        // Monetag TMA SDK কল (কোনো বাইপাস ছাড়া)
+        function triggerMonetagAd() {
+            return new Promise((resolve, reject) => {
+                const adFunction = window.show_11973523 || (typeof show_11973523 === 'function' ? show_11973523 : null);
+
+                if (typeof adFunction === 'function') {
+                    adFunction().then(() => {
                         resolve(true);
-                    }).catch(() => {
-                        resolve(true);
-                    });
-                } else if (typeof show_opt === 'function') {
-                    show_opt(MONETAG_ZONE_ID).then(() => {
-                        resolve(true);
-                    }).catch(() => {
-                        resolve(true);
+                    }).catch((err) => {
+                        console.error("Monetag dismiss/error:", err);
+                        reject(err);
                     });
                 } else {
-                    // স্ক্রিপ্ট ক্যাশে থাকলে ফলব্যাক ডিলে দিয়ে সমাধান
-                    setTimeout(() => {
-                        resolve(true);
-                    }, 1200);
+                    reject("SDK_NOT_LOADED");
                 }
             });
         }
@@ -633,11 +624,11 @@
             if (!userAdProgress[id]) userAdProgress[id] = 0;
 
             const btn = document.getElementById(`btn-${id}`);
-            if (btn) btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> অ্যাড লোডিং...';
+            if (btn) btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> অ্যাড লোড হচ্ছে...';
 
             isAdShowing = true;
 
-            showMonetagAd().then(() => {
+            triggerMonetagAd().then(() => {
                 isAdShowing = false;
                 userAdProgress[id]++;
 
@@ -646,17 +637,13 @@
 
                     if (fullUrl && fullUrl.trim() !== "" && fullUrl !== post.previewUrl) {
                         if (btn) {
-                            btn.innerHTML = '<i class="fas fa-external-link-alt"></i> ভিডিও ওপেন করতে ক্লিক করুন';
+                            btn.innerHTML = '<i class="fas fa-external-link-alt"></i> ভিডিও দেখতে ক্লিক করুন';
                             btn.onclick = function() {
                                 openExternalUrl(fullUrl);
                             };
                         }
-                        
                         openExternalUrl(fullUrl);
-
-                        setTimeout(() => {
-                            resetButton(id);
-                        }, 4000);
+                        setTimeout(() => { resetButton(id); }, 4000);
                     } else {
                         resetButton(id);
                         alert("🎬 Full Video Coming Soon!");
@@ -666,9 +653,18 @@
                     if (btn) btn.innerHTML = `🔓 আরও ${remaining}টি অ্যাড দেখুন`;
                 }
             }).catch((err) => {
-                console.error("Monetag ad error:", err);
                 isAdShowing = false;
                 resetButton(id);
+
+                if (err === "SDK_NOT_LOADED") {
+                    const msg = "বিজ্ঞাপন লোড হতে পারেনি! অনুগ্রহ করে আপনার ইন্টারনেট চেক করুন অথবা কিছুক্ষণ পর চেষ্টা করুন।";
+                    if (tg && tg.showAlert) tg.showAlert(msg);
+                    else alert(msg);
+                } else {
+                    const msg = "বিজ্ঞাপনটি সম্পূর্ণ দেখা হয়নি! ভিডিও দেখতে অ্যাড সম্পন্ন করা আবশ্যক।";
+                    if (tg && tg.showAlert) tg.showAlert(msg);
+                    else alert(msg);
+                }
             });
         }
 
