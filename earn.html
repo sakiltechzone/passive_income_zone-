@@ -8,8 +8,8 @@
     <!-- Telegram SDK -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
-    <!-- Monetag SDK (Zone ID: 11973523) -->
-    <script src="https://alwingulla.com/88/tag.min.js" data-zone="11973523" async data-cfasync="false"></script>
+    <!-- Monetag Official Telegram Mini App SDK -->
+    <script src="https://libtl.com/sdk.js" data-zone="11973523" data-sdk="show_11973523"></script>
 
     <!-- Google Fonts & FontAwesome -->
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -450,7 +450,6 @@
             }
         } catch(e) {}
 
-        const MONETAG_ZONE_ID = "11973523";
         const ONE_DAY_MS = 24 * 60 * 60 * 1000;
 
         const firebaseConfig = {
@@ -594,15 +593,20 @@
             }
         }
 
-        // Monetag Ad Trigger Helper
-        function showMonetagAd() {
-            return new Promise((resolve) => {
-                if (typeof show_11973523 === 'function') {
-                    show_11973523().then(() => resolve(true)).catch(() => resolve(true));
-                } else if (typeof show_opt === 'function') {
-                    show_opt(MONETAG_ZONE_ID).then(() => resolve(true)).catch(() => resolve(true));
+        // Monetag Ad Trigger (কোনো বাইপাস ছাড়া)
+        function triggerMonetagAd() {
+            return new Promise((resolve, reject) => {
+                const adFunction = window.show_11973523 || (typeof show_11973523 === 'function' ? show_11973523 : null);
+
+                if (typeof adFunction === 'function') {
+                    adFunction().then(() => {
+                        resolve(true);
+                    }).catch((err) => {
+                        console.error("Monetag dismiss/error:", err);
+                        reject(err);
+                    });
                 } else {
-                    setTimeout(() => resolve(true), 1200);
+                    reject("SDK_NOT_LOADED");
                 }
             });
         }
@@ -613,13 +617,21 @@
 
             const btn = document.getElementById('spinActionBtn');
             btn.disabled = true;
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading Ad...';
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> অ্যাড লোড হচ্ছে...';
 
-            showMonetagAd().then(() => {
+            triggerMonetagAd().then(() => {
                 executeWheelSpin();
             }).catch((err) => {
-                console.error("Monetag spin ad error:", err);
-                executeWheelSpin();
+                updateSpinUI();
+                if (err === "SDK_NOT_LOADED") {
+                    const msg = "বিজ্ঞাপন লোড হতে পারেনি! অনুগ্রহ করে আপনার ইন্টারনেট সংযোগ চেক করুন।";
+                    if (tg && tg.showAlert) tg.showAlert(msg);
+                    else alert(msg);
+                } else {
+                    const msg = "বিজ্ঞাপনটি সম্পূর্ণ দেখা হয়নি! স্পিন করতে সম্পূর্ণ অ্যাড দেখুন।";
+                    if (tg && tg.showAlert) tg.showAlert(msg);
+                    else alert(msg);
+                }
             });
         }
 
@@ -683,15 +695,24 @@
 
             const btn = document.getElementById('earnActionBtn');
             btn.disabled = true;
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading Ad...';
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> অ্যাড লোড হচ্ছে...';
 
             isProcessingAd = true;
 
-            showMonetagAd().then(() => {
+            triggerMonetagAd().then(() => {
                 rewardAdUser();
             }).catch((err) => {
-                console.error("Monetag watch ad error:", err);
-                rewardAdUser();
+                isProcessingAd = false;
+                updateAdUI();
+                if (err === "SDK_NOT_LOADED") {
+                    const msg = "বিজ্ঞাপন লোড হতে পারেনি! অনুগ্রহ করে আপনার ইন্টারনেট সংযোগ চেক করুন।";
+                    if (tg && tg.showAlert) tg.showAlert(msg);
+                    else alert(msg);
+                } else {
+                    const msg = "বিজ্ঞাপনটি সম্পূর্ণ দেখা হয়নি! রিওয়ার্ড পেতে সম্পূর্ণ অ্যাড দেখুন।";
+                    if (tg && tg.showAlert) tg.showAlert(msg);
+                    else alert(msg);
+                }
             });
         }
 
